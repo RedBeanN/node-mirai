@@ -53,7 +53,13 @@ class NodeMirai {
   async sendFriendMessage (message, target) {}
   async sendGroupMessage (message, target) {}
   async sendMessage (message, target) {}
-  reply (srcMsg, replyMsg) {}
+  reply (replyMsg, srcMsg) {
+    const replyMessage = [{
+      type: 'Plain',
+      text: replyMsg,
+    }];
+    this.sendMessage(replyMessage, srcMsg);
+  }
   quoteReply (srcMsg, replyMsg) {}
   onSignal (signalName, callback) {
     this.signal.on(signalName, callback);
