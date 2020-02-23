@@ -53,6 +53,9 @@ class NodeMirai {
   async sendFriendMessage (message, target) {}
   async sendGroupMessage (message, target) {}
   async sendMessage (message, target) {}
+  async sendQuotedFriendMessage (message, target) {}
+  async sendQuotedGroupMessage (message, target) {}
+  async sendQuotedMessage (message, target) {}
   reply (replyMsg, srcMsg) {
     const replyMessage = [{
       type: 'Plain',
