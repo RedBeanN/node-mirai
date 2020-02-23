@@ -8,6 +8,9 @@ const sendFriendMessage = async ({
 }) => {
   const { data } = await axios.post(`http://localhost:${port}/sendFriendMessage`, {
     messageChain, target, sessionKey,
+  }).catch(e => {
+    console.error('Unknown Error');
+    process.exit(1);
   });
   return data;
 };

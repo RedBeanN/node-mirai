@@ -5,6 +5,8 @@ const verify = require('./src/verify');
 const release = require('./src/release');
 const fetchMessage = require('./src/fetchMessage');
 
+const { sendFriendMessage } = require('./src/sendMessage');
+
 class NodeMirai {
   constructor ({
     port = 8080,
@@ -50,7 +52,14 @@ class NodeMirai {
   async fetchMessage (count = 10) {
     return fetchMessage(this.port, this.sessionKey, count);
   }
-  async sendFriendMessage (message, target) {}
+  async sendFriendMessage (message, target) {
+    return sendFriendMessage({
+      messageChain: message,
+      target,
+      sessionKey: this.sessionKey,
+      port: this.port,
+    });
+  }
   async sendGroupMessage (message, target) {}
   async sendMessage (message, target) {
     switch (target.type) {
