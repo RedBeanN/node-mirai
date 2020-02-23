@@ -50,6 +50,8 @@ class NodeMirai {
   async fetchMessage (count = 10) {
     return fetchMessage(this.port, this.sessionKey, count);
   }
+  async sendFriendMessage (message, target) {}
+  async sendGroupMessage (message, target) {}
   async sendMessage (message, target) {}
   reply (srcMsg, replyMsg) {}
   quoteReply (srcMsg, replyMsg) {}
