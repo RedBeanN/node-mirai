@@ -52,7 +52,19 @@ class NodeMirai {
   }
   async sendFriendMessage (message, target) {}
   async sendGroupMessage (message, target) {}
-  async sendMessage (message, target) {}
+  async sendMessage (message, target) {
+    switch (target.type) {
+      case 'FriendMessage':
+        this.sendFriendMessage(message, target.sender.id);
+        break;
+      case 'GroupMessage':
+        this.sendGroupMessage(message, target.sender.group.id);
+        break;
+      default:
+        console.error('Invalid target @ sendMessage');
+        process.exit(1);
+    }
+  }
   async sendQuotedFriendMessage (message, target) {}
   async sendQuotedGroupMessage (message, target) {}
   async sendQuotedMessage (message, target) {}
