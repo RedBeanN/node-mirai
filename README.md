@@ -2,7 +2,7 @@
 
 ## [mirai](https://github.com/mamoe/mirai) 的 NodeJs SDK
 
-由于还在开发中, 目前尚未同步到 npm, 所有 API 均为待定.
+由于还在开发中, 所有 API 均为待定.
 
 ### Usage/使用方法
 
