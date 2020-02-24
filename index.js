@@ -51,7 +51,7 @@ class NodeMirai {
   }
   async fetchMessage (count = 10) {
     return fetchMessage(this.port, this.sessionKey, count).catch(e => {
-      console.error('Unknown error', e.message);
+      console.error('Unknown error @ fetchMessage:', e.message);
       // process.exit(1);
     });
   }
@@ -104,6 +104,7 @@ class NodeMirai {
     try {
       let quote = target.messageChain[0].type === 'Source' ? target.messageChain[0].id : -1;
       if (quote < 0) throw new Error();
+      // console.log(target.type, quote);
       switch (target.type) {
         case 'FriendMessage':
           this.sendQuotedFriendMessage(message, target.sender.id, quote);
@@ -113,10 +114,11 @@ class NodeMirai {
           break;
         default:
           console.error('Invalid target @ sendMessage');
-          process.exit(1);
+          // process.exit(1);
       }
     } catch (e) {
       // 无法引用时退化到普通消息
+      // console.log('Back to send message');
       return this.sendMessage(message, target);
     }
   }
