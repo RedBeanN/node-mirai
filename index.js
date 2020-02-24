@@ -5,7 +5,7 @@ const verify = require('./src/verify');
 const release = require('./src/release');
 const fetchMessage = require('./src/fetchMessage');
 
-const { sendFriendMessage } = require('./src/sendMessage');
+const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuotedGroupMessage } = require('./src/sendMessage');
 
 class NodeMirai {
   constructor ({
@@ -60,7 +60,14 @@ class NodeMirai {
       port: this.port,
     });
   }
-  async sendGroupMessage (message, target) {}
+  async sendGroupMessage (message, target) {
+    return sendGroupMessage({
+      messageChain: message,
+      target,
+      sessionKey: this.sessionKey,
+      port: this.port,
+    });
+  }
   async sendMessage (message, target) {
     switch (target.type) {
       case 'FriendMessage':
@@ -74,9 +81,42 @@ class NodeMirai {
         process.exit(1);
     }
   }
-  async sendQuotedFriendMessage (message, target) {}
-  async sendQuotedGroupMessage (message, target) {}
-  async sendQuotedMessage (message, target) {}
+  async sendQuotedFriendMessage (message, target, quote) {
+    return sendQuotedFriendMessage({
+      messageChain: message,
+      target, quote,
+      sessionKey: this.sessionKey,
+      port: this.port,
+    });
+  }
+  async sendQuotedGroupMessage (message, target, quote) {
+    return sendQuotedGroupMessage({
+      messageChain: message,
+      target, quote,
+      sessionKey: this.sessionKey,
+      port: this.port,
+    });
+  }
+  async sendQuotedMessage (message, target) {
+    try {
+      let quote = target.messageChain[0].type === 'Source' ? target.messageChain[0].uid : -1;
+      if (quote < 0) throw new Error();
+      switch (target.type) {
+        case 'FriendMessage':
+          this.sendQuotedFriendMessage(message, target.sender.id, quote);
+          break;
+        case 'GroupMessage':
+          this.sendQuotedGroupMessage(message, target.sender.group.id, quote);
+          break;
+        default:
+          console.error('Invalid target @ sendMessage');
+          process.exit(1);
+      }
+    } catch (e) {
+      // 无法引用时退化到普通消息
+      return this.sendMessage(message, target);
+    }
+  }
   reply (replyMsg, srcMsg) {
     const replyMessage = [{
       type: 'Plain',
