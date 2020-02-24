@@ -10,7 +10,7 @@ const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuoted
 class NodeMirai {
   constructor ({
     port = 8080,
-    authKey = 'SupreSecureAuthKey',
+    authKey = 'InitKeyQzrZbHQd',
     qq = 123456,
   }) {
     this.port = port;
@@ -50,7 +50,10 @@ class NodeMirai {
     });
   }
   async fetchMessage (count = 10) {
-    return fetchMessage(this.port, this.sessionKey, count);
+    return fetchMessage(this.port, this.sessionKey, count).catch(e => {
+      console.error('Unknown error', e.message);
+      // process.exit(1);
+    });
   }
   async sendFriendMessage (message, target) {
     return sendFriendMessage({
@@ -99,7 +102,7 @@ class NodeMirai {
   }
   async sendQuotedMessage (message, target) {
     try {
-      let quote = target.messageChain[0].type === 'Source' ? target.messageChain[0].uid : -1;
+      let quote = target.messageChain[0].type === 'Source' ? target.messageChain[0].id : -1;
       if (quote < 0) throw new Error();
       switch (target.type) {
         case 'FriendMessage':
@@ -124,7 +127,13 @@ class NodeMirai {
     }];
     this.sendMessage(replyMessage, srcMsg);
   }
-  quoteReply (srcMsg, replyMsg) {}
+  quoteReply (replyMsg, srcMsg) {
+    const replyMessage = [{
+      type: 'Plain',
+      text: replyMsg,
+    }];
+    this.sendQuotedMessage(replyMessage, srcMsg);
+  }
   onSignal (signalName, callback) {
     this.signal.on(signalName, callback);
   }

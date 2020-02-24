@@ -9,8 +9,8 @@ const sendFriendMessage = async ({
   const { data } = await axios.post(`http://localhost:${port}/sendFriendMessage`, {
     messageChain, target, sessionKey,
   }).catch(e => {
-    console.error('Unknown Error', e);
-    process.exit(1);
+    // console.error('Unknown Error @ sendFriendMessage', e.message);
+    // process.exit(1);
   });
   return data;
 };
@@ -24,8 +24,8 @@ const sendQuotedFriendMessage = async ({
   const { data } = await axios.post(`http://localhost:${port}/sendFriendMessage`, {
     messageChain, target, sessionKey, quote,
   }).catch(e => {
-    console.error('Unknown Error', e);
-    process.exit(1);
+    // console.error('Unknown Error @ sendQuotedFriendMessage', e.message);
+    // process.exit(1);
   });
   return data;
 };
@@ -39,8 +39,8 @@ const sendGroupMessage = async ({
   const { data } = await axios.post(`http://localhost:${port}/sendGroupMessage`, {
     messageChain, target, sessionKey,
   }).catch(e => {
-    console.error('Unknown Error', e);
-    process.exit(1);
+    // console.error('Unknown Error @ sendGroupMessage', e.message);
+    // process.exit(1);
   });
   return data;
 };
@@ -54,8 +54,8 @@ const sendQuotedGroupMessage = async ({
   const { data } = await axios.post(`http://localhost:${port}/sendGroupMessage`, {
     messageChain, target, sessionKey, quote,
   }).catch(e => {
-    console.error('Unknown Error', e);
-    process.exit(1);
+    // console.error('Unknown Error @ sendQuotedGroupMessage', e.message);
+    // process.exit(1);
   });
   return data;
 };
