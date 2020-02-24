@@ -8,7 +8,7 @@
 
 ·运行你的 mirai-api-http service
 
-`npm install node-mirai`
+`npm install node-mirai-sdk`
 
 ```javascript
 const Mirai = require('node-mirai-sdk');
