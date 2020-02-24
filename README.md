@@ -11,7 +11,7 @@
 `npm install node-mirai`
 
 ```javascript
-const Mirai = require('node-mirai');
+const Mirai = require('node-mirai-sdk');
 
 const bot = new Mirai({
   port: 8080,
