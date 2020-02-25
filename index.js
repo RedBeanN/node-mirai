@@ -1,5 +1,7 @@
 const Signal = require('./src/utils/Signal');
 
+const MessageComponent = require('./src/MessageComponent');
+
 const init = require('./src/init');
 const verify = require('./src/verify');
 const release = require('./src/release');
@@ -168,5 +170,7 @@ class NodeMirai {
     }, 200);
   }
 }
+
+NodeMirai.MessageComponent = MessageComponent;
 
 module.exports = NodeMirai;
