@@ -57,9 +57,39 @@ const sendQuotedGroupMessage = async ({
   return data;
 };
 
+const sendImageMessage = async ({
+  urls,
+  target,
+  qq,
+  group,
+  sessionKey,
+  port = 8080,
+}) => {
+  if (target === qq || qq) return await axios.post(`http://localhost:${port}/sendImageMessage`, {
+    urls,
+    qq,
+    sessionKey,
+  }).catch(e => {
+    console.error('Unknown Error @ sendImageMessage:', e.message);
+    // process.exit(1);
+  });
+  else if (target === group || group) return await axios.post(`http://localhost:${port}/sendImageMessage`, {
+    urls,
+    group,
+    sessionKey,
+  }).catch(e => {
+    console.error('Unknown Error @ sendImageMessage:', e.message);
+    // process.exit(1);
+  });
+  else {
+    console.error('Error @ sendImageMessage: You need to provide a qq or a group');
+  }
+};
+
 module.exports = {
   sendFriendMessage,
   sendQuotedFriendMessage,
   sendGroupMessage,
   sendQuotedGroupMessage,
+  sendImageMessage,
 };

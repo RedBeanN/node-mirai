@@ -8,7 +8,7 @@ const verify = require('./src/verify');
 const release = require('./src/release');
 const fetchMessage = require('./src/fetchMessage');
 
-const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuotedGroupMessage } = require('./src/sendMessage');
+const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuotedGroupMessage, sendImageMessage } = require('./src/sendMessage');
 
 class NodeMirai {
   constructor ({
@@ -73,6 +73,26 @@ class NodeMirai {
       sessionKey: this.sessionKey,
       port: this.port,
     });
+  }
+  async sendImageMessage (urls, target) {
+    switch (target.type) {
+      case 'FriendMessage':
+        return sendImageMessage({
+          urls,
+          qq: target.sender.id,
+          sessionKey: this.sessionKey,
+          port: this.port,
+        });
+      case 'GroupMessage':
+        return sendImageMessage({
+          urls,
+          group: target.sender.group.id,
+          sessionKey: this.sessionKey,
+          port: this.port,
+        });
+      default:
+        console.error('Error @ sendImageMessage: unknown target type');
+    }
   }
   async sendMessage (message, target) {
     switch (target.type) {
