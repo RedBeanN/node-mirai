@@ -1,6 +1,7 @@
 const Signal = require('./src/utils/Signal');
 
 const MessageComponent = require('./src/MessageComponent');
+const { Plain } = MessageComponent;
 
 const init = require('./src/init');
 const verify = require('./src/verify');
@@ -125,17 +126,11 @@ class NodeMirai {
     }
   }
   reply (replyMsg, srcMsg) {
-    const replyMessage = [{
-      type: 'Plain',
-      text: replyMsg,
-    }];
+    const replyMessage = typeof replyMsg === 'string' ? [Plain(replyMsg)] : replyMsg;
     this.sendMessage(replyMessage, srcMsg);
   }
   quoteReply (replyMsg, srcMsg) {
-    const replyMessage = [{
-      type: 'Plain',
-      text: replyMsg,
-    }];
+    const replyMessage = typeof replyMsg === 'string' ? [Plain(replyMsg)] : replyMsg;
     this.sendQuotedMessage(replyMessage, srcMsg);
   }
   onSignal (signalName, callback) {
