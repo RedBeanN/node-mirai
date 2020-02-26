@@ -152,8 +152,7 @@ class NodeMirai {
   }
   recall (msg) {
     try {
-      const target = msg.messageId || msg;
-      console.log(target);
+      const target = msg.messageId || msg.messageChain[0].id || msg;
       return recall({
         target,
         sessionKey: this.sessionKey,
