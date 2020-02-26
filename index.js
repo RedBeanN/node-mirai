@@ -7,6 +7,7 @@ const init = require('./src/init');
 const verify = require('./src/verify');
 const release = require('./src/release');
 const fetchMessage = require('./src/fetchMessage');
+const recall = require('./src/recall');
 
 const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuotedGroupMessage, sendImageMessage } = require('./src/sendMessage');
 
@@ -97,11 +98,9 @@ class NodeMirai {
   async sendMessage (message, target) {
     switch (target.type) {
       case 'FriendMessage':
-        this.sendFriendMessage(message, target.sender.id);
-        break;
+        return this.sendFriendMessage(message, target.sender.id);
       case 'GroupMessage':
-        this.sendGroupMessage(message, target.sender.group.id);
-        break;
+        return this.sendGroupMessage(message, target.sender.group.id);
       default:
         console.error('Invalid target @ sendMessage');
         process.exit(1);
@@ -145,11 +144,24 @@ class NodeMirai {
   }
   reply (replyMsg, srcMsg) {
     const replyMessage = typeof replyMsg === 'string' ? [Plain(replyMsg)] : replyMsg;
-    this.sendMessage(replyMessage, srcMsg);
+    return this.sendMessage(replyMessage, srcMsg);
   }
   quoteReply (replyMsg, srcMsg) {
     const replyMessage = typeof replyMsg === 'string' ? [Plain(replyMsg)] : replyMsg;
     this.sendQuotedMessage(replyMessage, srcMsg);
+  }
+  recall (msg) {
+    try {
+      const target = msg.messageId || msg;
+      console.log(target);
+      return recall({
+        target,
+        sessionKey: this.sessionKey,
+        port: this.port,
+      });
+    } catch (e) {
+      console.error('Error @ recall', e.message);
+    }
   }
   onSignal (signalName, callback) {
     this.signal.on(signalName, callback);
