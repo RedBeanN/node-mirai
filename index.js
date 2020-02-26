@@ -130,11 +130,9 @@ class NodeMirai {
       // console.log(target.type, quote);
       switch (target.type) {
         case 'FriendMessage':
-          this.sendQuotedFriendMessage(message, target.sender.id, quote);
-          break;
+          return await this.sendQuotedFriendMessage(message, target.sender.id, quote);
         case 'GroupMessage':
-          this.sendQuotedGroupMessage(message, target.sender.group.id, quote);
-          break;
+          return await this.sendQuotedGroupMessage(message, target.sender.group.id, quote);
         default:
           console.error('Invalid target @ sendMessage');
           // process.exit(1);

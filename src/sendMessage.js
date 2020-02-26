@@ -1,4 +1,5 @@
 const axios = require('axios');
+const fs = require('fs');
 
 const sendFriendMessage = async ({
   messageChain,
@@ -59,13 +60,12 @@ const sendQuotedGroupMessage = async ({
 
 const sendImageMessage = async ({
   urls,
-  target,
   qq,
   group,
   sessionKey,
   port = 8080,
 }) => {
-  if (target === qq || qq) return await axios.post(`http://localhost:${port}/sendImageMessage`, {
+  if (qq) return await axios.post(`http://localhost:${port}/sendImageMessage`, {
     urls,
     qq,
     sessionKey,
@@ -73,7 +73,7 @@ const sendImageMessage = async ({
     console.error('Unknown Error @ sendImageMessage:', e.message);
     // process.exit(1);
   });
-  else if (target === group || group) return await axios.post(`http://localhost:${port}/sendImageMessage`, {
+  else if (group) return await axios.post(`http://localhost:${port}/sendImageMessage`, {
     urls,
     group,
     sessionKey,
