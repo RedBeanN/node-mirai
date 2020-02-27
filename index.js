@@ -22,9 +22,9 @@ class NodeMirai {
     this.qq = qq;
     this.signal = new Signal();
     this.eventListeners = [];
-    this.init();
+    this.auth();
   }
-  init () {
+  auth () {
     init(this.port, this.authKey).then(data => {
       const { code, session } = data;
       if (code !== 0) {
