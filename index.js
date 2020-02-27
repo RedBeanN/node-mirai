@@ -166,7 +166,10 @@ class NodeMirai {
     }
   }
   onSignal (signalName, callback) {
-    this.signal.on(signalName, callback);
+    return this.on(signalName, callback);
+  }
+  on (signalName, callback) {
+    return this.signal.on(signalName, callback);
   }
   onMessage (callback) {
     this.eventListeners.push(callback);
