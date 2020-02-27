@@ -167,7 +167,7 @@ class NodeMirai {
   }
   quoteReply (replyMsg, srcMsg) {
     const replyMessage = typeof replyMsg === 'string' ? [Plain(replyMsg)] : replyMsg;
-    this.sendQuotedMessage(replyMessage, srcMsg);
+    return this.sendQuotedMessage(replyMessage, srcMsg);
   }
 
   recall (msg) {
