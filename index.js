@@ -11,6 +11,8 @@ const recall = require('./src/recall');
 
 const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuotedGroupMessage, sendImageMessage } = require('./src/sendMessage');
 
+const { getFriendList, getGroupList } = require('./src/manage');
+
 class NodeMirai {
   constructor ({
     port = 8080,
@@ -173,20 +175,30 @@ class NodeMirai {
   }
 
   // management
-  getFriendList () {}
-  getGroupList () {}
-  getMemberList () {}
+  getFriendList () {
+    return getFriendList({
+      port: this.port,
+      sessionKey: this.sessionKey,
+    });
+  }
+  getGroupList () {
+    return getGroupList({
+      port: this.port,
+      sessionKey: this.sessionKey,
+    });
+  }
 
   // group management
-  groupMuteAll () {}
-  groupUnmuteAll () {}
-  groupMute () {}
-  groupUnmute () {}
-  groupKick () {}
+  getGroupMemberList () {}
+  setGroupMute () {}
+  setGroupUnmute () {}
+  setGroupMuteAll () {}
+  setGroupUnmuteAll () {}
+  setGroupKick () {}
   setGroupConfig () {}
   getGroupConfig () {}
-  setMemberInfo () {}
-  getMemberInfo () {}
+  setGroupMemberInfo () {}
+  getGroupMemberInfo () {}
 
   // event listener
   onSignal (signalName, callback) {
