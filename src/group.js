@@ -14,6 +14,23 @@ const getMemberList = async ({
   return data;
 };
 
+const setMute = async ({
+  target,
+  memberId,
+  time = 6000000,
+  port,
+  sessionKey,
+}) => {
+  const { data } = await axios.post(`http://localhost:${port}/mute`, {
+    sessionKey,
+    target,
+    memberId,
+    time,
+   });
+   return data;
+}
+
 module.exports = {
   getMemberList,
+  setMute
 };
