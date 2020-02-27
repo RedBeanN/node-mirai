@@ -67,10 +67,25 @@ const setUnmuteAll = async ({
   return { data };
 };
 
+const getConfig = async ({
+  target,
+  port,
+  sessionKey,
+}) => {
+  const { data } = await axios.get(`http://localhost:${port}/groupConfig`, {
+    params: {
+      sessionKey,
+      target,
+    },
+  });
+  return data;
+};
+
 module.exports = {
   getMemberList,
   setMute,
   setUnmute,
   setMuteAll,
   setUnmuteAll,
+  getConfig,
 };

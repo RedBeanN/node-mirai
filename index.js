@@ -230,7 +230,13 @@ class NodeMirai {
   }
   setGroupKick () {}
   setGroupConfig () {}
-  getGroupConfig () {}
+  getGroupConfig (target) {
+    return group.getConfig({
+      target,
+      port: this.port,
+      sessionKey: this.sessionKey,
+    });
+  }
   setGroupMemberInfo () {}
   getGroupMemberInfo () {}
 
