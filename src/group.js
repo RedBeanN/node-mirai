@@ -55,9 +55,22 @@ const setMuteAll = async ({
   return data;
 };
 
+const setUnmuteAll = async ({
+  target,
+  port,
+  sessionKey,
+}) => {
+  const { data } = await axios.post(`http://localhost:${port}/unmuteAll`, {
+    sessionKey,
+    target,
+  });
+  return { data };
+};
+
 module.exports = {
   getMemberList,
   setMute,
   setUnmute,
   setMuteAll,
+  setUnmuteAll,
 };
