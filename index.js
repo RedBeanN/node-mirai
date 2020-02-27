@@ -20,11 +20,13 @@ class NodeMirai {
     port = 8080,
     authKey = 'InitKeyQzrZbHQd',
     qq = 123456,
+    interval = 200,
   }) {
     // init
     this.port = port;
     this.authKey = authKey;
     this.qq = qq;
+    this.interval = interval;
     this.signal = new Signal();
     this.eventListeners = {
       message: [],
@@ -320,7 +322,7 @@ class NodeMirai {
           }
         });
       }
-    }, 200);
+    }, this.interval);
   }
 }
 
