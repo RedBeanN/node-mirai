@@ -2,6 +2,7 @@ const Signal = require('./src/utils/Signal');
 
 const MessageComponent = require('./src/MessageComponent');
 const { Plain } = MessageComponent;
+const events = require('./src/events.json');
 
 const init = require('./src/init');
 const verify = require('./src/verify');
@@ -25,7 +26,12 @@ class NodeMirai {
     this.authKey = authKey;
     this.qq = qq;
     this.signal = new Signal();
-    this.eventListeners = [];
+    this.eventListeners = {
+      message: [],
+    };
+    for (let event in events) {
+      this.eventListeners[events[event]] = [];
+    }
     this.auth();
   }
 
@@ -274,12 +280,17 @@ class NodeMirai {
   onSignal (signalName, callback) {
     return this.signal.on(signalName, callback);
   }
-  on (signalName, callback) {
-    if (signalName === 'message') return this.onMessage(callback)
-    return this.onSignal(signalName, callback);
+  on (name, callback) {
+    if (name === 'message') return this.onMessage(callback)
+    else if (name in this.signal.signalList) return this.onSignal(name, callback);
+    return this.onEvent(name, callback);
   }
   onMessage (callback) {
-    this.eventListeners.push(callback);
+    this.eventListeners.message.push(callback);
+  }
+  onEvent (event, callback) {
+    if (!this.eventListeners[event]) this.eventListeners[event] = [];
+    this.eventListeners[event].push(callback);
   }
   listen (type = 'all') {
     this.types = [];
@@ -298,11 +309,16 @@ class NodeMirai {
       if (messages.length) {
         messages.forEach(message => {
           if (this.types.includes(message.type)) {
-            for (let eventListener of this.eventListeners) {
-              eventListener(message, this);
+            for (let listener of this.eventListeners.message) {
+              listener(message, this);
             }
           }
-        })
+          else if (message.type in events) {
+            for (let listener of this.eventListeners[events[message.type]]) {
+              listener(message, this);
+            }
+          }
+        });
       }
     }, 200);
   }
