@@ -10,7 +10,7 @@ TODO List
 - [x] 引用回复
 - [x] 撤回消息
 - [ ] 发送图片
-- [ ] 群管理相关
+- [x] 群管理相关
 
 ### Usage/使用方法
 
@@ -32,8 +32,11 @@ bot.onSignal('authed', () => {
   bot.verify();
 });
 
-bot.onSignal('verified', () => {
+bot.onSignal('verified', async () => {
   console.log(`Verified with session key ${bot.sessionKey}`);
+  // 获取好友列表
+  const friendList = await bot.getFriendList();
+  console.log(`There are ${friendList.length} friends in bot`);
 });
 
 bot.onMessage(message => {
@@ -60,4 +63,25 @@ bot.listen('all');
 process.on('exit', () => {
   bot.release();
 });
+
+// 其他 API
+// 获取群列表
+bot.getGroupList();
+// 获取群成员列表
+bot.getGroupMemberList(groupId);
+
+// 禁言群成员, 需有相应权限
+bot.setGroupMute(groupId, memberId);
+bot.setGroupUnmute(groupId, memberId);
+// 全体禁言, 需有相应权限
+bot.setGroupMuteAll(groupId);
+bot.setGroupUnmuteAll(groupId);
+// 群踢人, 需有相应权限
+bot.setGroupKick(groupId, memberId, message);
+// 群设置, 需有相应权限
+bot.setGroupConfig(groupId, config);
+bot.getGroupConfig(groupId);
+// 群成员信息, 设置信息需有相应权限
+bot.setGroupMemberInfo(groupId, memberId, info);
+bot.getGroupMemberInfo(groupId, memberId);
 ```
