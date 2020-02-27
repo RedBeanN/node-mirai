@@ -7,12 +7,13 @@ const sendFriendMessage = async ({
   sessionKey,
   port = 8080,
 }) => {
-  return await axios.post(`http://localhost:${port}/sendFriendMessage`, {
+  const { data } = await axios.post(`http://localhost:${port}/sendFriendMessage`, {
     messageChain, target, sessionKey,
   }).catch(e => {
     console.error('Unknown Error @ sendFriendMessage:', e.message);
     // process.exit(1);
   });
+  return data;
 };
 const sendQuotedFriendMessage = async ({
   messageChain,
@@ -21,12 +22,13 @@ const sendQuotedFriendMessage = async ({
   sessionKey,
   port = 8080,
 }) => {
-  return await axios.post(`http://localhost:${port}/sendFriendMessage`, {
+  const { data } = await axios.post(`http://localhost:${port}/sendFriendMessage`, {
     messageChain, target, sessionKey, quote,
   }).catch(e => {
     console.error('Unknown Error @ sendQuotedFriendMessage:', e.message);
     // process.exit(1);
   });
+  return data;
 };
 
 const sendGroupMessage = async ({
@@ -35,12 +37,13 @@ const sendGroupMessage = async ({
   sessionKey,
   port = 8080,
 }) => {
-  return await axios.post(`http://localhost:${port}/sendGroupMessage`, {
+  const { data } = await axios.post(`http://localhost:${port}/sendGroupMessage`, {
     messageChain, target, sessionKey,
   }).catch(e => {
     console.error('Unknown Error @ sendGroupMessage:', e.message);
     // process.exit(1);
   });
+  return data;
 };
 const sendQuotedGroupMessage = async ({
   messageChain,
@@ -49,7 +52,7 @@ const sendQuotedGroupMessage = async ({
   sessionKey,
   port = 8080,
 }) => {
-  return await axios.post(`http://localhost:${port}/sendGroupMessage`, {
+  const { data } = await axios.post(`http://localhost:${port}/sendGroupMessage`, {
     messageChain, target, sessionKey, quote,
   }).catch(e => {
     console.error('Unknown Error @ sendQuotedGroupMessage:', e.message);
@@ -65,22 +68,28 @@ const sendImageMessage = async ({
   sessionKey,
   port = 8080,
 }) => {
-  if (qq) return await axios.post(`http://localhost:${port}/sendImageMessage`, {
-    urls,
-    qq,
-    sessionKey,
-  }).catch(e => {
-    console.error('Unknown Error @ sendImageMessage:', e.message);
-    // process.exit(1);
-  });
-  else if (group) return await axios.post(`http://localhost:${port}/sendImageMessage`, {
-    urls,
-    group,
-    sessionKey,
-  }).catch(e => {
-    console.error('Unknown Error @ sendImageMessage:', e.message);
-    // process.exit(1);
-  });
+  if (qq) {
+    const { data } = await axios.post(`http://localhost:${port}/sendImageMessage`, {
+      urls,
+      qq,
+      sessionKey,
+    }).catch(e => {
+      console.error('Unknown Error @ sendImageMessage:', e.message);
+      // process.exit(1);
+    });
+    return data;
+  }
+  else if (group) {
+    const { data } = await axios.post(`http://localhost:${port}/sendImageMessage`, {
+      urls,
+      group,
+      sessionKey,
+    }).catch(e => {
+      console.error('Unknown Error @ sendImageMessage:', e.message);
+      // process.exit(1);
+    });
+    return data;
+  }
   else {
     console.error('Error @ sendImageMessage: You need to provide a qq or a group');
   }
