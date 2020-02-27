@@ -17,7 +17,7 @@ const getMemberList = async ({
 const setMute = async ({
   target,
   memberId,
-  time = 6000000,
+  time,
   port,
   sessionKey,
 }) => {
