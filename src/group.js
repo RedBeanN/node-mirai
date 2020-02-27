@@ -67,6 +67,22 @@ const setUnmuteAll = async ({
   return { data };
 };
 
+const setKick = async ({
+  target,
+  memberId,
+  msg,
+  port,
+  sessionKey,
+}) => {
+  const { data } = await axios.post(`http://localhost:${port}/kick`, {
+    sessionKey,
+    target,
+    memberId,
+    msg,
+  });
+  return data;
+}
+
 const getConfig = async ({
   target,
   port,
@@ -101,6 +117,7 @@ module.exports = {
   setUnmute,
   setMuteAll,
   setUnmuteAll,
+  setKick,
   getConfig,
   setConfig,
 };

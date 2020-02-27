@@ -228,7 +228,15 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
-  setGroupKick () {}
+  setGroupKick (target, memberId, msg = '您已被移出群聊') {
+    return group.setKick({
+      target,
+      memberId,
+      msg,
+      port: this.port,
+      sessionKey: this.sessionKey,
+    });
+  }
   setGroupConfig (target, config) {
     return group.setConfig({
       target,
