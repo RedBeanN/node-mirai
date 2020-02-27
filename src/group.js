@@ -81,6 +81,20 @@ const getConfig = async ({
   return data;
 };
 
+const setConfig = async ({
+  target,
+  config,
+  port,
+  sessionKey,
+}) => {
+  const { data } = await axios.post(`http://localhost:${port}/groupConfig`, {
+    target,
+    sessionKey,
+    config,
+  });
+  return data;
+};
+
 module.exports = {
   getMemberList,
   setMute,
@@ -88,4 +102,5 @@ module.exports = {
   setMuteAll,
   setUnmuteAll,
   getConfig,
+  setConfig,
 };

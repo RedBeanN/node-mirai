@@ -229,7 +229,14 @@ class NodeMirai {
     });
   }
   setGroupKick () {}
-  setGroupConfig () {}
+  setGroupConfig (target, config) {
+    return group.setConfig({
+      target,
+      config,
+      port: this.port,
+      sessionKey: this.sessionKey,
+    });
+  }
   getGroupConfig (target) {
     return group.getConfig({
       target,
