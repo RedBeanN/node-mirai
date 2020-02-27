@@ -252,8 +252,23 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
-  setGroupMemberInfo () {}
-  getGroupMemberInfo () {}
+  setGroupMemberInfo (target, memberId, info) {
+    return group.setMemberInfo({
+      target,
+      memberId,
+      info,
+      port: this.port,
+      sessionKey: this.sessionKey,
+    });
+  }
+  getGroupMemberInfo (target, memberId) {
+    return group.getMemberInfo({
+      target,
+      memberId,
+      port: this.port,
+      sessionKey: this.sessionKey,
+    });
+  }
 
   // event listener
   onSignal (signalName, callback) {

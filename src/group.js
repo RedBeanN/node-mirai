@@ -96,7 +96,6 @@ const getConfig = async ({
   });
   return data;
 };
-
 const setConfig = async ({
   target,
   config,
@@ -111,6 +110,38 @@ const setConfig = async ({
   return data;
 };
 
+const getMemberInfo = async ({
+  target,
+  memberId,
+  port,
+  sessionKey,
+}) => {
+  const { data } = await axios.get(`http://localhost:${port}/memberInfo`, {
+    params: {
+      sessionKey,
+      target,
+      memberId,
+    },
+  });
+  return data;
+};
+
+const setMemberInfo = async ({
+  target,
+  memberId,
+  info,
+  port,
+  sessionKey,
+}) => {
+  const { data } = await axios.post(`http://localhost:${port}/memberInfo`, {
+    target,
+    memberId,
+    info,
+    sessionKey,
+  });
+  return data;
+}
+
 module.exports = {
   getMemberList,
   setMute,
@@ -120,4 +151,6 @@ module.exports = {
   setKick,
   getConfig,
   setConfig,
+  getMemberInfo,
+  setMemberInfo,
 };
