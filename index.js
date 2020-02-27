@@ -22,7 +22,10 @@ class NodeMirai {
     this.qq = qq;
     this.signal = new Signal();
     this.eventListeners = [];
-    init(port, authKey).then(data => {
+    this.init();
+  }
+  init () {
+    init(this.port, this.authKey).then(data => {
       const { code, session } = data;
       if (code !== 0) {
         console.error('Invalid auth key');
