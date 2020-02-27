@@ -206,7 +206,14 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
-  setGroupUnmute () {}
+  setGroupUnmute (target, memberId) {
+    return group.setUnmute({
+      target,
+      memberId,
+      port: this.port,
+      sessionKey: this.sessionKey,
+    });
+  }
   setGroupMuteAll () {}
   setGroupUnmuteAll () {}
   setGroupKick () {}
