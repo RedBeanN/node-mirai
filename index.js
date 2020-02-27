@@ -17,6 +17,7 @@ class NodeMirai {
     authKey = 'InitKeyQzrZbHQd',
     qq = 123456,
   }) {
+    // init
     this.port = port;
     this.authKey = authKey;
     this.qq = qq;
@@ -24,6 +25,7 @@ class NodeMirai {
     this.eventListeners = [];
     this.auth();
   }
+
   auth () {
     init(this.port, this.authKey).then(data => {
       const { code, session } = data;
@@ -56,12 +58,15 @@ class NodeMirai {
       return code;
     });
   }
+
   async fetchMessage (count = 10) {
     return fetchMessage(this.port, this.sessionKey, count).catch(e => {
       console.error('Unknown error @ fetchMessage:', e.message);
       // process.exit(1);
     });
   }
+
+  // send message
   async sendFriendMessage (message, target) {
     return sendFriendMessage({
       messageChain: message,
@@ -153,6 +158,7 @@ class NodeMirai {
     const replyMessage = typeof replyMsg === 'string' ? [Plain(replyMsg)] : replyMsg;
     this.sendQuotedMessage(replyMessage, srcMsg);
   }
+
   recall (msg) {
     try {
       const target = msg.messageId || msg.messageChain[0].id || msg;
@@ -165,6 +171,24 @@ class NodeMirai {
       console.error('Error @ recall', e.message);
     }
   }
+
+  // management
+  getFriendList () {}
+  getGroupList () {}
+  getMemberList () {}
+
+  // group management
+  groupMuteAll () {}
+  groupUnmuteAll () {}
+  groupMute () {}
+  groupUnmute () {}
+  groupKick () {}
+  setGroupConfig () {}
+  getGroupConfig () {}
+  setMemberInfo () {}
+  getMemberInfo () {}
+
+  // event listener
   onSignal (signalName, callback) {
     return this.on(signalName, callback);
   }
