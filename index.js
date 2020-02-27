@@ -12,6 +12,7 @@ const recall = require('./src/recall');
 const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuotedGroupMessage, sendImageMessage } = require('./src/sendMessage');
 
 const { getFriendList, getGroupList } = require('./src/manage');
+const group = require('./src/group');
 
 class NodeMirai {
   constructor ({
@@ -189,7 +190,13 @@ class NodeMirai {
   }
 
   // group management
-  getGroupMemberList () {}
+  getGroupMemberList (target) {
+    return group.getMemberList({
+      target,
+      port: this.port,
+      sessionKey: this.sessionKey,
+    });
+  }
   setGroupMute () {}
   setGroupUnmute () {}
   setGroupMuteAll () {}
