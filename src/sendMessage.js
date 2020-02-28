@@ -1,6 +1,7 @@
 const axios = require('axios');
 const fs = require('fs');
 const request = require('request');
+const FormData = require('form-data');
 
 const { Image } = require('./MessageComponent');
 
@@ -70,7 +71,6 @@ const uploadImage = async ({
   sessionKey,
   host,
 }) => new Promise((resolve, reject) => {
-  console.log(url);
   const options = {
     method: 'POST',
     url: `${host}/uploadImage`,
@@ -87,7 +87,24 @@ const uploadImage = async ({
     if (err) return reject('ERROR:', err);
     else return resolve(body);
   });
-})
+  // const data = new FormData();
+  // data.append('sessionKey', sessionKey);
+  // data.append('type', type);
+  // data.append('img', fs.createReadStream(url));
+  // axios.post(`${host}/uploadImage`, data, {
+  //   headers: {
+  //     'Content-Type': 'multipart/form-data',
+  //   }
+  // })
+  // .then(res => {
+  //   console.log(res.data);
+  //   resolve(res.data)
+  // })
+  // .catch(err => {
+  //   console.error(err.message);
+  //   reject(err);
+  // });
+});
 
 const sendImageMessage = async ({
   url,
@@ -113,7 +130,7 @@ const sendImageMessage = async ({
     host,
   });
   const messageChain = [Image(imageId)];
-  send({
+  return send({
     messageChain,
     target,
     sessionKey,
