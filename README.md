@@ -22,7 +22,7 @@ TODO List
 const Mirai = require('node-mirai-sdk');
 
 const bot = new Mirai({
-  port: 8080, // your server port
+  host: 'http://your.host.name:port', // your server host
   authKey: 'YourAuthKey',
   qq: 123456 // your qq
 });
