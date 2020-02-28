@@ -16,7 +16,7 @@ TODO List
 
 ·运行你的 mirai-api-http service
 
-`npm install node-mirai-sdk`
+`npm i -S node-mirai-sdk`
 
 ```javascript
 const Mirai = require('node-mirai-sdk');
