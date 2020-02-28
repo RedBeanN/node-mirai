@@ -2,10 +2,10 @@ const axios = require('axios');
 
 const getMemberList = async ({
   target,
-  port,
+  host,
   sessionKey,
 }) => {
-  const { data } = await axios.get(`http://localhost:${port}/memberList`, {
+  const { data } = await axios.get(`${host}/memberList`, {
     params: {
       sessionKey,
       target,
@@ -18,10 +18,10 @@ const setMute = async ({
   target,
   memberId,
   time,
-  port,
+  host,
   sessionKey,
 }) => {
-  const { data } = await axios.post(`http://localhost:${port}/mute`, {
+  const { data } = await axios.post(`${host}/mute`, {
     sessionKey,
     target,
     memberId,
@@ -32,10 +32,10 @@ const setMute = async ({
 const setUnmute = async ({
   target,
   memberId,
-  port,
+  host,
   sessionKey,
 }) => {
-  const { data } = await axios.post(`http://localhost:${port}/unmute`, {
+  const { data } = await axios.post(`${host}/unmute`, {
     sessionKey,
     target,
     memberId,
@@ -45,10 +45,10 @@ const setUnmute = async ({
 
 const setMuteAll = async ({
   target,
-  port,
+  host,
   sessionKey,
 }) => {
-  const { data } = await axios.post(`http://localhost:${port}/muteAll`, {
+  const { data } = await axios.post(`${host}/muteAll`, {
     sessionKey,
     target,
   });
@@ -57,10 +57,10 @@ const setMuteAll = async ({
 
 const setUnmuteAll = async ({
   target,
-  port,
+  host,
   sessionKey,
 }) => {
-  const { data } = await axios.post(`http://localhost:${port}/unmuteAll`, {
+  const { data } = await axios.post(`${host}/unmuteAll`, {
     sessionKey,
     target,
   });
@@ -71,10 +71,10 @@ const setKick = async ({
   target,
   memberId,
   msg,
-  port,
+  host,
   sessionKey,
 }) => {
-  const { data } = await axios.post(`http://localhost:${port}/kick`, {
+  const { data } = await axios.post(`${host}/kick`, {
     sessionKey,
     target,
     memberId,
@@ -85,10 +85,10 @@ const setKick = async ({
 
 const getConfig = async ({
   target,
-  port,
+  host,
   sessionKey,
 }) => {
-  const { data } = await axios.get(`http://localhost:${port}/groupConfig`, {
+  const { data } = await axios.get(`${host}/groupConfig`, {
     params: {
       sessionKey,
       target,
@@ -99,10 +99,10 @@ const getConfig = async ({
 const setConfig = async ({
   target,
   config,
-  port,
+  host,
   sessionKey,
 }) => {
-  const { data } = await axios.post(`http://localhost:${port}/groupConfig`, {
+  const { data } = await axios.post(`${host}/groupConfig`, {
     target,
     sessionKey,
     config,
@@ -113,10 +113,10 @@ const setConfig = async ({
 const getMemberInfo = async ({
   target,
   memberId,
-  port,
+  host,
   sessionKey,
 }) => {
-  const { data } = await axios.get(`http://localhost:${port}/memberInfo`, {
+  const { data } = await axios.get(`${host}/memberInfo`, {
     params: {
       sessionKey,
       target,
@@ -130,10 +130,10 @@ const setMemberInfo = async ({
   target,
   memberId,
   info,
-  port,
+  host,
   sessionKey,
 }) => {
-  const { data } = await axios.post(`http://localhost:${port}/memberInfo`, {
+  const { data } = await axios.post(`${host}/memberInfo`, {
     target,
     memberId,
     info,

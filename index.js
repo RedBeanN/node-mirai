@@ -17,13 +17,13 @@ const group = require('./src/group');
 
 class NodeMirai {
   constructor ({
-    port = 8080,
+    host = 'http://localhost:8080',
     authKey = 'InitKeyQzrZbHQd',
     qq = 123456,
     interval = 200,
   }) {
     // init
-    this.port = port;
+    this.host = host;
     this.authKey = authKey;
     this.qq = qq;
     this.interval = interval;
@@ -38,7 +38,7 @@ class NodeMirai {
   }
 
   auth () {
-    init(this.port, this.authKey).then(data => {
+    init(this.host, this.authKey).then(data => {
       const { code, session } = data;
       if (code !== 0) {
         console.error('Invalid auth key');
@@ -48,12 +48,12 @@ class NodeMirai {
       this.signal.trigger('authed');
       this.startListeningEvents();
     }).catch(() => {
-      console.error('Invalid port');
+      console.error('Invalid host');
       process.exit(1);
     });
   }
   async verify () {
-    return verify(this.port, this.sessionKey, this.qq).then(({ code, msg}) => {
+    return verify(this.host, this.sessionKey, this.qq).then(({ code, msg}) => {
       if (code !== 0) {
         console.error('Invalid session key');
         process.exit(1);
@@ -63,7 +63,7 @@ class NodeMirai {
     });
   }
   async release () {
-    return release(this.port, this.sessionKey, this.qq).then(({ code }) => {
+    return release(this.host, this.sessionKey, this.qq).then(({ code }) => {
       if (code !== 0) return console.error('Invalid session key');
       this.signal.trigger('released');
       return code;
@@ -71,7 +71,7 @@ class NodeMirai {
   }
 
   async fetchMessage (count = 10) {
-    return fetchMessage(this.port, this.sessionKey, count).catch(e => {
+    return fetchMessage(this.host, this.sessionKey, count).catch(e => {
       console.error('Unknown error @ fetchMessage:', e.message);
       // process.exit(1);
     });
@@ -83,7 +83,7 @@ class NodeMirai {
       messageChain: message,
       target,
       sessionKey: this.sessionKey,
-      port: this.port,
+      host: this.host,
     });
   }
   async sendGroupMessage (message, target) {
@@ -91,7 +91,7 @@ class NodeMirai {
       messageChain: message,
       target,
       sessionKey: this.sessionKey,
-      port: this.port,
+      host: this.host,
     });
   }
   async sendImageMessage (url, target) {
@@ -101,14 +101,14 @@ class NodeMirai {
           url,
           qq: target.sender.id,
           sessionKey: this.sessionKey,
-          port: this.port,
+          host: this.host,
         });
       case 'GroupMessage':
         return sendImageMessage({
           url,
           group: target.sender.group.id,
           sessionKey: this.sessionKey,
-          port: this.port,
+          host: this.host,
         });
       default:
         console.error('Error @ sendImageMessage: unknown target type');
@@ -130,7 +130,7 @@ class NodeMirai {
       url,
       type,
       sessionKey: this.sessionKey,
-      port: this.port,
+      host: this.host,
     });
   }
   async sendMessage (message, target) {
@@ -149,7 +149,7 @@ class NodeMirai {
       messageChain: message,
       target, quote,
       sessionKey: this.sessionKey,
-      port: this.port,
+      host: this.host,
     });
   }
   async sendQuotedGroupMessage (message, target, quote) {
@@ -157,7 +157,7 @@ class NodeMirai {
       messageChain: message,
       target, quote,
       sessionKey: this.sessionKey,
-      port: this.port,
+      host: this.host,
     });
   }
   async sendQuotedMessage (message, target) {
@@ -195,7 +195,7 @@ class NodeMirai {
       return recall({
         target,
         sessionKey: this.sessionKey,
-        port: this.port,
+        host: this.host,
       });
     } catch (e) {
       console.error('Error @ recall', e.message);
@@ -205,13 +205,13 @@ class NodeMirai {
   // management
   getFriendList () {
     return getFriendList({
-      port: this.port,
+      host: this.host,
       sessionKey: this.sessionKey,
     });
   }
   getGroupList () {
     return getGroupList({
-      port: this.port,
+      host: this.host,
       sessionKey: this.sessionKey,
     });
   }
@@ -220,7 +220,7 @@ class NodeMirai {
   getGroupMemberList (target) {
     return group.getMemberList({
       target,
-      port: this.port,
+      host: this.host,
       sessionKey: this.sessionKey,
     });
   }
@@ -229,7 +229,7 @@ class NodeMirai {
       target,
       memberId,
       time,
-      port: this.port,
+      host: this.host,
       sessionKey: this.sessionKey,
     });
   }
@@ -237,21 +237,21 @@ class NodeMirai {
     return group.setUnmute({
       target,
       memberId,
-      port: this.port,
+      host: this.host,
       sessionKey: this.sessionKey,
     });
   }
   setGroupMuteAll (target) {
     return group.setMuteAll({
       target,
-      port: this.port,
+      host: this.host,
       sessionKey: this.sessionKey,
     });
   }
   setGroupUnmuteAll (target) {
     return group.setUnmuteAll({
       target,
-      port: this.port,
+      host: this.host,
       sessionKey: this.sessionKey,
     });
   }
@@ -260,7 +260,7 @@ class NodeMirai {
       target,
       memberId,
       msg,
-      port: this.port,
+      host: this.host,
       sessionKey: this.sessionKey,
     });
   }
@@ -268,14 +268,14 @@ class NodeMirai {
     return group.setConfig({
       target,
       config,
-      port: this.port,
+      host: this.host,
       sessionKey: this.sessionKey,
     });
   }
   getGroupConfig (target) {
     return group.getConfig({
       target,
-      port: this.port,
+      host: this.host,
       sessionKey: this.sessionKey,
     });
   }
@@ -284,7 +284,7 @@ class NodeMirai {
       target,
       memberId,
       info,
-      port: this.port,
+      host: this.host,
       sessionKey: this.sessionKey,
     });
   }
@@ -292,7 +292,7 @@ class NodeMirai {
     return group.getMemberInfo({
       target,
       memberId,
-      port: this.port,
+      host: this.host,
       sessionKey: this.sessionKey,
     });
   }

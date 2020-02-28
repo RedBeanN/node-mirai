@@ -3,9 +3,9 @@ const axios = require('axios');
 const recall = async ({
   target,
   sessionKey,
-  port,
+  host,
 }) => {
-  return await axios.post(`http://localhost:${port}/recall`, {
+  return await axios.post(`${host}/recall`, {
     sessionKey,
     target,
   }).catch(e => {

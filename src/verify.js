@@ -1,7 +1,7 @@
 const axios = require('axios');
 
-const verify = async (port, sessionKey, qq) => {
-  const { data } = await axios.post(`http://localhost:${port}/verify`, {
+const verify = async (host, sessionKey, qq) => {
+  const { data } = await axios.post(`${host}/verify`, {
     sessionKey, qq,
   });
   return data;

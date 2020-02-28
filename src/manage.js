@@ -1,18 +1,18 @@
 const axios = require('axios');
 
 const getFriendList = async ({
-  port,
+  host,
   sessionKey,
 }) => {
-  const { data } = await axios.get(`http://localhost:${port}/friendList?sessionKey=${sessionKey}`);
+  const { data } = await axios.get(`${host}/friendList?sessionKey=${sessionKey}`);
   return data;
 };
 
 const getGroupList = async ({
-  port,
+  host,
   sessionKey,
 }) => {
-  const { data } = await axios.get(`http://localhost:${port}/groupList?sessionKey=${sessionKey}`);
+  const { data } = await axios.get(`${host}/groupList?sessionKey=${sessionKey}`);
   return data;
 };
 

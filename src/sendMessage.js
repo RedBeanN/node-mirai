@@ -8,9 +8,9 @@ const sendFriendMessage = async ({
   messageChain,
   target,
   sessionKey,
-  port = 8080,
+  host = 8080,
 }) => {
-  const { data } = await axios.post(`http://localhost:${port}/sendFriendMessage`, {
+  const { data } = await axios.post(`${host}/sendFriendMessage`, {
     messageChain, target, sessionKey,
   }).catch(e => {
     console.error('Unknown Error @ sendFriendMessage:', e.message);
@@ -23,9 +23,9 @@ const sendQuotedFriendMessage = async ({
   target,
   quote,
   sessionKey,
-  port = 8080,
+  host = 8080,
 }) => {
-  const { data } = await axios.post(`http://localhost:${port}/sendFriendMessage`, {
+  const { data } = await axios.post(`${host}/sendFriendMessage`, {
     messageChain, target, sessionKey, quote,
   }).catch(e => {
     console.error('Unknown Error @ sendQuotedFriendMessage:', e.message);
@@ -38,9 +38,9 @@ const sendGroupMessage = async ({
   messageChain,
   target,
   sessionKey,
-  port = 8080,
+  host = 8080,
 }) => {
-  const { data } = await axios.post(`http://localhost:${port}/sendGroupMessage`, {
+  const { data } = await axios.post(`${host}/sendGroupMessage`, {
     messageChain, target, sessionKey,
   }).catch(e => {
     console.error('Unknown Error @ sendGroupMessage:', e.message);
@@ -53,9 +53,9 @@ const sendQuotedGroupMessage = async ({
   target,
   quote,
   sessionKey,
-  port = 8080,
+  host = 8080,
 }) => {
-  const { data } = await axios.post(`http://localhost:${port}/sendGroupMessage`, {
+  const { data } = await axios.post(`${host}/sendGroupMessage`, {
     messageChain, target, sessionKey, quote,
   }).catch(e => {
     console.error('Unknown Error @ sendQuotedGroupMessage:', e.message);
@@ -68,12 +68,12 @@ const uploadImage = async ({
   url,
   type,
   sessionKey,
-  port,
+  host,
 }) => new Promise((resolve, reject) => {
   console.log(url);
   const options = {
     method: 'POST',
-    url: `http://localhost:${port}/uploadImage`,
+    url: `${host}/uploadImage`,
     'headers': {
       'Content-Type': 'multipart/form-data'
     },
@@ -94,7 +94,7 @@ const sendImageMessage = async ({
   qq,
   group,
   sessionKey,
-  port = 8080,
+  host = 8080,
 }) => {
   let type, send, target;
   if (qq) {
@@ -110,14 +110,14 @@ const sendImageMessage = async ({
     url,
     type,
     sessionKey,
-    port,
+    host,
   });
   const messageChain = [Image(imageId)];
   send({
     messageChain,
     target,
     sessionKey,
-    port,
+    host,
   });
 };
 

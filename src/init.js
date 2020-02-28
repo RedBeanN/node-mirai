@@ -1,7 +1,7 @@
 const axios = require('axios');
 
-const init = async (port, authKey) => {
-  const { data } = await axios.post(`http://localhost:${port}/auth`, {
+const init = async (host, authKey) => {
+  const { data } = await axios.post(`${host}/auth`, {
     authKey,
   });
   return data;
