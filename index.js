@@ -10,7 +10,7 @@ const release = require('./src/release');
 const fetchMessage = require('./src/fetchMessage');
 const recall = require('./src/recall');
 
-const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuotedGroupMessage, sendImageMessage } = require('./src/sendMessage');
+const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuotedGroupMessage, uploadImage, sendImageMessage } = require('./src/sendMessage');
 
 const { getFriendList, getGroupList } = require('./src/manage');
 const group = require('./src/group');
@@ -94,18 +94,18 @@ class NodeMirai {
       port: this.port,
     });
   }
-  async sendImageMessage (urls, target) {
+  async sendImageMessage (url, target) {
     switch (target.type) {
       case 'FriendMessage':
         return sendImageMessage({
-          urls,
+          url,
           qq: target.sender.id,
           sessionKey: this.sessionKey,
           port: this.port,
         });
       case 'GroupMessage':
         return sendImageMessage({
-          urls,
+          url,
           group: target.sender.group.id,
           sessionKey: this.sessionKey,
           port: this.port,
@@ -113,6 +113,25 @@ class NodeMirai {
       default:
         console.error('Error @ sendImageMessage: unknown target type');
     }
+  }
+  async uploadImage (url, target) {
+    let type;
+    switch (target.type) {
+      case 'FriendMessage':
+        type = 'friend';
+        break;
+      case 'GroupMessage':
+        type = 'group';
+        break;
+      default:
+        console.error('Error @ uploadImage: unknown target type');
+    }
+    return uploadImage({
+      url,
+      type,
+      sessionKey: this.sessionKey,
+      port: this.port,
+    });
   }
   async sendMessage (message, target) {
     switch (target.type) {

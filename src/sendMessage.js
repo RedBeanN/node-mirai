@@ -1,5 +1,8 @@
 const axios = require('axios');
 const fs = require('fs');
+const request = require('request');
+
+const { Image } = require('./MessageComponent');
 
 const sendFriendMessage = async ({
   messageChain,
@@ -61,38 +64,61 @@ const sendQuotedGroupMessage = async ({
   return data;
 };
 
+const uploadImage = async ({
+  url,
+  type,
+  sessionKey,
+  port,
+}) => new Promise((resolve, reject) => {
+  console.log(url);
+  const options = {
+    method: 'POST',
+    url: `http://localhost:${port}/uploadImage`,
+    'headers': {
+      'Content-Type': 'multipart/form-data'
+    },
+    formData: {
+      sessionKey,
+      type,
+      img: fs.createReadStream(url),
+    }
+  };
+  request(options, (err, res, body) => {
+    if (err) return reject('ERROR:', err);
+    else return resolve(body);
+  });
+})
+
 const sendImageMessage = async ({
-  urls,
+  url,
   qq,
   group,
   sessionKey,
   port = 8080,
 }) => {
+  let type, send, target;
   if (qq) {
-    const { data } = await axios.post(`http://localhost:${port}/sendImageMessage`, {
-      urls,
-      qq,
-      sessionKey,
-    }).catch(e => {
-      console.error('Unknown Error @ sendImageMessage:', e.message);
-      // process.exit(1);
-    });
-    return data;
-  }
-  else if (group) {
-    const { data } = await axios.post(`http://localhost:${port}/sendImageMessage`, {
-      urls,
-      group,
-      sessionKey,
-    }).catch(e => {
-      console.error('Unknown Error @ sendImageMessage:', e.message);
-      // process.exit(1);
-    });
-    return data;
-  }
-  else {
-    console.error('Error @ sendImageMessage: You need to provide a qq or a group');
-  }
+    type = 'friend';
+    send = sendFriendMessage;
+    target = qq;
+  } else if (group) {
+    type = 'group';
+    send = sendGroupMessage;
+    target = group;
+  } else return console.error('Error @ sendImageMessage: you should provide qq or group');
+  const imageId = await uploadImage({
+    url,
+    type,
+    sessionKey,
+    port,
+  });
+  const messageChain = [Image(imageId)];
+  send({
+    messageChain,
+    target,
+    sessionKey,
+    port,
+  });
 };
 
 module.exports = {
@@ -100,5 +126,6 @@ module.exports = {
   sendQuotedFriendMessage,
   sendGroupMessage,
   sendQuotedGroupMessage,
+  uploadImage,
   sendImageMessage,
 };
