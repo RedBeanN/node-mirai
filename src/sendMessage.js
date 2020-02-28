@@ -1,7 +1,7 @@
 const axios = require('axios');
 const fs = require('fs');
 const request = require('request');
-const FormData = require('form-data');
+// const FormData = require('form-data');
 
 const { Image } = require('./MessageComponent');
 
@@ -85,7 +85,8 @@ const uploadImage = async ({
   };
   request(options, (err, res, body) => {
     if (err) return reject('ERROR:', err);
-    else return resolve(body);
+    console.log('body:', body);
+    return resolve(body);
   });
   // const data = new FormData();
   // data.append('sessionKey', sessionKey);

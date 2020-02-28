@@ -224,7 +224,7 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
-  setGroupMute (target, memberId, time = 600000) {
+  setGroupMute (target, memberId, time = 600) {
     return group.setMute({
       target,
       memberId,
