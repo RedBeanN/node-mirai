@@ -2,7 +2,10 @@
 
 class Signal {
   constructor () {
-    this.signalList = {};
+    this.signalList = {
+      'authed': [],
+      'verified': [],
+    };
   }
   on (signalName, callback) {
     if (!this.signalList[signalName]) this.signalList[signalName] = [];
