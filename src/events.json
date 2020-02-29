@@ -2,7 +2,7 @@
   "BotOnlineEvent": "online",
   "BotOfflineEventActive": "offlineActive",
   "BotOfflineEventForce": "offlineForce",
-  "BotOfflineEventDropped": "offlineDroped",
+  "BotOfflineEventDropped": "offlineDropped",
   "BotReloginEvent": "relogin",
   "BotGroupPermissionChangeEvent": "groupPermissionChange",
   "BotMuteEvent": "mute",
