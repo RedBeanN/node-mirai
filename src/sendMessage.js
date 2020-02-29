@@ -1,7 +1,6 @@
 const axios = require('axios');
 const fs = require('fs');
 const request = require('request');
-// const FormData = require('form-data');
 
 const { Image } = require('./MessageComponent');
 
@@ -15,7 +14,6 @@ const sendFriendMessage = async ({
     messageChain, target, sessionKey,
   }).catch(e => {
     console.error('Unknown Error @ sendFriendMessage:', e.message);
-    // process.exit(1);
   });
   return data;
 };
@@ -30,7 +28,6 @@ const sendQuotedFriendMessage = async ({
     messageChain, target, sessionKey, quote,
   }).catch(e => {
     console.error('Unknown Error @ sendQuotedFriendMessage:', e.message);
-    // process.exit(1);
   });
   return data;
 };
@@ -45,7 +42,6 @@ const sendGroupMessage = async ({
     messageChain, target, sessionKey,
   }).catch(e => {
     console.error('Unknown Error @ sendGroupMessage:', e.message);
-    // process.exit(1);
   });
   return data;
 };
@@ -60,7 +56,6 @@ const sendQuotedGroupMessage = async ({
     messageChain, target, sessionKey, quote,
   }).catch(e => {
     console.error('Unknown Error @ sendQuotedGroupMessage:', e.message);
-    // process.exit(1);
   });
   return data;
 };
@@ -71,6 +66,9 @@ const uploadImage = async ({
   sessionKey,
   host,
 }) => new Promise((resolve, reject) => {
+  let img;
+  if (typeof url === 'string') img = fs.createReadStream(url);
+  else img = url;
   const options = {
     method: 'POST',
     url: `${host}/uploadImage`,
@@ -80,31 +78,13 @@ const uploadImage = async ({
     formData: {
       sessionKey,
       type,
-      img: fs.createReadStream(url),
+      img,
     }
   };
   request(options, (err, res, body) => {
     if (err) return reject('ERROR:', err);
-    console.log('body:', body);
     return resolve(body);
   });
-  // const data = new FormData();
-  // data.append('sessionKey', sessionKey);
-  // data.append('type', type);
-  // data.append('img', fs.createReadStream(url));
-  // axios.post(`${host}/uploadImage`, data, {
-  //   headers: {
-  //     'Content-Type': 'multipart/form-data',
-  //   }
-  // })
-  // .then(res => {
-  //   console.log(res.data);
-  //   resolve(res.data)
-  // })
-  // .catch(err => {
-  //   console.error(err.message);
-  //   reject(err);
-  // });
 });
 
 const sendImageMessage = async ({
