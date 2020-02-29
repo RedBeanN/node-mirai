@@ -20,6 +20,7 @@ TODO List
 
 ```javascript
 const Mirai = require('node-mirai-sdk');
+const { Plain, At } = Mirai.MessageComponent;
 
 const bot = new Mirai({
   host: 'http://your.host.name:port', // your server host
@@ -43,12 +44,12 @@ bot.onMessage(message => {
   const { type, sender, messageChain } = message;
   let msg = '';
   messageChain.forEach(chain => {
-    if (chain.type === 'Plain') msg += chain.text;
+    if (chain.type === 'Plain') msg += Plain.value(chain);
   });
   // 直接回复
   if (msg.includes('收到了吗')) bot.reply('收到了收到了', message);
   // 引用回复
-  else if (msg.includes('引用我')) bot.quoteReply('好的', message);
+  else if (msg.includes('引用我')) bot.quoteReply([At(sender.id), Plain('好的')], message);
   // 撤回
   else if (msg.includes('撤回')) bot.recall(message);
 });
