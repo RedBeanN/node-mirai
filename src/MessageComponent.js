@@ -3,7 +3,8 @@ const Plain = text => {
     type: 'Plain',
     text,
   };
-}
+};
+Plain.value = plain => plain.text;
 
 const At = target => {
   return {
@@ -11,12 +12,14 @@ const At = target => {
     target,
   };
 };
+At.value = at => at.target;
 
 const AtAll = () => {
   return {
     type: 'AtAll',
   };
 };
+AtAll.value = () => {};
 
 const Face = faceId => {
   return {
@@ -24,6 +27,7 @@ const Face = faceId => {
     faceId,
   };
 };
+Face.value = face => face.faceId;
 
 const Image = imageId => {
   return {
@@ -31,6 +35,7 @@ const Image = imageId => {
     imageId,
   };
 };
+Image.value = image => image.imageId;
 
 const Xml = xml => {
   return {
@@ -38,6 +43,7 @@ const Xml = xml => {
     xml,
   };
 };
+Xml.value = xml => xml.xml;
 
 module.exports = {
   Plain,
