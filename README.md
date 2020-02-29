@@ -16,7 +16,7 @@ TODO List
 
 ### Usage/使用方法
 
-·运行你的 mirai-api-http service
+·运行你的 [mirai-api-http](https://github.com/mamoe/mirai-api-http) service
 
 `npm i -S node-mirai-sdk`
 
