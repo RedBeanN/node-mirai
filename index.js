@@ -48,7 +48,7 @@ class NodeMirai {
       this.sessionKey = session;
       this.signal.trigger('authed');
       this.startListeningEvents();
-      return { code, msg };
+      return { code, session };
     }).catch(() => {
       console.error('Failed @ auth: Invalid host');
       // process.exit(1);
