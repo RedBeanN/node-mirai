@@ -18,9 +18,9 @@ bot.on('mute', ({ operator }) => console.log(`我被${operator.memberName}禁言
 
 #### Bot登录成功
 
-eventname: `online`
+eventName: `online`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -35,9 +35,9 @@ callback argument:
 
 #### Bot主动离线
 
-eventname: `offlineActive`
+eventName: `offlineActive`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -52,9 +52,9 @@ callback argument:
 
 #### Bot被挤下线
 
-eventname: `offlineForce`
+eventName: `offlineForce`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -69,9 +69,9 @@ callback argument:
 
 #### Bot被服务器断开或因网络问题而掉线
 
-eventname: `offlineDropped`
+eventName: `offlineDropped`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -86,9 +86,9 @@ callback argument:
 
 #### Bot主动重新登录
 
-eventname: `relogin`
+eventName: `relogin`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -103,9 +103,9 @@ callback argument:
 
 #### Bot在群里的权限被改变. 操作人一定是群主
 
-eventname: `groupPermissionChange`
+eventName: `groupPermissionChange`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -131,9 +131,9 @@ callback argument:
 
 #### Bot被禁言
 
-eventname: `mute`
+eventName: `mute`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -166,9 +166,9 @@ callback argument:
 
 #### Bot被取消禁言
 
-eventname: `unmute`
+eventName: `unmute`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -199,9 +199,9 @@ callback argument:
 
 #### Bot加入了一个新群
 
-eventname: `joinGroup`
+eventName: `joinGroup`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -223,9 +223,9 @@ callback argument:
 
 #### 某个群名改变
 
-eventname: `groupNameChange`
+eventName: `groupNameChange`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -253,9 +253,9 @@ callback argument:
 
 #### 某群入群公告改变
 
-eventname: `groupEntranceAnnouncementChange`
+eventName: `groupEntranceAnnouncementChange`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -296,9 +296,9 @@ callback argument:
 
 #### 全员禁言
 
-eventname: `groupMuteAll`
+eventName: `groupMuteAll`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -339,9 +339,9 @@ callback argument:
 
 #### 匿名聊天
 
-eventname: `groupAllowAnonymousChat`
+eventName: `groupAllowAnonymousChat`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -382,9 +382,9 @@ callback argument:
 
 #### 坦白说
 
-eventname: `groupAllowConfessTalk`
+eventName: `groupAllowConfessTalk`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -412,9 +412,9 @@ callback argument:
 
 #### 允许群员邀请好友加群
 
-eventname: `groupAllowMemberInvite`
+eventName: `groupAllowMemberInvite`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -455,9 +455,9 @@ callback argument:
 
 #### 新人入群的事件
 
-eventname: `memberJoin`
+eventName: `memberJoin`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -488,9 +488,9 @@ callback argument:
 
 #### 成员被踢出群（该成员不是Bot）
 
-eventname: `memberLeaveKick`
+eventName: `memberLeaveKick`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -536,9 +536,9 @@ callback argument:
 
 #### 成员主动离群（该成员不是Bot）
 
-eventname: `memberLeaveQuit`
+eventName: `memberLeaveQuit`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -569,9 +569,9 @@ callback argument:
 
 #### 群名片改动
 
-eventname: `memberCardChange`
+eventName: `memberCardChange`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -619,9 +619,9 @@ callback argument:
 
 #### 群头衔改动（只有群主有操作限权）
 
-eventname: `memberSpecialTitleChange`
+eventName: `memberSpecialTitleChange`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -656,9 +656,9 @@ callback argument:
 
 #### 成员权限改变的事件（该成员不可能是Bot，见BotGroupPermissionChangeEvent）
 
-eventname: `memberPermissionChange`
+eventName: `memberPermissionChange`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -693,9 +693,9 @@ callback argument:
 
 #### 群成员被禁言事件（该成员不可能是Bot，见BotMuteEvent）
 
-eventname: `memberMute`
+eventName: `memberMute`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
@@ -743,9 +743,9 @@ callback argument:
 
 #### 群成员被取消禁言事件（该成员不可能是Bot，见BotUnmuteEvent）
 
-eventname: `memberUnmute`
+eventName: `memberUnmute`
 
-callback argument:
+callback parameter:
 
 ```json5
 {
