@@ -12,7 +12,7 @@ TODO List
 - [x] 发送图片
 - [ ] XML 消息
 - [x] 群管理相关
-- [ ] 事件订阅
+- [x] 事件订阅
 
 ### Usage/使用方法
 
@@ -89,4 +89,10 @@ bot.getGroupConfig(groupId);
 // 群成员信息, 设置信息需有相应权限
 bot.setGroupMemberInfo(groupId, memberId, info);
 bot.getGroupMemberInfo(groupId, memberId);
+
+// 事件订阅
+bot.on(eventname, callback)
+
 ```
+
+另请参考[事件订阅说明](event.md)
