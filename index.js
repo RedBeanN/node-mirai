@@ -41,32 +41,42 @@ class NodeMirai {
     init(this.host, this.authKey).then(data => {
       const { code, session } = data;
       if (code !== 0) {
-        console.error('Invalid auth key');
-        process.exit(1);
+        console.error('Failed @ auth: Invalid auth key');
+        // process.exit(1);
+        return { code, session };
       }
       this.sessionKey = session;
       this.signal.trigger('authed');
       this.startListeningEvents();
+      return { code, msg };
     }).catch(() => {
-      console.error('Invalid host');
-      process.exit(1);
+      console.error('Failed @ auth: Invalid host');
+      // process.exit(1);
+      return {
+        code: 2,
+        msg: 'Invalid host',
+      };
     });
   }
   async verify () {
     return verify(this.host, this.sessionKey, this.qq).then(({ code, msg}) => {
       if (code !== 0) {
-        console.error('Invalid session key');
-        process.exit(1);
+        console.error('Failed @ verify: Invalid session key');
+        // process.exit(1);
+        return { code, msg };
       }
       this.signal.trigger('verified');
-      return code;
+      return { code, msg };
     });
   }
   async release () {
-    return release(this.host, this.sessionKey, this.qq).then(({ code }) => {
-      if (code !== 0) return console.error('Invalid session key');
+    return release(this.host, this.sessionKey, this.qq).then(({ code, msg }) => {
+      if (code !== 0) {
+        console.error('Failed @ release: Invalid session key');
+        return { code, msg };
+      }
       this.signal.trigger('released');
-      return code;
+      return { code, msg };
     });
   }
 
