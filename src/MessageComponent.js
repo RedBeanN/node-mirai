@@ -1,3 +1,11 @@
+const Source = id => {
+  return {
+    type: 'Source',
+    id,
+  };
+};
+Source.value = source => source.id;
+
 const Plain = text => {
   return {
     type: 'Plain',
@@ -54,6 +62,7 @@ const Quote = id => {
 Quote.value = quote => quote.id;
 
 module.exports = {
+  Source,
   Plain,
   At,
   AtAll,
