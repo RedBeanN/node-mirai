@@ -340,6 +340,9 @@ class NodeMirai {
       if (messages.length) {
         messages.forEach(message => {
           if (this.types.includes(message.type)) {
+            message.reply = msg => this.reply(msg, message);
+            message.quoteReply = msg => this.quoteReply(msg, message);
+            message.recall = msg => this.recall(message);
             for (let listener of this.eventListeners.message) {
               listener(message, this);
             }

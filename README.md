@@ -45,17 +45,17 @@ bot.onSignal('verified', async () => {
 });
 
 bot.onMessage(message => {
-  const { type, sender, messageChain } = message;
+  const { type, sender, messageChain, reply, quoteReply } = message;
   let msg = '';
   messageChain.forEach(chain => {
     if (chain.type === 'Plain') msg += Plain.value(chain);
   });
   // 直接回复
-  if (msg.includes('收到了吗')) bot.reply('收到了收到了', message); // 或者: bot.reply([Plain('收到了')], message)
+  if (msg.includes('收到了吗')) reply('收到了收到了'); // 或者: bot.reply('收到了', message)
   // 引用回复, 失败时会自动退化到普通回复
-  else if (msg.includes('引用我')) bot.quoteReply([At(sender.id), Plain('好的')], message);
+  else if (msg.includes('引用我')) quoteReply([At(sender.id), Plain('好的')], message);
   // 撤回
-  else if (msg.includes('撤回')) bot.recall(message);
+  else if (msg.includes('撤回')) message.recall(message);
 });
 
 /* 开始监听消息
