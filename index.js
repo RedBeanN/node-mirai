@@ -12,7 +12,7 @@ const recall = require('./src/recall');
 
 const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuotedGroupMessage, uploadImage, sendImageMessage } = require('./src/sendMessage');
 
-const { getFriendList, getGroupList } = require('./src/manage');
+const { getFriendList, getGroupList, getMessageById } = require('./src/manage');
 const group = require('./src/group');
 
 class NodeMirai {
@@ -221,6 +221,13 @@ class NodeMirai {
   }
   getGroupList () {
     return getGroupList({
+      host: this.host,
+      sessionKey: this.sessionKey,
+    });
+  }
+  getMessageById (messageId) {
+    return getMessageById({
+      messageId,
       host: this.host,
       sessionKey: this.sessionKey,
     });
