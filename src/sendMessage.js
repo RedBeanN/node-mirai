@@ -2,7 +2,7 @@ const axios = require('axios');
 const fs = require('fs');
 const request = require('request');
 
-const { Image } = require('./MessageComponent');
+const { Plain, Image } = require('./MessageComponent');
 
 const sendFriendMessage = async ({
   messageChain,
@@ -10,6 +10,7 @@ const sendFriendMessage = async ({
   sessionKey,
   host = 8080,
 }) => {
+  if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
   const { data } = await axios.post(`${host}/sendFriendMessage`, {
     messageChain, target, sessionKey,
   }).catch(e => {
@@ -24,6 +25,7 @@ const sendQuotedFriendMessage = async ({
   sessionKey,
   host = 8080,
 }) => {
+  if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
   const { data } = await axios.post(`${host}/sendFriendMessage`, {
     messageChain, target, sessionKey, quote,
   }).catch(e => {
@@ -38,6 +40,7 @@ const sendGroupMessage = async ({
   sessionKey,
   host = 8080,
 }) => {
+  if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
   const { data } = await axios.post(`${host}/sendGroupMessage`, {
     messageChain, target, sessionKey,
   }).catch(e => {
@@ -52,6 +55,7 @@ const sendQuotedGroupMessage = async ({
   sessionKey,
   host = 8080,
 }) => {
+  if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
   const { data } = await axios.post(`${host}/sendGroupMessage`, {
     messageChain, target, sessionKey, quote,
   }).catch(e => {
