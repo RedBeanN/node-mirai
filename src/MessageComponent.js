@@ -37,13 +37,19 @@ const Face = faceId => {
 };
 Face.value = face => face.faceId;
 
-const Image = imageId => {
+const Image = (imageId, url = '') => {
   return {
     type: 'Image',
     imageId,
+    url,
   };
 };
-Image.value = image => image.imageId;
+Image.value = image => {
+  return {
+    imageId: image.imageId,
+    url: image.url,
+  };
+};
 
 const Xml = xml => {
   return {
