@@ -82,7 +82,7 @@ const uploadImage = async ({
     }
   };
   request(options, (err, res, body) => {
-    if (err) return reject('ERROR:', err);
+    if (err) return reject(['ERROR:', err, body].join(' '));
     return resolve(body);
   });
 });
