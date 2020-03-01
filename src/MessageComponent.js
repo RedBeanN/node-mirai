@@ -45,6 +45,14 @@ const Xml = xml => {
 };
 Xml.value = xml => xml.xml;
 
+const Quote = id => {
+  return {
+    type: 'Quote',
+    id,
+  };
+};
+Quote.value = quote => quote.id;
+
 module.exports = {
   Plain,
   At,
@@ -52,4 +60,5 @@ module.exports = {
   Face,
   Image,
   Xml,
+  Quote,
 };
