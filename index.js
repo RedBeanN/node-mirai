@@ -83,6 +83,7 @@ class NodeMirai {
   async fetchMessage (count = 10) {
     return fetchMessage(this.host, this.sessionKey, count).catch(e => {
       console.error('Unknown error @ fetchMessage:', e.message);
+      return [];
       // process.exit(1);
     });
   }
