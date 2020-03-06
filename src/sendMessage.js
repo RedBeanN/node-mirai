@@ -108,13 +108,13 @@ const sendImageMessage = async ({
     send = sendGroupMessage;
     target = group;
   } else return console.error('Error @ sendImageMessage: you should provide qq or group');
-  const imageId = await uploadImage({
+  const image = await uploadImage({
     url,
     type,
     sessionKey,
     host,
   });
-  const messageChain = [Image(imageId)];
+  const messageChain = [Image(image)];
   return send({
     messageChain,
     target,

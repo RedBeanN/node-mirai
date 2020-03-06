@@ -37,7 +37,7 @@ const Face = faceId => {
 };
 Face.value = face => face.faceId;
 
-const Image = (imageId, url = '') => {
+const Image = ({ imageId, url = '' }) => {
   return {
     type: 'Image',
     imageId,
