@@ -41,6 +41,7 @@ const sendGroupMessage = async ({
   host = 8080,
 }) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
+  console.log(messageChain);
   const { data } = await axios.post(`${host}/sendGroupMessage`, {
     messageChain, target, sessionKey,
   }).catch(e => {
@@ -86,7 +87,7 @@ const uploadImage = async ({
     }
   };
   request(options, (err, res, body) => {
-    if (err) return reject(['ERROR:', err, body].join(' '));
+    if (res.statusCode !== 200) return reject(['ERROR:', res.statusCode, body].join(' '));
     return resolve(body);
   });
 });
