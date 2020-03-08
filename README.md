@@ -19,7 +19,7 @@ TODO List
 
 - 运行你的 [mirai-api-http](https://github.com/mamoe/mirai-api-http) service
 
-最低支持: `mirai-console-wrapper-0.1.1` `mirai-api-http-1.1.1`
+最低支持: `mirai-console-wrapper-0.1.1` `mirai-core-0.26.0` `mirai-api-http-1.1.1`
 
 `npm i -S node-mirai-sdk`
 
