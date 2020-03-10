@@ -91,5 +91,7 @@ module.exports = {
   Face,
   Image,
   Xml,
+  Json,
+  App,
   Quote,
 };
