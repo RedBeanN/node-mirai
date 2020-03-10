@@ -59,6 +59,22 @@ const Xml = xml => {
 };
 Xml.value = xml => xml.xml;
 
+const Json = json => {
+  return {
+    type: 'Json',
+    json,
+  };
+};
+Json.value = json => json.json;
+
+const App = app => {
+  return {
+    type: 'App',
+    content,
+  };
+};
+App.value = app => app.content;
+
 const Quote = id => {
   return {
     type: 'Quote',
