@@ -34,6 +34,7 @@ class NodeMirai {
     for (let event in events) {
       this.eventListeners[events[event]] = [];
     }
+    this.types = [];
     this.auth();
   }
 
