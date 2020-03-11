@@ -550,25 +550,51 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
+  /**
+   * @callback messageCallback
+   * @param { message } message
+   * 
+   * @callback signalCallback
+   * 
+   * @callback eventCallback
+   * @param { object } message
+   */
 
   // event listener
-  onSignal (signalName, callback) {
-    return this.signal.on(signalName, callback);
-  }
   /**
    * @method NodeMirai#on
    * @description 事件监听
    * @param { string } name 事件名
-   * @param { function } callback 回调
+   * @param { messageCallback|signalCallback|eventCallback } callback 回调
    */
   on (name, callback) {
     if (name === 'message') return this.onMessage(callback)
     else if (name in this.signal.signalList) return this.onSignal(name, callback);
     return this.onEvent(name, callback);
   }
+  /**
+   * @method NodeMirai#onSignal
+   * @description 订阅 authed, verified, 或 released 信号
+   * @param { "authed"|"verified"|"released" } signalName 信号
+   * @param { signalCallback } callback 回调
+   */
+  onSignal (signalName, callback) {
+    return this.signal.on(signalName, callback);
+  }
+  /**
+   * @method NodeMirai#onMessage
+   * @description 订阅消息事件
+   * @param { messageCallback } callback 回调
+   */
   onMessage (callback) {
     this.eventListeners.message.push(callback);
   }
+  /**
+   * @method NodeMirai#onEvent
+   * @description 订阅事件
+   * @param { string } event 事件名
+   * @param { eventCallback } callback 事件回调
+   */
   onEvent (event, callback) {
     if (!this.eventListeners[event]) this.eventListeners[event] = [];
     this.eventListeners[event].push(callback);
