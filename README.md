@@ -60,7 +60,7 @@ bot.onMessage(message => {
   // 引用回复, 失败时会自动退化到普通回复
   else if (msg.includes('引用我')) quoteReply([At(sender.id), Plain('好的')], message);
   // 撤回
-  else if (msg.includes('撤回')) message.recall(message);
+  else if (msg.includes('撤回')) bot.recall(message);
 });
 
 /* 开始监听消息
