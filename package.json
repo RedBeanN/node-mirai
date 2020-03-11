@@ -15,5 +15,8 @@
   "dependencies": {
     "axios": "^0.19.2",
     "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "docdash": "^1.2.0"
   }
 }
