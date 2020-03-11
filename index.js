@@ -15,14 +15,37 @@ const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuoted
 const { getFriendList, getGroupList, getMessageById } = require('./src/manage');
 const group = require('./src/group');
 
+/**
+ * @typedef { Object } MessageChain 消息链
+ * @property { string } type 消息类型
+ * @property { number } id
+ * @property { number } [time] 时间戳, 只在 Source 类型中出现
+ */
+/**
+ * @typedef { Object } message 消息
+ * @property { "FriendMessage"|"GroupMessage" } messageType 消息类型
+ * @property { MessageChain[] } messageChain
+ * @property { Sender } sender 发送者
+ */
+
+/**
+ * Class NodeMirai
+ */
 class NodeMirai {
+  /**
+   * Create a NodeMirai bot
+   * @param { object } options
+   * @param { string } options.host http-api 服务的地址
+   * @param { string } options.authKey http-api 服务的 authKey
+   * @param { number } options.qq bot 的 qq 号
+   * @param { number } [options.interval] 拉取消息的周期(ms), 默认为200
+   */
   constructor ({
-    host = 'http://localhost:8080',
-    authKey = 'InitKeyQzrZbHQd',
-    qq = 123456,
+    host,
+    authKey,
+    qq,
     interval = 200,
   }) {
-    // init
     this.host = host;
     this.authKey = authKey;
     this.qq = qq;
@@ -38,6 +61,9 @@ class NodeMirai {
     this.auth();
   }
 
+  /**
+   * Bot 认证, 获取 sessionKey
+   */
   auth () {
     init(this.host, this.authKey).then(data => {
       const { code, session } = data;
@@ -59,6 +85,10 @@ class NodeMirai {
       };
     });
   }
+
+  /**
+   * 校验 sessionKey, 必须在 authed 事件后进行
+   */
   async verify () {
     return verify(this.host, this.sessionKey, this.qq).then(({ code, msg}) => {
       if (code !== 0) {
@@ -70,6 +100,10 @@ class NodeMirai {
       return { code, msg };
     });
   }
+
+  /**
+   * 释放 sessionKey
+   */
   async release () {
     return release(this.host, this.sessionKey, this.qq).then(({ code, msg }) => {
       if (code !== 0) {
@@ -89,15 +123,38 @@ class NodeMirai {
     });
   }
 
-  // send message
-  async sendFriendMessage (message, target) {
+  /**
+   * @method NodeMirai#sendFriendMessage
+   * @description 发送好友消息
+   * @async
+   * @param { MessageChain[] } MessageChain MessageChain 数组
+   * @param { number } qq 发送对象的 qq 号
+   * @return { object } {
+   *  code: 0,
+   *  msg: "success",
+   *  messageId: 123456
+   * }
+   */
+  async sendFriendMessage (messageChain, qq) {
     return sendFriendMessage({
-      messageChain: message,
-      target,
+      messageChain: messageChain,
+      target: qq,
       sessionKey: this.sessionKey,
       host: this.host,
     });
   }
+  /**
+   * @method NodeMirai#sendGroupMessage
+   * @description 发送群组消息
+   * @async
+   * @param { MessageChain[] } MessageChain MessageChain 数组
+   * @param { number } qq 发送群组的群号
+   * @return { object } {
+   *  code: 0,
+   *  msg: "success",
+   *  messageId: 123456
+   * }
+   */
   async sendGroupMessage (message, target) {
     return sendGroupMessage({
       messageChain: message,
@@ -106,6 +163,17 @@ class NodeMirai {
       host: this.host,
     });
   }
+  /**
+   * @method NodeMirai#sendImageMessage
+   * @async
+   * @param { url } url 图片所在路径
+   * @param { message } target 发送目标对象
+   * @return { object } {
+   *  code: 0,
+   *  msg: "success",
+   *  messageId: 123456
+   * }
+   */
   async sendImageMessage (url, target) {
     switch (target.type) {
       case 'FriendMessage':
@@ -126,6 +194,12 @@ class NodeMirai {
         console.error('Error @ sendImageMessage: unknown target type');
     }
   }
+  /**
+   * @method NodeMirai#uploadImage
+   * @async
+   * @param { string } url 图片所在路径
+   * @param { message } target 发送目标对象
+   */
   async uploadImage (url, target) {
     let type;
     switch (target.type) {
@@ -145,6 +219,14 @@ class NodeMirai {
       host: this.host,
     });
   }
+
+  /**
+   * @method NodeMirai#sendMessage
+   * @description 发送消息给指定好友或群组
+   * @async
+   * @param { MessageChain[]|string } message 要发送的消息
+   * @param { message } target 发送目标对象
+   */
   async sendMessage (message, target) {
     switch (target.type) {
       case 'FriendMessage':
@@ -153,9 +235,22 @@ class NodeMirai {
         return this.sendGroupMessage(message, target.sender.group.id);
       default:
         console.error('Invalid target @ sendMessage');
-        process.exit(1);
     }
   }
+  
+  /**
+   * @method NodeMirai#sendQuotedFriendMessage
+   * @description 发送带引用的好友消息
+   * @async
+   * @param { MessageChain[] } MessageChain MessageChain 数组
+   * @param { number } qq 发送对象的 qq 号
+   * @param { number } quote 引用的 Message 的 id
+   * @return { object } {
+   *  code: 0,
+   *  msg: "success",
+   *  messageId: 123456
+   * }
+   */
   async sendQuotedFriendMessage (message, target, quote) {
     return sendQuotedFriendMessage({
       messageChain: message,
@@ -164,6 +259,19 @@ class NodeMirai {
       host: this.host,
     });
   }
+  /**
+   * @method NodeMirai#sendQuotedGroupMessage
+   * @description 发送带引用的群组消息
+   * @async
+   * @param { MessageChain[] } MessageChain MessageChain 数组
+   * @param { number } qq 发送群组的群号
+   * @param { number} quote 引用的 Message 的 id
+   * @return { object } {
+   *  code: 0,
+   *  msg: "success",
+   *  messageId: 123456
+   * }
+   */
   async sendQuotedGroupMessage (message, target, quote) {
     return sendQuotedGroupMessage({
       messageChain: message,
@@ -172,6 +280,14 @@ class NodeMirai {
       host: this.host,
     });
   }
+
+  /**
+   * @method NodeMirai#sendQuotedMessage
+   * @description 发送引用消息
+   * @async
+   * @param { MessageChain[]|string } message 要发送的消息
+   * @param { message } target 发送目标对象
+   */
   async sendQuotedMessage (message, target) {
     try {
       let quote = target.messageChain[0].type === 'Source' ? target.messageChain[0].id : -1;
@@ -192,15 +308,33 @@ class NodeMirai {
       return this.sendMessage(message, target);
     }
   }
+
+  /**
+   * @method NodeMirai#reply
+   * @description 回复一条消息, sendMessage 的别名方法
+   * @param { MessageChain[]|string } replyMsg 回复的内容
+   * @param { message } srcMsg 源消息
+   */
   reply (replyMsg, srcMsg) {
     const replyMessage = typeof replyMsg === 'string' ? [Plain(replyMsg)] : replyMsg;
     return this.sendMessage(replyMessage, srcMsg);
   }
+  /**
+   * @method NodeMirai#quoteReply
+   * @description 引用回复一条消息, sendQuotedMessage 的别名方法
+   * @param { MessageChain[]|string } replyMsg 回复的内容
+   * @param { message } srcMsg 源消息
+   */
   quoteReply (replyMsg, srcMsg) {
     const replyMessage = typeof replyMsg === 'string' ? [Plain(replyMsg)] : replyMsg;
     return this.sendQuotedMessage(replyMessage, srcMsg);
   }
 
+  /**
+   * @method NodeMirai#recall
+   * @description 撤回一条消息
+   * @param { object|number } msg 要撤回的消息或消息 id
+   */
   recall (msg) {
     try {
       const target = msg.messageId || msg.messageChain[0].id || msg;
@@ -214,19 +348,36 @@ class NodeMirai {
     }
   }
 
-  // management
+  /**
+   * @method NodeMirai#getFriendList
+   * @description 获取 bot 的好友列表
+   * @async
+   * @returns { Friend[] }
+   */
   getFriendList () {
     return getFriendList({
       host: this.host,
       sessionKey: this.sessionKey,
     });
   }
+  /**
+   * @method NodeMirai#getGroupList
+   * @description 获取 bot 的群组列表
+   * @async
+   * @returns { Group[] }
+   */
   getGroupList () {
     return getGroupList({
       host: this.host,
       sessionKey: this.sessionKey,
     });
   }
+  /**
+   * @method NodeMirai#getMessageById
+   * @description 根据消息 id 获取消息内容
+   * @param { number } messageId 指定的消息 id
+   * @return { message }
+   */
   getMessageById (messageId) {
     return getMessageById({
       messageId,
