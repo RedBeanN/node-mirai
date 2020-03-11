@@ -375,6 +375,7 @@ class NodeMirai {
   /**
    * @method NodeMirai#getMessageById
    * @description 根据消息 id 获取消息内容
+   * @async
    * @param { number } messageId 指定的消息 id
    * @return { message }
    */
@@ -386,7 +387,12 @@ class NodeMirai {
     });
   }
 
-  // group management
+  /**
+   * @method NodeMirai#getGroupMemberList
+   * @description 获取指定群的成员名单
+   * @async
+   * @param { number } target 指定的群号
+   */
   getGroupMemberList (target) {
     return group.getMemberList({
       target,
@@ -394,6 +400,14 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
+  /**
+   * @method NodeMirai#setGroupMute
+   * @description 禁言一位群员(需有相应权限)
+   * @async
+   * @param { number } target 群号
+   * @param { number } memberId 群员的 qq 号
+   * @param { number } time 禁言时间(秒)
+   */
   setGroupMute (target, memberId, time = 600) {
     return group.setMute({
       target,
@@ -403,6 +417,13 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
+  /**
+   * @method NodeMirai#setGroupUnmute
+   * @description 解除一位群员的禁言状态
+   * @async
+   * @param { number } target 群号
+   * @param { number } memberId 群员的 qq 号
+   */
   setGroupUnmute (target, memberId) {
     return group.setUnmute({
       target,
@@ -411,6 +432,12 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
+  /**
+   * @method NodeMirai#setGroupMuteAll
+   * @description 设置全体禁言
+   * @async
+   * @param { number } target 群号
+   */
   setGroupMuteAll (target) {
     return group.setMuteAll({
       target,
@@ -418,6 +445,12 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
+  /**
+   * @method NodeMirai#setGroupUnmuteAll
+   * @description 解除全体禁言
+   * @async
+   * @param { number } target 群号
+   */
   setGroupUnmuteAll (target) {
     return group.setUnmuteAll({
       target,
@@ -425,6 +458,14 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
+  /**
+   * @method NodeMirai#setGroupKick
+   * @description 移除群成员
+   * @async
+   * @param { number } target 群号
+   * @param { number } memberId 群员的 qq 号
+   * @param { string } msg 信息
+   */
   setGroupKick (target, memberId, msg = '您已被移出群聊') {
     return group.setKick({
       target,
@@ -434,6 +475,13 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
+  /**
+   * @method NodeMirai#setGroupConfig
+   * @description 修改群设置
+   * @async
+   * @param { number } target 群号
+   * @param { object } config 设置
+   */
   setGroupConfig (target, config) {
     return group.setConfig({
       target,
@@ -442,6 +490,12 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
+  /**
+   * @method NodeMirai#getGroupConfig
+   * @description 获取群设置
+   * @async
+   * @param { number } target 群号
+   */
   getGroupConfig (target) {
     return group.getConfig({
       target,
@@ -449,6 +503,13 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
+  /**
+   * @method NodeMirai#setGroupMemberInfo
+   * @description 设置群成员信息
+   * @param { number } target 群号
+   * @param { number } memberId 群员 qq 号
+   * @param { object } info 信息
+   */
   setGroupMemberInfo (target, memberId, info) {
     return group.setMemberInfo({
       target,
@@ -458,6 +519,12 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
+  /**
+   * @method NodeMirai#getGroupMemberInfo
+   * @description 获取群成员信息
+   * @param { number } target 群号
+   * @param { number } memberId 群员 qq 号
+   */
   getGroupMemberInfo (target, memberId) {
     return group.getMemberInfo({
       target,
@@ -471,6 +538,12 @@ class NodeMirai {
   onSignal (signalName, callback) {
     return this.signal.on(signalName, callback);
   }
+  /**
+   * @method NodeMirai#on
+   * @description 事件监听
+   * @param { string } name 事件名
+   * @param { function } callback 回调
+   */
   on (name, callback) {
     if (name === 'message') return this.onMessage(callback)
     else if (name in this.signal.signalList) return this.onSignal(name, callback);
@@ -483,6 +556,12 @@ class NodeMirai {
     if (!this.eventListeners[event]) this.eventListeners[event] = [];
     this.eventListeners[event].push(callback);
   }
+
+  /**
+   * @method NodeMirai#listen
+   * @description 启动事件监听
+   * @param { "all"|"friend"|"group" } type 类型
+   */
   listen (type = 'all') {
     this.types = [];
     switch (type) {
