@@ -4,7 +4,12 @@ const Source = id => {
     id,
   };
 };
-Source.value = source => source.id;
+Source.value = source => {
+  return {
+    id: source.id,
+    time: source.time,
+  };
+};
 
 const Plain = text => {
   return {
@@ -20,7 +25,12 @@ const At = target => {
     target,
   };
 };
-At.value = at => at.target;
+At.value = at => {
+  return {
+    target: at.target,
+    display: at.display,
+  };
+};
 
 const AtAll = () => {
   return {
@@ -81,7 +91,14 @@ const Quote = id => {
     id,
   };
 };
-Quote.value = quote => quote.id;
+Quote.value = quote => {
+  return {
+    id: quote.id,
+    groupId: quote.groupId,
+    senderId: quote.senderId,
+    origin: quote.origin,
+  };
+};
 
 module.exports = {
   Source,

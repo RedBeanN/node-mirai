@@ -17,9 +17,22 @@ const group = require('./src/group');
 
 /**
  * @typedef { Object } MessageChain 消息链
+ * @description 消息链对象, node-mirai-sdk 提供各类型的 .value() 方法获得各自的属性值
  * @property { string } type 消息类型
- * @property { number } id
- * @property { number } [time] 时间戳, 只在 Source 类型中出现
+ * @property { number } [id] Source 类型中的消息 id, 或Quote类型中引用的源消息的 id
+ * @property { number } [time] Source 类型中的时间戳
+ * @property { number } [groupId] Quote 类型中源消息所在群的群号, 好友消息时为 0
+ * @property { number } [senderId] Quote 类型中源消息发送者的 qq 号
+ * @property { object } [origin] Quote 类型中源消息的 MessageChain
+ * @property { string } [text] Plain 类型的文本
+ * @property { number } [target] At 类型中 @ 目标的 qq 号
+ * @property { string } [display] At 类型中 @ 目标的群名片
+ * @property { number } [faceId] Face 类型中表情的编号
+ * @property { string } [imageId] Image 类型中图片的 imageId
+ * @property { string } [url] Image 类型中图片的 url, 可用于下载图片
+ * @property { string } [xml] Xml 类型中的 xml 字符串
+ * @property { string } [json] Json 类型中的 json 字符串
+ * @property { string } [content] App 类型中的 app content 字符串
  */
 /**
  * @typedef { Object } message 消息
@@ -199,6 +212,10 @@ class NodeMirai {
    * @async
    * @param { string } url 图片所在路径
    * @param { message } target 发送目标对象
+   * @returns { object } {
+   *  imageId: "{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}.jpg",
+   *  url: "xxxxxxxxxxxxxxxxxxxx"
+   * }
    */
   async uploadImage (url, target) {
     let type;
