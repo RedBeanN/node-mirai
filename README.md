@@ -63,6 +63,6 @@ process.on('exit', () => {
 
 ```
 
-另请参考[事件订阅说明](event.md)
+另请参考[事件订阅说明](https://github.com/RedBeanN/node-mirai/blob/master/event.md)
 
 [API文档](https://redbean.tech/node-mirai-sdk)

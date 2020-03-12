@@ -37,8 +37,11 @@ const group = require('./src/group');
 /**
  * @typedef { Object } message 消息
  * @property { "FriendMessage"|"GroupMessage" } messageType 消息类型
- * @property { MessageChain[] } messageChain
+ * @property { MessageChain[] } messageChain 消息链对象
  * @property { Sender } sender 发送者
+ * @property { function } reply 快速回复消息
+ * @property { function } quoteReply 快速引用回复消息
+ * @property { function } recall 撤回本条消息
  */
 
 /**
@@ -553,9 +556,11 @@ class NodeMirai {
   /**
    * @callback messageCallback
    * @param { message } message
-   * 
+   */
+  /** 
    * @callback signalCallback
-   * 
+   */
+  /** 
    * @callback eventCallback
    * @param { object } message
    */
