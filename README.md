@@ -15,14 +15,17 @@
 main.js
 
 PS:注释中带*为必须有
+
 ```javascript
 const Mirai = require('node-mirai-sdk');
 const { Plain, At } = Mirai.MessageComponent;
+
 //服务端设置(*)
 const bot = new Mirai({
   host: 'http://your.host.name:port', // your server host
   authKey: 'YourAuthKey',
-  qq: 123456 // your qq
+  qq: 123456, // your qq
+  enableWebsocket: false,
 });
 
 //auth认证(*)
@@ -37,6 +40,7 @@ bot.onSignal('verified', async () => {
   const friendList = await bot.getFriendList();
   console.log(`There are ${friendList.length} friends in bot`);
 });
+
 //接受消息,发送消息(*)
 bot.onMessage(message => {
   const { type, sender, messageChain, reply, quoteReply } = message;
