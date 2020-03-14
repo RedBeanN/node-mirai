@@ -86,6 +86,7 @@ const uploadImage = async ({
     }
   };
   request(options, (err, res, body) => {
+    if (err) return reject(err);
     if (res.statusCode !== 200) return reject(['ERROR:', res.statusCode, body].join(' '));
     if (typeof body === 'string') body = JSON.parse(body);
     return resolve(body);
