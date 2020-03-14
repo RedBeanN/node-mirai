@@ -1,3 +1,5 @@
+const WebSocket = require('ws');
+
 const Signal = require('./src/utils/Signal');
 
 const MessageComponent = require('./src/MessageComponent');
@@ -54,12 +56,14 @@ class NodeMirai {
    * @param { string } options.host http-api 服务的地址
    * @param { string } options.authKey http-api 服务的 authKey
    * @param { number } options.qq bot 的 qq 号
+   * @param { boolean } [options.enableWebsocket] 使用 ws 来获取消息和事件推送
    * @param { number } [options.interval] 拉取消息的周期(ms), 默认为200
    */
   constructor ({
     host,
     authKey,
     qq,
+    enableWebsocket = false,
     interval = 200,
   }) {
     this.host = host;
@@ -74,6 +78,7 @@ class NodeMirai {
       this.eventListeners[events[event]] = [];
     }
     this.types = [];
+    this.enableWebsocket = enableWebsocket;
     this.auth();
   }
 
@@ -622,26 +627,39 @@ class NodeMirai {
     }
   }
   startListeningEvents () {
-    setInterval(async () => {
+    if (this.isEventListeningStarted) return;
+    this.isEventListeningStarted = true;
+    if (this.enableWebsocket) {
+      this.onSignal('verified', () => {
+        const wsHost = `${this.host.replace('http', 'ws')}/all?sessionKey=${this.sessionKey}`;
+        (new WebSocket(wsHost)).on('message', message => {
+          this.emitEventListener(JSON.parse(message));
+        })
+      });
+    }
+    else setInterval(async () => {
       const messages = await this.fetchMessage(10);
       if (messages.length) {
         messages.forEach(message => {
-          if (this.types.includes(message.type)) {
-            message.reply = msg => this.reply(msg, message);
-            message.quoteReply = msg => this.quoteReply(msg, message);
-            message.recall = () => this.recall(message);
-            for (let listener of this.eventListeners.message) {
-              listener(message);
-            }
-          }
-          else if (message.type in events) {
-            for (let listener of this.eventListeners[events[message.type]]) {
-              listener(message);
-            }
-          }
+          return this.emitEventListener(message);
         });
       }
     }, this.interval);
+  }
+  emitEventListener (message) {
+    if (this.types.includes(message.type)) {
+      message.reply = msg => this.reply(msg, message);
+      message.quoteReply = msg => this.quoteReply(msg, message);
+      message.recall = () => this.recall(message);
+      for (let listener of this.eventListeners.message) {
+        listener(message);
+      }
+    }
+    else if (message.type in events) {
+      for (let listener of this.eventListeners[events[message.type]]) {
+        listener(message);
+      }
+    }
   }
 }
 
