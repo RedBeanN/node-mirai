@@ -14,28 +14,30 @@
 
 main.js
 
+PS:注释中带*为必须有
 ```javascript
 const Mirai = require('node-mirai-sdk');
 const { Plain, At } = Mirai.MessageComponent;
-
+//服务端设置(*)
 const bot = new Mirai({
   host: 'http://your.host.name:port', // your server host
   authKey: 'YourAuthKey',
   qq: 123456 // your qq
 });
 
+//auth认证(*)
 bot.onSignal('authed', () => {
   console.log(`Authed with session key ${bot.sessionKey}`);
   bot.verify();
 });
 
+//获取好友列表
 bot.onSignal('verified', async () => {
   console.log(`Verified with session key ${bot.sessionKey}`);
-  // 获取好友列表
   const friendList = await bot.getFriendList();
   console.log(`There are ${friendList.length} friends in bot`);
 });
-
+//接受消息,发送消息(*)
 bot.onMessage(message => {
   const { type, sender, messageChain, reply, quoteReply } = message;
   let msg = '';
@@ -50,7 +52,7 @@ bot.onMessage(message => {
   else if (msg.includes('撤回')) bot.recall(message);
 });
 
-/* 开始监听消息
+/* 开始监听消息(*)
  * 'all' - 监听好友和群
  * 'friend' - 只监听好友
  * 'group' - 只监听群
