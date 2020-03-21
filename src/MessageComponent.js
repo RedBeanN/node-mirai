@@ -77,7 +77,7 @@ const Json = json => {
 };
 Json.value = json => json.json;
 
-const App = app => {
+const App = content => {
   return {
     type: 'App',
     content,
