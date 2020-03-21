@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2",
-    "request": "^2.88.2",
+    "form-data": "^3.0.0",
     "ws": "^7.2.3"
   },
   "devDependencies": {
