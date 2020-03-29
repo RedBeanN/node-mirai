@@ -14,7 +14,7 @@ const recall = require('./src/recall');
 
 const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuotedGroupMessage, uploadImage, sendImageMessage } = require('./src/sendMessage');
 
-const { getFriendList, getGroupList, getMessageById } = require('./src/manage');
+const { getFriendList, getGroupList, getMessageById, registerCommand } = require('./src/manage');
 const group = require('./src/group');
 
 /**
@@ -558,6 +558,24 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
+
+  // command
+  /**
+   * @method NodeMirai#registerCommand
+   * @async
+   * @param { Object } command 注册的 command 对象
+   * @param { string } command.name
+   * @param { string[] } command.alias
+   * @param { string } command.description
+   * @param { string } command.usage
+   */
+  registerCommand (command) {
+    return registerCommand(Object.assign({
+      host: this.host,
+      authKey: this.authKey,
+    }, command));
+  }
+
   /**
    * @callback messageCallback
    * @param { message } message

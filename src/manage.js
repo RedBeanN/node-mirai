@@ -25,8 +25,23 @@ const getMessageById = async ({
   return data;
 };
 
+const registerCommand = async ({
+  host,
+  authKey,
+  name,
+  alias,
+  description,
+  usage
+}) => {
+  const { data } = await axios.post(`${host}/command/register`, {
+    authKey, name, alias, description, usage,
+  });
+  return { data };
+};
+
 module.exports = {
   getFriendList,
   getGroupList,
   getMessageById,
+  registerCommand,
 };
