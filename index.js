@@ -648,6 +648,12 @@ class NodeMirai {
     if (!this.eventListeners[event]) this.eventListeners[event] = [];
     this.eventListeners[event].push(callback);
   }
+  onCommand (callback) {
+    const ws = new WebSocket(`${this.host.replace('http', 'ws')}/command?authKey=${this.authKey}`);
+    ws.on('message', message => {
+      callback(JSON.parse(message));
+    });
+  }
 
   /**
    * @method NodeMirai#listen
