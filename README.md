@@ -4,7 +4,7 @@
 
 由于还在开发中, 所有 API 均为待定.
 
-最低支持: `mirai-console-wrapper-0.1.2` `mirai-core-0.27.0` `mirai-api-http-1.2.0`
+最低支持: `mirai-console-wrapper-0.2.0` `mirai-core-0.31.1` `mirai-api-http-1.3.2`
 
 ### QuickStart/快速开始
 
