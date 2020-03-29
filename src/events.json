@@ -14,6 +14,8 @@
   "GroupAllowAnonymousChatEvent": "groupAllowAnonymousChat",
   "GroupAllowConfessTalkEvent": "groupAllowConfessTalk",
   "GroupAllowMemberInviteEvent": "groupAllowMemberInvite",
+  "GroupRecallEvent": "groupRecall",
+  "FriendRecallEvent": "friendRecall",
   "MemberJoinEvent": "memberJoin",
   "MemberLeaveEventKick": "memberLeaveKick",
   "MemberLeaveEventQuit": "memberLeaveQuit",
