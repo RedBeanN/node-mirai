@@ -14,7 +14,7 @@ const recall = require('./src/recall');
 
 const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuotedGroupMessage, uploadImage, sendImageMessage } = require('./src/sendMessage');
 
-const { getFriendList, getGroupList, getMessageById, registerCommand } = require('./src/manage');
+const { getFriendList, getGroupList, getMessageById, registerCommand, sendCommand } = require('./src/manage');
 const group = require('./src/group');
 
 /**
@@ -583,7 +583,7 @@ class NodeMirai {
    * @param { string[] } command.args
    */
   sendCommand (command) {
-    return registerCommand(Object.assign({
+    return sendCommand(Object.assign({
       host: this.host,
       authKey: this.authKey,
     }, command));
