@@ -39,9 +39,22 @@ const registerCommand = async ({
   return { data };
 };
 
+const sendCommand = async ({
+  host,
+  authKey,
+  name,
+  args,
+}) => {
+  const { data } = await axios.post(`${host}/command/send`, {
+    authKey, name, args,
+  });
+  return data;
+};
+
 module.exports = {
   getFriendList,
   getGroupList,
   getMessageById,
   registerCommand,
+  sendCommand,
 };

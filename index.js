@@ -575,6 +575,19 @@ class NodeMirai {
       authKey: this.authKey,
     }, command));
   }
+  /**
+   * @method NodeMirai#sendCommand
+   * @async
+   * @param { Object } command 发送的 command 对象
+   * @param { string } command.name
+   * @param { string[] } command.args
+   */
+  sendCommand (command) {
+    return registerCommand(Object.assign({
+      host: this.host,
+      authKey: this.authKey,
+    }, command));
+  }
 
   /**
    * @callback messageCallback
