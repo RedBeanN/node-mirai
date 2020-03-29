@@ -51,10 +51,20 @@ const sendCommand = async ({
   return data;
 };
 
+const getManager = async ({
+  host,
+  authKey,
+  qq,
+}) => {
+  const { data } = await axios.get(`${host}/manager?authKey=${authKey}&qq=${qq}`);
+  return data;
+};
+
 module.exports = {
   getFriendList,
   getGroupList,
   getMessageById,
   registerCommand,
   sendCommand,
+  getManager,
 };

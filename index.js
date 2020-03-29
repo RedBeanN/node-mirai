@@ -14,7 +14,7 @@ const recall = require('./src/recall');
 
 const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuotedGroupMessage, uploadImage, sendImageMessage } = require('./src/sendMessage');
 
-const { getFriendList, getGroupList, getMessageById, registerCommand, sendCommand } = require('./src/manage');
+const { getFriendList, getGroupList, getMessageById, registerCommand, sendCommand, getManager } = require('./src/manage');
 const group = require('./src/group');
 
 /**
@@ -556,6 +556,14 @@ class NodeMirai {
       memberId,
       host: this.host,
       sessionKey: this.sessionKey,
+    });
+  }
+
+  getManager () {
+    return getManager({
+      host: this.host,
+      authKey: this.authKey,
+      qq: this.qq,
     });
   }
 
