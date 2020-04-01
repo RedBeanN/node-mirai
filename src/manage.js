@@ -51,14 +51,16 @@ const sendCommand = async ({
   return data;
 };
 
-const getManager = async ({
+const getManagers = async ({
   host,
   authKey,
   qq,
 }) => {
-  const { data } = await axios.get(`${host}/manager?authKey=${authKey}&qq=${qq}`);
+  const { data } = await axios.get(`${host}/managers?authKey=${authKey}&qq=${qq}`);
   return data;
 };
+
+const getManager = getManagers
 
 module.exports = {
   getFriendList,
