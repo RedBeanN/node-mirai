@@ -60,13 +60,11 @@ const getManagers = async ({
   return data;
 };
 
-const getManager = getManagers
-
 module.exports = {
   getFriendList,
   getGroupList,
   getMessageById,
   registerCommand,
   sendCommand,
-  getManager,
+  getManagers,
 };

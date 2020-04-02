@@ -1,3 +1,4 @@
+const util = require('util');
 const WebSocket = require('ws');
 
 const Signal = require('./src/utils/Signal');
@@ -14,7 +15,7 @@ const recall = require('./src/recall');
 
 const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuotedGroupMessage, uploadImage, sendImageMessage } = require('./src/sendMessage');
 
-const { getFriendList, getGroupList, getMessageById, registerCommand, sendCommand, getManager } = require('./src/manage');
+const { getFriendList, getGroupList, getMessageById, registerCommand, sendCommand, getManagers } = require('./src/manage');
 const group = require('./src/group');
 
 /**
@@ -559,12 +560,16 @@ class NodeMirai {
     });
   }
 
-  getManager () {
-    return getManager({
+  getManagers () {
+    return getManagers({
       host: this.host,
       authKey: this.authKey,
       qq: this.qq,
     });
+  }
+
+  getManager () {
+    return util.deprecate(this.getManagers, 'NodeMirai#getManager is deprecated, use getManagers instead');
   }
 
   // command
