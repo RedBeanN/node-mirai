@@ -693,6 +693,8 @@ class NodeMirai {
         messages.forEach(message => {
           return this.emitEventListener(message);
         });
+      } else if (messages.code) {
+        console.error(`Error @ fetchMessage:\n\tCode: ${messages.code}\n\tMessage: ${messages.message || messages.msg || messages}`);
       }
     }, this.interval);
   }
