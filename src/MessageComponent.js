@@ -114,6 +114,14 @@ Quote.value = quote => {
   };
 };
 
+const Poke = name => {
+  return {
+    type: 'Poke',
+    name,
+  };
+};
+Poke.value = poke => poke.name;
+
 module.exports = {
   Source,
   Plain,
@@ -126,4 +134,5 @@ module.exports = {
   Json,
   App,
   Quote,
+  Poke,
 };
