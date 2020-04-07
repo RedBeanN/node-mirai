@@ -13,7 +13,7 @@ const release = require('./src/release');
 const fetchMessage = require('./src/fetchMessage');
 const recall = require('./src/recall');
 
-const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuotedGroupMessage, uploadImage, sendImageMessage } = require('./src/sendMessage');
+const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuotedGroupMessage, uploadImage, sendImageMessage, sendFlashImageMessage } = require('./src/sendMessage');
 
 const { getFriendList, getGroupList, getMessageById, registerCommand, sendCommand, getManagers } = require('./src/manage');
 const group = require('./src/group');
@@ -214,6 +214,37 @@ class NodeMirai {
         });
       default:
         console.error('Error @ sendImageMessage: unknown target type');
+    }
+  }
+  /**
+   * @method NodeMirai#sendFlashImageMessage
+   * @async
+   * @param { url } url 图片所在路径
+   * @param { message } target 发送目标对象
+   * @return { object } {
+   *  code: 0,
+   *  msg: "success",
+   *  messageId: 123456
+   * }
+   */
+  async sendFlashImageMessage (url, target) {
+    switch (target.type) {
+      case 'FriendMessage':
+        return sendFlashImageMessage({
+          url,
+          qq: target.sender.id,
+          sessionKey: this.sessionKey,
+          host: this.host,
+        });
+      case 'GroupMessage':
+        return sendFlashImageMessage({
+          url,
+          group: target.sender.group.id,
+          sessionKey: this.sessionKey,
+          host: this.host,
+        });
+      default:
+        console.error('Error @ sendFlashImageMessage: unknown target type');
     }
   }
   /**

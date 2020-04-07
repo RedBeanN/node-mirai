@@ -61,6 +61,20 @@ Image.value = image => {
   };
 };
 
+const FlashImage = ({ imageId, url = '' }) => {
+  return {
+    type: 'FlashImage',
+    imageId,
+    url,
+  };
+};
+FlashImage.value = image => {
+  return {
+    imageId: image.imageId,
+    url: image.url,
+  };
+};
+
 const Xml = xml => {
   return {
     type: 'Xml',
@@ -107,6 +121,7 @@ module.exports = {
   AtAll,
   Face,
   Image,
+  FlashImage,
   Xml,
   Json,
   App,

@@ -3,7 +3,7 @@ const fs = require('fs');
 // const request = require('request');
 const FormData = require('form-data');
 
-const { Plain, Image } = require('./MessageComponent');
+const { Plain, Image, FlashImage } = require('./MessageComponent');
 
 const sendFriendMessage = async ({
   messageChain,
@@ -115,6 +115,38 @@ const sendImageMessage = async ({
   });
 };
 
+const sendFlashImageMessage = async ({
+  url,
+  qq,
+  group,
+  sessionKey,
+  host = 8080,
+}) => {
+  let type, send, target;
+  if (qq) {
+    type = 'friend';
+    send = sendFriendMessage;
+    target = qq;
+  } else if (group) {
+    type = 'group';
+    send = sendGroupMessage;
+    target = group;
+  } else return console.error('Error @ sendImageMessage: you should provide qq or group');
+  const image = await uploadImage({
+    url,
+    type,
+    sessionKey,
+    host,
+  });
+  const messageChain = [FlashImage(image)];
+  return send({
+    messageChain,
+    target,
+    sessionKey,
+    host,
+  });
+};
+
 module.exports = {
   sendFriendMessage,
   sendQuotedFriendMessage,
@@ -122,4 +154,5 @@ module.exports = {
   sendQuotedGroupMessage,
   uploadImage,
   sendImageMessage,
+  sendFlashImageMessage,
 };
