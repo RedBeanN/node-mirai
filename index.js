@@ -742,10 +742,11 @@ class NodeMirai {
     switch (type) {
       case 'group': this.types.push('GroupMessage'); break;
       case 'friend': this.types.push('FriendMessage'); break;
-      case 'all': this.types.push('FriendMessage', 'GroupMessage'); break;
+      case 'temp': this.types.push('TempMessage'); break;
+      case 'all': this.types.push('FriendMessage', 'GroupMessage', 'TempMessage'); break;
       default:
-        console.error('Invalid listen type. Type should be "all", "friend" or "group"');
-        process.exit(1);
+        console.error('Invalid listen type. Type should be "all", "friend", "group" or "temp"');
+        // process.exit(1);
     }
   }
   startListeningEvents () {
