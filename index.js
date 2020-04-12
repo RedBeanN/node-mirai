@@ -694,7 +694,8 @@ class NodeMirai {
    * @param { messageCallback|signalCallback|eventCallback } callback 回调
    */
   on (name, callback) {
-    if (name === 'message') return this.onMessage(callback)
+    if (name === 'message') return this.onMessage(callback);
+    else if (name === 'command') return this.onCommand(callback);
     else if (name in this.signal.signalList) return this.onSignal(name, callback);
     return this.onEvent(name, callback);
   }
