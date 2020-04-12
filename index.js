@@ -13,7 +13,7 @@ const release = require('./src/release');
 const fetchMessage = require('./src/fetchMessage');
 const recall = require('./src/recall');
 
-const { sendFriendMessage, sendGroupMessage, sendQuotedFriendMessage, sendQuotedGroupMessage, uploadImage, sendImageMessage, sendFlashImageMessage } = require('./src/sendMessage');
+const { sendFriendMessage, sendGroupMessage, sendTempMessage, sendQuotedFriendMessage, sendQuotedGroupMessage, sendQuotedTempMessage, uploadImage, sendImageMessage, sendFlashImageMessage } = require('./src/sendMessage');
 
 const { getFriendList, getGroupList, getMessageById, registerCommand, sendCommand, getManagers } = require('./src/manage');
 const group = require('./src/group');
@@ -186,6 +186,26 @@ class NodeMirai {
     });
   }
   /**
+   * @method NodeMirai#sendTempMessage
+   * @description 发送临时消息
+   * @async
+   * @param { MessageChain[] } MessageChain MessageChain 数组
+   * @param { number } target long int 高32位为临时会话群号，低32位为临时会话对象QQ号
+   * @return { object } {
+   *  code: 0,
+   *  msg: "success",
+   *  messageId: 123456
+   * }
+   */
+  async sendTempMessage (message, target) {
+    return sendTempMessage({
+      messageChain: message,
+      target,
+      sessionKey: this.sessionKey,
+      host: this.host,
+    });
+  }
+  /**
    * @method NodeMirai#sendImageMessage
    * @async
    * @param { url } url 图片所在路径
@@ -331,6 +351,27 @@ class NodeMirai {
    */
   async sendQuotedGroupMessage (message, target, quote) {
     return sendQuotedGroupMessage({
+      messageChain: message,
+      target, quote,
+      sessionKey: this.sessionKey,
+      host: this.host,
+    });
+  }
+  /**
+   * @method NodeMirai#sendQuotedTempMessage
+   * @description 发送带引用的临时消息
+   * @async
+   * @param { MessageChain[] } MessageChain MessageChain 数组
+   * @param { number } target long int 高32位为临时会话群号，低32位为临时会话对象QQ号
+   * @param { number} quote 引用的 Message 的 id
+   * @return { object } {
+   *  code: 0,
+   *  msg: "success",
+   *  messageId: 123456
+   * }
+   */
+  async sendQuotedTempMessage (message, target, quote) {
+    return sendQuotedTempMessage({
       messageChain: message,
       target, quote,
       sessionKey: this.sessionKey,

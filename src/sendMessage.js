@@ -65,6 +65,36 @@ const sendQuotedGroupMessage = async ({
   return data;
 };
 
+const sendTempMessage = async ({
+  messageChain,
+  target,
+  sessionKey,
+  host = 8080,
+}) => {
+  if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
+  const { data } = await axios.post(`${host}/sendTempMessage`, {
+    messageChain, target, sessionKey,
+  }).catch(e => {
+    console.error('Unknown Error @ sendTempMessage:', e.message);
+  });
+  return data;
+};
+const sendQuotedTempMessage = async ({
+  messageChain,
+  target,
+  quote,
+  sessionKey,
+  host = 8080,
+}) => {
+  if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
+  const { data } = await axios.post(`${host}/sendTempMessage`, {
+    messageChain, target, sessionKey, quote,
+  }).catch(e => {
+    console.error('Unknown Error @ sendQuotedTempMessage:', e.message);
+  });
+  return data;
+};
+
 const uploadImage = async ({
   url,
   type,
@@ -152,6 +182,8 @@ module.exports = {
   sendQuotedFriendMessage,
   sendGroupMessage,
   sendQuotedGroupMessage,
+  sendTempMessage,
+  sendQuotedTempMessage,
   uploadImage,
   sendImageMessage,
   sendFlashImageMessage,
