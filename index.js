@@ -314,7 +314,7 @@ class NodeMirai {
         console.error('Invalid target @ sendMessage');
     }
   }
-  
+
   /**
    * @method NodeMirai#sendQuotedFriendMessage
    * @description 发送带引用的好友消息
@@ -397,13 +397,19 @@ class NodeMirai {
         case 'GroupMessage':
           return await this.sendQuotedGroupMessage(message, target.sender.group.id, quote);
         default:
-          console.error('Invalid target @ sendMessage');
+          console.error('Invalid target @ sendQuotedMessage');
           // process.exit(1);
       }
     } catch (e) {
       // 无法引用时退化到普通消息
       // console.log('Back to send message');
-      return this.sendMessage(message, target);
+
+      /*
+      2020.4.20 因 mirai 0.37.5 更新导致 sequenceId not yet available 错误，但消息正常发出，导致消息重复，在此修复
+      https://github.com/mamoe/mirai-api-http/issues/66
+       */
+      // return this.sendMessage(message, target);
+      console.error('Invalid target @ sendQuotedMessage');
     }
   }
 
@@ -678,10 +684,10 @@ class NodeMirai {
    * @callback messageCallback
    * @param { message } message
    */
-  /** 
+  /**
    * @callback signalCallback
    */
-  /** 
+  /**
    * @callback eventCallback
    * @param { object } message
    */
