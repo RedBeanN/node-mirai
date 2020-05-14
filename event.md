@@ -14,7 +14,7 @@ bot.on('mute', ({ operator }) => console.log(`我被${operator.memberName}禁言
 
 ### 所有事件及 callback 参数
 
-此列表来自[mirai-http-api/EventType_CH](https://github.com/mamoe/mirai-api-http/blob/master/EventType_CH.md)
+此列表来自[mirai-http-api/EventType](https://github.com/mamoe/mirai-api-http/blob/master/EventType.md)
 
 #### Bot登录成功
 
@@ -788,3 +788,31 @@ callback parameter:
 | operator.memberName     | String  | 操作者的群名片                                      |
 | operator.permission     | String  | 操作者在群中的权限，OWNER、ADMINISTRATOR            |
 | operator.group          | Object  | 同member.group                                      |
+
+
+### 用户入群申请（Bot需要有管理员权限）
+
+eventName: `memberJoinRequest`
+
+callback parameter:
+
+```json5
+{
+    "type": "MemberJoinRequestEvent",
+    "eventId": 12345678,
+    "fromId": 123456,
+    "groupId": 654321,
+    "groupName": "Group",
+    "nick": "Nick Name"
+}
+```
+
+| 名字        | 类型    | 说明                    | 
+| ---------- | ------ | ----------------------- |
+| eventId	 | Long   |	事件标识，响应该事件时的标识 |
+| fromId	 | Long   |	申请人QQ号                |
+| groupId	 | Long   |	申请人申请入群的群号        |
+| groupName	 | String |	申请人申请入群的群名称      |
+| nick	     | String |	申请人的昵称或群名片        |
+
+接收 `memberJoinRequest` 事件后，可以通过 `bot.handleMemberJoinRequest(eventId, fromId, groupId, operate, message)` 处理用户入群申请。

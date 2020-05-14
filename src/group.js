@@ -142,6 +142,27 @@ const setMemberInfo = async ({
   return data;
 }
 
+const handleMemberJoinRequest = async({
+  sessionKey,
+  host,
+  eventId,
+  fromId,
+  groupId,
+  operate,
+  message
+}) => {
+  console.log(sessionKey, eventId, fromId, groupId, operate, message)
+  const { data } = await axios.post(`${host}/resp/memberJoinRequestEvent`, {
+    sessionKey,
+    eventId,
+    fromId,
+    groupId,
+    operate,
+    message
+  });
+  return data;
+}
+
 module.exports = {
   getMemberList,
   setMute,
@@ -153,4 +174,5 @@ module.exports = {
   setConfig,
   getMemberInfo,
   setMemberInfo,
+  handleMemberJoinRequest
 };
