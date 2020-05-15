@@ -637,6 +637,27 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
+  
+  /**
+   * @method NodeMirai#handleMemberJoinRequest
+   * @description 处理用户入群申请
+   * @param { number } eventId 入群事件 (memberJoinRequest) ID
+   * @param { number } fromId 申请入群人 QQ 号
+   * @param { number } groupId 申请入群群号
+   * @param { number } operate 响应操作，0同意，1拒绝，2忽略，3拒绝并拉黑，4忽略并拉黑
+   * @param { string } message 回复的消息
+   */
+  handleMemberJoinRequest (eventId, fromId, groupId, operate, message = "") {
+    return group.handleMemberJoinRequest({
+      eventId,
+      fromId,
+      groupId,
+      operate,
+      message,
+      host: this.host,
+      sessionKey: this.sessionKey,
+    });
+  }
 
   getManagers () {
     return getManagers({

@@ -23,5 +23,6 @@
   "MemberSpecialTitleChangeEvent": "memberSpecialTitleChange",
   "MemberPermissionChangeEvent": "memberPermissionChange",
   "MemberMuteEvent": "memberMute",
-  "MemberUnmuteEvent": "memberUnmute"
+  "MemberUnmuteEvent": "memberUnmute",
+  "MemberJoinRequestEvent": "memberJoinRequest"
 }
