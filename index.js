@@ -322,6 +322,8 @@ class NodeMirai {
         return this.sendFriendMessage(message, target.sender.id);
       case 'GroupMessage':
         return this.sendGroupMessage(message, target.sender.group.id);
+      case 'TempMessage':
+        return this.sendTempMessage(message, target.sender.id, target.sender.group,id);
       default:
         console.error('Invalid target @ sendMessage');
     }
@@ -411,6 +413,8 @@ class NodeMirai {
           return await this.sendQuotedFriendMessage(message, target.sender.id, quote);
         case 'GroupMessage':
           return await this.sendQuotedGroupMessage(message, target.sender.group.id, quote);
+        case 'TempMessage':
+          return await this.sendQuotedTempMessage(message, target.sender.id, target.sender.group.id, quote);
         default:
           console.error('Invalid target @ sendQuotedMessage');
           // process.exit(1);
