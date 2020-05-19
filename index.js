@@ -298,6 +298,9 @@ class NodeMirai {
       case 'GroupMessage':
         type = 'group';
         break;
+      case 'TempMessage':
+        type = 'temp';
+        break;
       default:
         console.error('Error @ uploadImage: unknown target type');
     }
@@ -389,14 +392,26 @@ class NodeMirai {
    * }
    */
   async sendQuotedTempMessage (message, qq, group, quote) {
-    return sendQuotedTempMessage({
-      messageChain: message,
-      qq,
-      group,
-      quote,
-      sessionKey: this.sessionKey,
-      host: this.host,
-    });
+    // 兼容旧格式：高 32 位为群号，低 32 位为 QQ 号
+    // 若使用旧 API 格式，则 group 位置的值实为 quote
+    if (!quote)
+      return sendQuotedTempMessage({
+        messageChain: message,
+        qq: (qq & 0xFFFFFFFF),
+        group: ((qq >> 32) & 0xFFFFFFFF),
+        quote: group,
+        sessionKey: this.sessionKey,
+        host: this.host,
+      });    
+    else
+      return sendQuotedTempMessage({
+        messageChain: message,
+        qq,
+        group,
+        quote,
+        sessionKey: this.sessionKey,
+        host: this.host,
+      });
   }
 
   /**
