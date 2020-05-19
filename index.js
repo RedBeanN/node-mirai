@@ -379,7 +379,8 @@ class NodeMirai {
    * @description 发送带引用的临时消息
    * @async
    * @param { MessageChain[] } MessageChain MessageChain 数组
-   * @param { number } target long int 高32位为临时会话群号，低32位为临时会话对象QQ号
+   * @param { number } qq 临时消息发送对象 QQ 号
+   * @param { number } group 所在群号
    * @param { number} quote 引用的 Message 的 id
    * @return { object } {
    *  code: 0,
@@ -387,10 +388,12 @@ class NodeMirai {
    *  messageId: 123456
    * }
    */
-  async sendQuotedTempMessage (message, target, quote) {
+  async sendQuotedTempMessage (message, qq, group, quote) {
     return sendQuotedTempMessage({
       messageChain: message,
-      target, quote,
+      qq,
+      group,
+      quote,
       sessionKey: this.sessionKey,
       host: this.host,
     });
