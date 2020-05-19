@@ -67,13 +67,14 @@ const sendQuotedGroupMessage = async ({
 
 const sendTempMessage = async ({
   messageChain,
-  target,
+  qq,
+  group,
   sessionKey,
   host = 8080,
 }) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
   const { data } = await axios.post(`${host}/sendTempMessage`, {
-    messageChain, target, sessionKey,
+    messageChain, qq, group, sessionKey,
   }).catch(e => {
     console.error('Unknown Error @ sendTempMessage:', e.message);
   });
@@ -81,14 +82,15 @@ const sendTempMessage = async ({
 };
 const sendQuotedTempMessage = async ({
   messageChain,
-  target,
+  qq,
+  group,
   quote,
   sessionKey,
   host = 8080,
 }) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
   const { data } = await axios.post(`${host}/sendTempMessage`, {
-    messageChain, target, sessionKey, quote,
+    messageChain, qq, group, sessionKey, quote,
   }).catch(e => {
     console.error('Unknown Error @ sendQuotedTempMessage:', e.message);
   });

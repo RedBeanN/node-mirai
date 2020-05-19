@@ -151,7 +151,6 @@ const handleMemberJoinRequest = async({
   operate,
   message
 }) => {
-  console.log(sessionKey, eventId, fromId, groupId, operate, message)
   const { data } = await axios.post(`${host}/resp/memberJoinRequestEvent`, {
     sessionKey,
     eventId,

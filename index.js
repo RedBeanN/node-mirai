@@ -190,20 +190,32 @@ class NodeMirai {
    * @description 发送临时消息
    * @async
    * @param { MessageChain[] } MessageChain MessageChain 数组
-   * @param { number } target long int 高32位为临时会话群号，低32位为临时会话对象QQ号
+   * @param { number } qq 临时消息发送对象 QQ 号
+   * @param { number } group 所在群号
    * @return { object } {
    *  code: 0,
    *  msg: "success",
    *  messageId: 123456
    * }
    */
-  async sendTempMessage (message, target) {
-    return sendTempMessage({
-      messageChain: message,
-      target,
-      sessionKey: this.sessionKey,
-      host: this.host,
-    });
+  async sendTempMessage (message, qq, group) {
+    // 兼容旧格式：高 32 位为群号，低 32 位为 QQ 号
+    if (!group)
+      return sendTempMessage({
+        messageChain: message,
+        qq: (qq & 0xFFFFFFFF),
+        group: ((qq >> 32) & 0xFFFFFFFF),
+        sessionKey: this.sessionKey,
+        host: this.host,
+      });
+    else
+      return sendTempMessage({
+        messageChain: message,
+        qq,
+        group,
+        sessionKey: this.sessionKey,
+        host: this.host,
+      });
   }
   /**
    * @method NodeMirai#sendImageMessage
@@ -286,6 +298,9 @@ class NodeMirai {
       case 'GroupMessage':
         type = 'group';
         break;
+      case 'TempMessage':
+        type = 'temp';
+        break;
       default:
         console.error('Error @ uploadImage: unknown target type');
     }
@@ -310,6 +325,8 @@ class NodeMirai {
         return this.sendFriendMessage(message, target.sender.id);
       case 'GroupMessage':
         return this.sendGroupMessage(message, target.sender.group.id);
+      case 'TempMessage':
+        return this.sendTempMessage(message, target.sender.id, target.sender.group,id);
       default:
         console.error('Invalid target @ sendMessage');
     }
@@ -321,6 +338,7 @@ class NodeMirai {
    * @async
    * @param { MessageChain[] } MessageChain MessageChain 数组
    * @param { number } qq 发送对象的 qq 号
+   * @param { number } group 发送对象的群号
    * @param { number } quote 引用的 Message 的 id
    * @return { object } {
    *  code: 0,
@@ -328,10 +346,12 @@ class NodeMirai {
    *  messageId: 123456
    * }
    */
-  async sendQuotedFriendMessage (message, target, quote) {
+  async sendQuotedFriendMessage (message, qq, group, quote) {
     return sendQuotedFriendMessage({
       messageChain: message,
-      target, quote,
+      qq,
+      group,
+      quote,
       sessionKey: this.sessionKey,
       host: this.host,
     });
@@ -362,7 +382,8 @@ class NodeMirai {
    * @description 发送带引用的临时消息
    * @async
    * @param { MessageChain[] } MessageChain MessageChain 数组
-   * @param { number } target long int 高32位为临时会话群号，低32位为临时会话对象QQ号
+   * @param { number } qq 临时消息发送对象 QQ 号
+   * @param { number } group 所在群号
    * @param { number} quote 引用的 Message 的 id
    * @return { object } {
    *  code: 0,
@@ -370,13 +391,27 @@ class NodeMirai {
    *  messageId: 123456
    * }
    */
-  async sendQuotedTempMessage (message, target, quote) {
-    return sendQuotedTempMessage({
-      messageChain: message,
-      target, quote,
-      sessionKey: this.sessionKey,
-      host: this.host,
-    });
+  async sendQuotedTempMessage (message, qq, group, quote) {
+    // 兼容旧格式：高 32 位为群号，低 32 位为 QQ 号
+    // 若使用旧 API 格式，则 group 位置的值实为 quote
+    if (!quote)
+      return sendQuotedTempMessage({
+        messageChain: message,
+        qq: (qq & 0xFFFFFFFF),
+        group: ((qq >> 32) & 0xFFFFFFFF),
+        quote: group,
+        sessionKey: this.sessionKey,
+        host: this.host,
+      });    
+    else
+      return sendQuotedTempMessage({
+        messageChain: message,
+        qq,
+        group,
+        quote,
+        sessionKey: this.sessionKey,
+        host: this.host,
+      });
   }
 
   /**
@@ -396,6 +431,8 @@ class NodeMirai {
           return await this.sendQuotedFriendMessage(message, target.sender.id, quote);
         case 'GroupMessage':
           return await this.sendQuotedGroupMessage(message, target.sender.group.id, quote);
+        case 'TempMessage':
+          return await this.sendQuotedTempMessage(message, target.sender.id, target.sender.group.id, quote);
         default:
           console.error('Invalid target @ sendQuotedMessage');
           // process.exit(1);
