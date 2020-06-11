@@ -478,7 +478,7 @@ class NodeMirai {
    */
   recall (msg) {
     try {
-      const target = msg.messageId || msg.messageChain[0].id || msg;
+      const target = msg.messageId || (msg.messageChain && msg.messageChain[0] && msg.messageChain[0].id) || msg;
       return recall({
         target,
         sessionKey: this.sessionKey,
