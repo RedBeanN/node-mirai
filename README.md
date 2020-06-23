@@ -51,7 +51,7 @@ bot.onMessage(message => {
   // 直接回复
   if (msg.includes('收到了吗')) reply('收到了收到了'); // 或者: bot.reply('收到了', message)
   // 引用回复
-  else if (msg.includes('引用我')) quoteReply([At(sender.id), Plain('好的')], message);
+  else if (msg.includes('引用我')) bot.quoteReply([At(sender.id), Plain('好的')], message); // 或者: bot.reply([...], message, true)
   // 撤回
   else if (msg.includes('撤回')) bot.recall(message);
 });
