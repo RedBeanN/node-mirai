@@ -456,8 +456,9 @@ class NodeMirai {
    * @param { MessageChain[]|string } replyMsg 回复的内容
    * @param { message } srcMsg 源消息
    */
-  reply (replyMsg, srcMsg) {
+  reply (replyMsg, srcMsg, quote = false) {
     const replyMessage = typeof replyMsg === 'string' ? [Plain(replyMsg)] : replyMsg;
+    if (quote) return this.sendQuotedMessage(replyMessage, srcMsg);
     return this.sendMessage(replyMessage, srcMsg);
   }
   /**
