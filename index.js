@@ -80,6 +80,7 @@ class NodeMirai {
     }
     this.types = [];
     this.enableWebsocket = enableWebsocket;
+    this.plugins = [];
     this.auth();
   }
 
@@ -843,12 +844,49 @@ class NodeMirai {
       message.quoteReply = msg => this.quoteReply(msg, message);
       message.recall = () => this.recall(message);
       for (let listener of this.eventListeners.message) {
-        listener(message);
+        listener(message, this);
       }
     }
     else if (message.type in events) {
       for (let listener of this.eventListeners[events[message.type]]) {
-        listener(message);
+        listener(message, this);
+      }
+    }
+  }
+
+  // plugins
+  // 这个插件系统需要大量改进
+  getPlugins () {
+    return this.plugins.map(i => i.name);
+  }
+  /**
+   * @method NodeMirai#use
+   * @description install plugin
+   * @param { object } plugin plugin config
+   * @param { string } plugin.name
+   * @param { string? } plugin.subscribe
+   * @param { function } plugin.callback
+   */
+  use (plugin) {
+    if (!plugin.name || typeof plugin.name !== 'string' || plugin.name.length === 0) throw new Error(`[NodeMirai] Invalid plugin name ${plugin.name}. Plugin name must be a string.`);
+    if (!plugin.callback || typeof plugin.callback !== 'function') throw new Error('[NodeMirai] Invalid plugin callback. Plugin callback must be a function.');
+    if (this.getPlugins().includes(plugin.name)) throw new Error(`[NodeMirai] Duplicate plugin name ${plugin.name}`);
+    this.plugins.push(plugin);
+    const event = typeof plugin.subscribe === 'string' ? plugin.subscribe : 'message';
+    this.on(event, plugin.callback);
+    console.log(`[NodeMirai] Installed plugin [ ${plugin.name} ]`);
+  }
+  remove (pluginName) {
+    const pluginNames = this.getPlugins();
+    if (pluginNames.includes(pluginName)) {
+      const plugin = this.plugins[pluginNames.indexOf(pluginName)];
+      for (let event in this.eventListeners) {
+        for (let i in this.eventListeners[event]) {
+          if (this.eventListeners.message[i] === plugin.callback) {
+            this.eventListeners.message.splice(i, 1);
+            console.log(`[NodeMirai] Uninstalled plugin [ ${plugin.name} ]`);
+          }
+        }
       }
     }
   }
