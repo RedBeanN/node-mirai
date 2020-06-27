@@ -122,6 +122,37 @@ const Poke = name => {
 };
 Poke.value = poke => poke.name;
 
+// Experimental
+// refer: https://github.com/mamoe/mirai/blob/master/docs/mirai-code-specification.md
+const toMiraiCode = component => {
+  switch (component.type) {
+    case 'Plain':
+      return Plain.value(component);
+    case 'AtAll':
+      return '[mirai:atall]';
+    case 'At':
+      return `[mirai:at:${component.target},${component.display}]`;
+    case 'Face':
+      return `[mirai:face:${component.id}]`;
+    case 'Poke':
+      // TODO: 当前版本(mirai-core1.0.2/http-api1.7.2)尚未支持接收 Poke 消息
+      // return `[mirai:poke:${component.name},${component.type},${component.id}]`;
+      break;
+    case 'VipFace':
+      // TODO: 当前版本(http-api1.7.2)尚未支持 VipFace 消息
+      // return `[mirai:vipface:${component.id},${component.name},${component.count}]`;
+      break;
+    case 'Image':
+      return `[mirai:image:${component.imageId}]`;
+    case 'FlashImage':
+      return `[mirai:flash:${component.imageId}]`;
+  }
+  throw new Error(`Type ${component.type} is not yet supported`);
+};
+
+// TODO:
+const parseMiraiCode = code => {};
+
 module.exports = {
   Source,
   Plain,
@@ -135,4 +166,6 @@ module.exports = {
   App,
   Quote,
   Poke,
+  toMiraiCode,
+  parseMiraiCode,
 };
