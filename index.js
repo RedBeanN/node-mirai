@@ -864,9 +864,9 @@ class NodeMirai {
    * @method NodeMirai#use
    * @description install plugin
    * @param { object } plugin plugin config
-   * @param { string } plugin.name
-   * @param { string } [plugin.subscribe]
-   * @param { function } plugin.callback
+   * @param { string } plugin.name unique plugin name
+   * @param { string } [plugin.subscribe] subscribe event name
+   * @param { function } plugin.callback callback function
    */
   use (plugin) {
     if (!plugin.name || typeof plugin.name !== 'string' || plugin.name.length === 0) throw new Error(`[NodeMirai] Invalid plugin name ${plugin.name}. Plugin name must be a string.`);
