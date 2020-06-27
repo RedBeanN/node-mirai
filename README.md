@@ -60,6 +60,7 @@ bot.onMessage(message => {
  * 'all' - 监听好友和群
  * 'friend' - 只监听好友
  * 'group' - 只监听群
+ * 'temp' - 只监听临时会话
 */
 bot.listen('all');
 
