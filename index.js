@@ -456,6 +456,7 @@ class NodeMirai {
    * @description 回复一条消息, sendMessage 的别名方法
    * @param { MessageChain[]|string } replyMsg 回复的内容
    * @param { message } srcMsg 源消息
+   * @param { boolean } [quote] 是否引用源消息
    */
   reply (replyMsg, srcMsg, quote = false) {
     const replyMessage = typeof replyMsg === 'string' ? [Plain(replyMsg)] : replyMsg;
@@ -864,7 +865,7 @@ class NodeMirai {
    * @description install plugin
    * @param { object } plugin plugin config
    * @param { string } plugin.name
-   * @param { string? } plugin.subscribe
+   * @param { string } [plugin.subscribe]
    * @param { function } plugin.callback
    */
   use (plugin) {
@@ -872,6 +873,7 @@ class NodeMirai {
     if (!plugin.callback || typeof plugin.callback !== 'function') throw new Error('[NodeMirai] Invalid plugin callback. Plugin callback must be a function.');
     if (this.getPlugins().includes(plugin.name)) throw new Error(`[NodeMirai] Duplicate plugin name ${plugin.name}`);
     this.plugins.push(plugin);
+    // TODO: support string[]
     const event = typeof plugin.subscribe === 'string' ? plugin.subscribe : 'message';
     this.on(event, plugin.callback);
     console.log(`[NodeMirai] Installed plugin [ ${plugin.name} ]`);
