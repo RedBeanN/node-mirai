@@ -21,14 +21,14 @@ const sendFriendMessage = async ({
 };
 const sendQuotedFriendMessage = async ({
   messageChain,
-  target,
+  qq,
   quote,
   sessionKey,
   host = 8080,
 }) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
   const { data } = await axios.post(`${host}/sendFriendMessage`, {
-    messageChain, target, sessionKey, quote,
+    messageChain, target: qq, sessionKey, quote,
   }).catch(e => {
     console.error('Unknown Error @ sendQuotedFriendMessage:', e.message);
   });
