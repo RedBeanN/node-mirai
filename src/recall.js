@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const recall = async ({
+const recall = async ({ //撤回消息,管理BOT不能撤回群主消息,会报错
   target,
   sessionKey,
   host,

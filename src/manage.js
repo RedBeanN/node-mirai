@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const getFriendList = async ({
+const getFriendList = async ({ //获取好友列表
   host,
   sessionKey,
 }) => {
@@ -8,7 +8,7 @@ const getFriendList = async ({
   return data;
 };
 
-const getGroupList = async ({
+const getGroupList = async ({ //获取群列表
   host,
   sessionKey,
 }) => {
@@ -16,8 +16,8 @@ const getGroupList = async ({
   return data;
 };
 
-const getMessageById = async ({
-  messageId,
+const getMessageById = async ({ //通过messageId获取一条被缓存的消息
+  messageId, 
   host,
   sessionKey,
 }) => {
@@ -25,7 +25,7 @@ const getMessageById = async ({
   return data;
 };
 
-const registerCommand = async ({
+const registerCommand = async ({ //注册指令
   host,
   authKey,
   name,
@@ -39,7 +39,7 @@ const registerCommand = async ({
   return { data };
 };
 
-const sendCommand = async ({
+const sendCommand = async ({ //发送指令
   host,
   authKey,
   name,
@@ -51,7 +51,7 @@ const sendCommand = async ({
   return data;
 };
 
-const getManagers = async ({
+const getManagers = async ({ //获取Mangers
   host,
   authKey,
   qq,
