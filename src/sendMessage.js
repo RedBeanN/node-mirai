@@ -5,7 +5,7 @@ const FormData = require('form-data');
 
 const { Plain, Image, FlashImage } = require('./MessageComponent');
 
-const sendFriendMessage = async ({
+const sendFriendMessage = async ({ //发送好友消息
   messageChain,
   target,
   sessionKey,
@@ -19,7 +19,7 @@ const sendFriendMessage = async ({
   });
   return data;
 };
-const sendQuotedFriendMessage = async ({
+const sendQuotedFriendMessage = async ({ //好友中引用一条消息的messageId进行回复
   messageChain,
   target,
   quote,
@@ -35,7 +35,7 @@ const sendQuotedFriendMessage = async ({
   return data;
 };
 
-const sendGroupMessage = async ({
+const sendGroupMessage = async ({ //发送群消息
   messageChain,
   target,
   sessionKey,
@@ -49,7 +49,7 @@ const sendGroupMessage = async ({
   });
   return data;
 };
-const sendQuotedGroupMessage = async ({
+const sendQuotedGroupMessage = async ({ //群消息中引用一条消息的messageId进行回复
   messageChain,
   target,
   quote,
@@ -65,7 +65,7 @@ const sendQuotedGroupMessage = async ({
   return data;
 };
 
-const sendTempMessage = async ({
+const sendTempMessage = async ({ //发送临时会话消息
   messageChain,
   qq,
   group,
@@ -80,7 +80,7 @@ const sendTempMessage = async ({
   });
   return data;
 };
-const sendQuotedTempMessage = async ({
+const sendQuotedTempMessage = async ({ //发送临时会话引用一条消息的messageId进行回复
   messageChain,
   qq,
   group,
@@ -97,7 +97,7 @@ const sendQuotedTempMessage = async ({
   return data;
 };
 
-const uploadImage = async ({
+const uploadImage = async ({ //上传图片
   url,
   type,
   sessionKey,
