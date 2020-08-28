@@ -165,23 +165,23 @@ bot.onMessage(message => {
       break;
 
     case "全体禁言测试":
-      bot.setGroupMuteAll(sender.group.id, message); // 全体禁言"
+      bot.setGroupMuteAll(sender.group.id, message); // 全体禁言
       break;
       
     case "全体禁言取消测试":
-      bot.setGroupUnmuteAll(sender.group.id, message); // 全体禁言取消"
+      bot.setGroupUnmuteAll(sender.group.id, message); // 全体禁言取消
       break;
     
     case "禁言群员测试":
-      bot.setGroupMute(sender.group.id,sender.id); // 禁言群成员10分钟"
+      bot.setGroupMute(sender.group.id,sender.id); // 禁言群成员10分钟
       break;
 
     case "解除禁言群员测试":
-      bot.setGroupUnmute(sender.group.id,sender.id); // 解除群成员禁言"
+      bot.setGroupUnmute(sender.group.id,sender.id); // 解除群成员禁言
       break;
     
     case "移除群成员测试":
-      bot.setGroupKick(sender.group.id,sender.id); // 移除群成员"
+      bot.setGroupKick(sender.group.id,sender.id); // 移除群成员
       break;
     
     case "发布群公告测试":
