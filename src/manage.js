@@ -80,6 +80,18 @@ const botInvitedJoinGroupRequestHandler = async({
   return data;
 };
 
+const quitGroup = async ({
+  sessionKey,
+  host,
+  target
+}) => {
+  const { data } = await axios.post(`${host}/quit`, {
+    sessionKey,
+    target
+  });
+  return data;
+}
+
 module.exports = {
   getFriendList,
   getGroupList,
@@ -87,5 +99,6 @@ module.exports = {
   registerCommand,
   sendCommand,
   getManagers,
-  botInvitedJoinGroupRequestHandler
+  botInvitedJoinGroupRequestHandler,
+  quitGroup
 };

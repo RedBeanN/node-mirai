@@ -32,7 +32,8 @@ const {
   registerCommand,
   sendCommand,
   getManagers,
-  botInvitedJoinGroupRequestHandler
+  botInvitedJoinGroupRequestHandler,
+  quitGroup
 } = require('./src/manage');
 
 const group = require('./src/group');
@@ -694,6 +695,20 @@ class NodeMirai {
       memberId,
       host: this.host,
       sessionKey: this.sessionKey,
+    });
+  }
+
+  /**
+   * @method NodeMirai#quit
+   * @description BOT 主动离群
+   * @param { number } target 要离开的群的群号
+   * @returns {Promise<*>}
+   */
+  quit(target) {
+    return quit({
+      host: this.host,
+      sessionKey: this.sessionKey,
+      target
     });
   }
   
