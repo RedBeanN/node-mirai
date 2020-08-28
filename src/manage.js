@@ -60,6 +60,26 @@ const getManagers = async ({ //获取Mangers
   return data;
 };
 
+const botInvitedJoinGroupRequestHandler = async({
+  sessionKey,
+  host,
+  eventId,
+  fromId,
+  groupId,
+  operate,
+  message
+}) => {
+  const { data } = await axios.post(`${host}/resp/botInvitedJoinGroupRequestEvent`, {
+    sessionKey,
+    eventId,
+    fromId,
+    groupId,
+    operate,
+    message
+  });
+  return data;
+};
+
 module.exports = {
   getFriendList,
   getGroupList,
@@ -67,4 +87,5 @@ module.exports = {
   registerCommand,
   sendCommand,
   getManagers,
+  botInvitedJoinGroupRequestHandler
 };
