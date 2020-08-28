@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const release = async (host, sessionKey, qq) => {
+const release = async (host, sessionKey, qq) => { //�ͷŻỰ
   const { data } = await axios.post(`${host}/release`, {
     sessionKey, qq,
   });
