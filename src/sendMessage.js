@@ -1,11 +1,10 @@
 const axios = require('axios');
 const fs = require('fs');
-// const request = require('request');
 const FormData = require('form-data');
 
 const { Plain, Image, FlashImage } = require('./MessageComponent');
 
-const sendFriendMessage = async ({ //·¢ËÍºÃÓÑÏûÏ¢
+const sendFriendMessage = async ({ //å‘é€å¥½å‹æ¶ˆæ¯
   messageChain,
   target,
   sessionKey,
@@ -19,7 +18,7 @@ const sendFriendMessage = async ({ //·¢ËÍºÃÓÑÏûÏ¢
   });
   return data;
 };
-const sendQuotedFriendMessage = async ({ //ºÃÓÑÖĞÒıÓÃÒ»ÌõÏûÏ¢µÄmessageId½øĞĞ»Ø¸´
+const sendQuotedFriendMessage = async ({ //å¥½å‹ä¸­å¼•ç”¨ä¸€æ¡æ¶ˆæ¯çš„messageIdè¿›è¡Œå›å¤
   messageChain,
   target,
   quote,
@@ -35,7 +34,7 @@ const sendQuotedFriendMessage = async ({ //ºÃÓÑÖĞÒıÓÃÒ»ÌõÏûÏ¢µÄmessageId½øĞĞ»Ø¸´
   return data;
 };
 
-const sendGroupMessage = async ({ //·¢ËÍÈºÏûÏ¢
+const sendGroupMessage = async ({ //å‘é€ç¾¤æ¶ˆæ¯
   messageChain,
   target,
   sessionKey,
@@ -49,7 +48,7 @@ const sendGroupMessage = async ({ //·¢ËÍÈºÏûÏ¢
   });
   return data;
 };
-const sendQuotedGroupMessage = async ({ //ÈºÏûÏ¢ÖĞÒıÓÃÒ»ÌõÏûÏ¢µÄmessageId½øĞĞ»Ø¸´
+const sendQuotedGroupMessage = async ({ //ç¾¤æ¶ˆæ¯ä¸­å¼•ç”¨ä¸€æ¡æ¶ˆæ¯çš„messageIdè¿›è¡Œå›å¤
   messageChain,
   target,
   quote,
@@ -65,7 +64,7 @@ const sendQuotedGroupMessage = async ({ //ÈºÏûÏ¢ÖĞÒıÓÃÒ»ÌõÏûÏ¢µÄmessageId½øĞĞ»Ø¸
   return data;
 };
 
-const sendTempMessage = async ({ //·¢ËÍÁÙÊ±»á»°ÏûÏ¢
+const sendTempMessage = async ({ //å‘é€ä¸´æ—¶ä¼šè¯æ¶ˆæ¯
   messageChain,
   qq,
   group,
@@ -80,7 +79,7 @@ const sendTempMessage = async ({ //·¢ËÍÁÙÊ±»á»°ÏûÏ¢
   });
   return data;
 };
-const sendQuotedTempMessage = async ({ //·¢ËÍÁÙÊ±»á»°ÒıÓÃÒ»ÌõÏûÏ¢µÄmessageId½øĞĞ»Ø¸´
+const sendQuotedTempMessage = async ({ //å‘é€ä¸´æ—¶ä¼šè¯å¼•ç”¨ä¸€æ¡æ¶ˆæ¯çš„messageIdè¿›è¡Œå›å¤
   messageChain,
   qq,
   group,
@@ -97,7 +96,7 @@ const sendQuotedTempMessage = async ({ //·¢ËÍÁÙÊ±»á»°ÒıÓÃÒ»ÌõÏûÏ¢µÄmessageId½øĞĞ
   return data;
 };
 
-const uploadImage = async ({ //ÉÏ´«Í¼Æ¬
+const uploadImage = async ({ //ä¸Šä¼ å›¾ç‰‡
   url,
   type,
   sessionKey,

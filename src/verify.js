@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const verify = async (host, sessionKey, qq) => { //校验会话
+const verify = async (host, sessionKey, qq) => { // 鏍￠獙浼氳瘽
   const { data } = await axios.post(`${host}/verify`, {
     sessionKey, qq,
   });

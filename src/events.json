@@ -8,6 +8,7 @@
   "BotMuteEvent": "mute",
   "BotUnmuteEvent": "unmute",
   "BotJoinGroupEvent": "joinGroup",
+  "BotInvitedJoinGroupRequestEvent": "invitedJoinGroupRequest",
   "GroupNameChangeEvent": "groupNameChange",
   "GroupEntranceAnnouncementChangeEvent": "groupEntranceAnnouncementChange",
   "GroupMuteAllEvent": "groupMuteAll",

@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const recall = async ({ //³·»ØÏûÏ¢,¹ÜÀíBOT²»ÄÜ³·»ØÈºÖ÷ÏûÏ¢,»á±¨´í
+const recall = async ({ //æ’¤å›æ¶ˆæ¯,ç®¡ç†BOTä¸èƒ½æ’¤å›ç¾¤ä¸»æ¶ˆæ¯,ä¼šæŠ¥é”™
   target,
   sessionKey,
   host,

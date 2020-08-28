@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const getMemberList = async ({ //»ñÈ¡Èº³ÉÔ±ÁĞ±í
+const getMemberList = async ({ //è·å–ç¾¤æˆå‘˜åˆ—è¡¨
   target,
   host,
   sessionKey,
@@ -14,7 +14,7 @@ const getMemberList = async ({ //»ñÈ¡Èº³ÉÔ±ÁĞ±í
   return data;
 };
 
-const setMute = async ({ //Èº½ûÑÔÈº³ÉÔ±
+const setMute = async ({ //ç¾¤ç¦è¨€ç¾¤æˆå‘˜
   target,
   memberId,
   time,
@@ -29,7 +29,7 @@ const setMute = async ({ //Èº½ûÑÔÈº³ÉÔ±
    });
    return data;
 };
-const setUnmute = async ({ //Èº½â³ıÈº³ÉÔ±½ûÑÔ
+const setUnmute = async ({ //ç¾¤è§£é™¤ç¾¤æˆå‘˜ç¦è¨€
   target,
   memberId,
   host,
@@ -43,7 +43,7 @@ const setUnmute = async ({ //Èº½â³ıÈº³ÉÔ±½ûÑÔ
   return data;
 };
 
-const setMuteAll = async ({ //ÈºÈ«Ìå½ûÑÔ
+const setMuteAll = async ({ //ç¾¤å…¨ä½“ç¦è¨€
   target,
   host,
   sessionKey,
@@ -55,7 +55,7 @@ const setMuteAll = async ({ //ÈºÈ«Ìå½ûÑÔ
   return data;
 };
 
-const setUnmuteAll = async ({ //Èº½â³ıÈ«Ìå½ûÑÔ
+const setUnmuteAll = async ({ //ç¾¤è§£é™¤å…¨ä½“ç¦è¨€
   target,
   host,
   sessionKey,
@@ -67,7 +67,7 @@ const setUnmuteAll = async ({ //Èº½â³ıÈ«Ìå½ûÑÔ
   return { data };
 };
 
-const setKick = async ({ //ÒÆ³ıÈº³ÉÔ±
+const setKick = async ({ //ç§»é™¤ç¾¤æˆå‘˜
   target,
   memberId,
   msg,
@@ -83,7 +83,7 @@ const setKick = async ({ //ÒÆ³ıÈº³ÉÔ±
   return data;
 }
 
-const getConfig = async ({ //»ñÈ¡ÈºÉèÖÃ
+const getConfig = async ({ //è·å–ç¾¤è®¾ç½®
   target,
   host,
   sessionKey,
@@ -96,7 +96,7 @@ const getConfig = async ({ //»ñÈ¡ÈºÉèÖÃ
   });
   return data;
 };
-const setConfig = async ({ //ĞŞ¸ÄÈºÉèÖÃ
+const setConfig = async ({ //ä¿®æ”¹ç¾¤è®¾ç½®
   target,
   config,
   host,
@@ -110,7 +110,7 @@ const setConfig = async ({ //ĞŞ¸ÄÈºÉèÖÃ
   return data;
 };
 
-const getMemberInfo = async ({ //»ñÈ¡ÈºÔ±×ÊÁÏ
+const getMemberInfo = async ({ //è·å–ç¾¤å‘˜èµ„æ–™
   target,
   memberId,
   host,
@@ -126,7 +126,7 @@ const getMemberInfo = async ({ //»ñÈ¡ÈºÔ±×ÊÁÏ
   return data;
 };
 
-const setMemberInfo = async ({ //ĞŞ¸ÄÈºÔ±×ÊÁÏ
+const setMemberInfo = async ({ //ä¿®æ”¹ç¾¤å‘˜èµ„æ–™
   target,
   memberId,
   info,
@@ -142,7 +142,7 @@ const setMemberInfo = async ({ //ĞŞ¸ÄÈºÔ±×ÊÁÏ
   return data;
 }
 
-const handleMemberJoinRequest = async({ //»ñÈ¡ÈëÈºÉêÇë
+const handleMemberJoinRequest = async({ //è·å–å…¥ç¾¤ç”³è¯·
   sessionKey,
   host,
   eventId,

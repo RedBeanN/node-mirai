@@ -1,6 +1,7 @@
 const axios = require('axios');
 
-const fetchMessage = async (host, sessionKey, count = 10) => { //Ê¹ÓÃ´Ë·½·¨»ñÈ¡bot½ÓÊÕµ½µÄ×îÀÏÏûÏ¢ºÍ×îÀÏ¸÷ÀàÊÂ¼ş(»á´ÓMiraiApiHttpÏûÏ¢¼ÇÂ¼ÖĞÉ¾³ı)
+const fetchMessage = async (host, sessionKey, count = 10) => {
+  //ä½¿ç”¨æ­¤æ–¹æ³•è·å– bot æ¥æ”¶åˆ°çš„æœ€è€æ¶ˆæ¯å’Œæœ€è€å„ç±»äº‹ä»¶ (ä¼šä»MiraiApiHttpæ¶ˆæ¯è®°å½•ä¸­åˆ é™¤)
   const { data } = await axios.get(`${host}/fetchMessage?sessionKey=${sessionKey}&count=${count}`, );
   if ('code' in data && data.code === 0) return data.data;
   return data;

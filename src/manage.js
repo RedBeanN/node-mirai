@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const getFriendList = async ({ //»ñÈ¡ºÃÓÑÁĞ±í
+const getFriendList = async ({ //è·å–å¥½å‹åˆ—è¡¨
   host,
   sessionKey,
 }) => {
@@ -8,7 +8,7 @@ const getFriendList = async ({ //»ñÈ¡ºÃÓÑÁĞ±í
   return data;
 };
 
-const getGroupList = async ({ //»ñÈ¡ÈºÁĞ±í
+const getGroupList = async ({ //è·å–ç¾¤åˆ—è¡¨
   host,
   sessionKey,
 }) => {
@@ -16,7 +16,7 @@ const getGroupList = async ({ //»ñÈ¡ÈºÁĞ±í
   return data;
 };
 
-const getMessageById = async ({ //Í¨¹ımessageId»ñÈ¡Ò»Ìõ±»»º´æµÄÏûÏ¢
+const getMessageById = async ({ //é€šè¿‡messageIdè·å–ä¸€æ¡è¢«ç¼“å­˜çš„æ¶ˆæ¯
   messageId, 
   host,
   sessionKey,
@@ -25,7 +25,7 @@ const getMessageById = async ({ //Í¨¹ımessageId»ñÈ¡Ò»Ìõ±»»º´æµÄÏûÏ¢
   return data;
 };
 
-const registerCommand = async ({ //×¢²áÖ¸Áî
+const registerCommand = async ({ //æ³¨å†ŒæŒ‡ä»¤
   host,
   authKey,
   name,
@@ -39,7 +39,7 @@ const registerCommand = async ({ //×¢²áÖ¸Áî
   return { data };
 };
 
-const sendCommand = async ({ //·¢ËÍÖ¸Áî
+const sendCommand = async ({ //å‘é€æŒ‡ä»¤
   host,
   authKey,
   name,
@@ -51,7 +51,7 @@ const sendCommand = async ({ //·¢ËÍÖ¸Áî
   return data;
 };
 
-const getManagers = async ({ //»ñÈ¡Mangers
+const getManagers = async ({ //è·å–Mangers
   host,
   authKey,
   qq,
