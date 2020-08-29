@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const release = async (host, sessionKey, qq) => { //�ͷŻỰ
+const release = async (host, sessionKey, qq) => { //释放会话
   const { data } = await axios.post(`${host}/release`, {
     sessionKey, qq,
   });

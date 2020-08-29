@@ -4,3 +4,5 @@ test/
 
 jsdoc*
 docs/
+
+.idea

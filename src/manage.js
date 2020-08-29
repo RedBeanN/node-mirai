@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const getFriendList = async ({ //»ñÈ¡ºÃÓÑÁÐ±í
+const getFriendList = async ({ //èŽ·å–å¥½å‹åˆ—è¡¨
   host,
   sessionKey,
 }) => {
@@ -8,7 +8,7 @@ const getFriendList = async ({ //»ñÈ¡ºÃÓÑÁÐ±í
   return data;
 };
 
-const getGroupList = async ({ //»ñÈ¡ÈºÁÐ±í
+const getGroupList = async ({ //èŽ·å–ç¾¤åˆ—è¡¨
   host,
   sessionKey,
 }) => {
@@ -16,7 +16,7 @@ const getGroupList = async ({ //»ñÈ¡ÈºÁÐ±í
   return data;
 };
 
-const getMessageById = async ({ //Í¨¹ýmessageId»ñÈ¡Ò»Ìõ±»»º´æµÄÏûÏ¢
+const getMessageById = async ({ //é€šè¿‡messageIdèŽ·å–ä¸€æ¡è¢«ç¼“å­˜çš„æ¶ˆæ¯
   messageId, 
   host,
   sessionKey,
@@ -25,7 +25,7 @@ const getMessageById = async ({ //Í¨¹ýmessageId»ñÈ¡Ò»Ìõ±»»º´æµÄÏûÏ¢
   return data;
 };
 
-const registerCommand = async ({ //×¢²áÖ¸Áî
+const registerCommand = async ({ //æ³¨å†ŒæŒ‡ä»¤
   host,
   authKey,
   name,
@@ -39,7 +39,7 @@ const registerCommand = async ({ //×¢²áÖ¸Áî
   return { data };
 };
 
-const sendCommand = async ({ //·¢ËÍÖ¸Áî
+const sendCommand = async ({ //å‘é€æŒ‡ä»¤
   host,
   authKey,
   name,
@@ -51,7 +51,7 @@ const sendCommand = async ({ //·¢ËÍÖ¸Áî
   return data;
 };
 
-const getManagers = async ({ //»ñÈ¡Mangers
+const getManagers = async ({ //èŽ·å–Mangers
   host,
   authKey,
   qq,
@@ -60,6 +60,38 @@ const getManagers = async ({ //»ñÈ¡Mangers
   return data;
 };
 
+const botInvitedJoinGroupRequestHandler = async({
+  sessionKey,
+  host,
+  eventId,
+  fromId,
+  groupId,
+  operate,
+  message
+}) => {
+  const { data } = await axios.post(`${host}/resp/botInvitedJoinGroupRequestEvent`, {
+    sessionKey,
+    eventId,
+    fromId,
+    groupId,
+    operate,
+    message
+  });
+  return data;
+};
+
+const quitGroup = async ({
+  sessionKey,
+  host,
+  target
+}) => {
+  const { data } = await axios.post(`${host}/quit`, {
+    sessionKey,
+    target
+  });
+  return data;
+}
+
 module.exports = {
   getFriendList,
   getGroupList,
@@ -67,4 +99,6 @@ module.exports = {
   registerCommand,
   sendCommand,
   getManagers,
+  botInvitedJoinGroupRequestHandler,
+  quitGroup
 };
