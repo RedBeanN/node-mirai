@@ -24,7 +24,7 @@ npm i -S node-mirai-sdk
 
 ```javascript
 const Mirai = require('node-mirai-sdk');
-const { Plain, At, Image } = Mirai.MessageComponent;
+const { Plain, At } = Mirai.MessageComponent;
 
 /**
 * 服务端设置(*)
@@ -73,7 +73,7 @@ bot.onMessage(async message => {
   // 撤回消息
   else if (msg.includes('撤回'))
     bot.recall(message);
-  // 发送图片
+  // 发送图片，参数接受图片路径或 Buffer
   else if (msg.includes('来张图'))
     bot.sendImageMessage("./image.jpg", message);
 });
