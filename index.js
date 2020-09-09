@@ -37,7 +37,6 @@ const {
 } = require('./src/manage');
 
 const group = require('./src/group');
-const { ReadStream, ReadStream } = require('fs');
 
 /**
  * @typedef { Object } MessageChain 消息链
