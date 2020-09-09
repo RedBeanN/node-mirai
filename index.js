@@ -37,6 +37,7 @@ const {
 } = require('./src/manage');
 
 const group = require('./src/group');
+const { ReadStream, ReadStream } = require('fs');
 
 /**
  * @typedef { Object } MessageChain 消息链
@@ -241,7 +242,7 @@ class NodeMirai {
   /**
    * @method NodeMirai#sendImageMessage
    * @async
-   * @param { url } url 图片所在路径
+   * @param { string | Buffer | ReadStream } url 图片所在路径
    * @param { message } target 发送目标对象
    * @return { object } {
    *  code: 0,
@@ -303,7 +304,7 @@ class NodeMirai {
   /**
    * @method NodeMirai#uploadImage
    * @async
-   * @param { string } url 图片所在路径
+   * @param { string | Buffer | ReadStream } url 图片所在路径
    * @param { message } target 发送目标对象
    * @returns { object } {
    *  imageId: "{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}.jpg",
@@ -705,7 +706,7 @@ class NodeMirai {
    * @returns {Promise<*>}
    */
   quit(target) {
-    return quit({
+    return quitGroup({
       host: this.host,
       sessionKey: this.sessionKey,
       target
