@@ -12,9 +12,61 @@ bot.on(eventName, callback);
 bot.on('mute', ({ operator }) => console.log(`我被${operator.memberName}禁言啦！`));
 ```
 
-### 所有事件及 callback 参数
+## 事件名称一览表
 
-此列表来自[mirai-http-api/EventType](https://github.com/mamoe/mirai-api-http/blob/master/EventType.md)
+**Tips**: node-mirai 的 **事件名称 (eventName)** 和 mirai-api-http 的 **事件类型 (type)** 并不一致。
+
+通常情况下，node-mirai 中的事件名称是 mirai-api-http 中的事件类型去掉 `Bot` 和 `Event` 后的小驼峰命名形式。在监听事件时，请以 node-mirai 的事件名称为准。例如：
+
+```javascript
+/* 监听群成员主动离群事件 (MemberLeaveEventQuit => memberLeaveQuit) */
+
+// 正确写法：监听 memberLeaveQuit
+bot.on("memberLeaveQuit", () => console.log("Someone has left the group."));
+
+// 错误写法：监听 MemberLeaveEventQuit
+bot.on("MemberLeaveEventQuit", () => console.log("Someone has left the group."));
+```
+
+下表列出了 mirai-api-http 事件类型与 node-mirai 事件名称的对应关系：
+
+| mirai-api-http 事件类型 | 对应 node-mirai 事件名称 |
+|-----------------------|------------------------|
+|BotOnlineEvent|online|
+|BotOfflineEventActive|offlineActive|
+|BotOfflineEventForce|offlineForce|
+|BotOfflineEventDropped|offlineDropped|
+|BotReloginEvent|relogin|
+|BotGroupPermissionChangeEvent|groupPermissionChange|
+|BotMuteEvent|mute|
+|BotUnmuteEvent|unmute|
+|BotLeaveEventActive|leaveActive|
+|BotLeaveEventKick|leaveKick|
+|BotJoinGroupEvent|joinGroup|
+|BotInvitedJoinGroupRequestEvent|invitedJoinGroupRequest|
+|GroupNameChangeEvent|groupNameChange|
+|GroupEntranceAnnouncementChangeEvent|groupEntranceAnnouncementChange|
+|GroupMuteAllEvent|groupMuteAll|
+|GroupAllowAnonymousChatEvent|groupAllowAnonymousChat|
+|GroupAllowConfessTalkEvent|groupAllowConfessTalk|
+|GroupAllowMemberInviteEvent|groupAllowMemberInvite|
+|GroupRecallEvent|groupRecall|
+|FriendRecallEvent|friendRecall|
+|MemberJoinEvent|memberJoin|
+|MemberLeaveEventKick|memberLeaveKick|
+|MemberLeaveEventQuit|memberLeaveQuit|
+|MemberCardChangeEvent|memberCardChange|
+|MemberSpecialTitleChangeEvent|memberSpecialTitleChange|
+|MemberPermissionChangeEvent|memberPermissionChange|
+|MemberMuteEvent|memberMute|
+|MemberUnmuteEvent|memberUnmute|
+|MemberJoinRequestEvent|memberJoinRequest|
+
+另请参阅 [events.json](src/events.json).
+
+## 所有事件及 callback 参数
+
+此列表来自 [mirai-http-api/EventType](https://github.com/project-mirai/mirai-api-http/blob/master/EventType.md)
 
 #### Bot登录成功
 
@@ -816,3 +868,75 @@ callback parameter:
 | nick	     | String |	申请人的昵称或群名片        |
 
 接收 `memberJoinRequest` 事件后，可以通过 `bot.handleMemberJoinRequest(eventId, fromId, groupId, operate, message)` 处理用户入群申请。
+
+### Bot被邀请入群申请
+
+eventName: `invitedJoinGroupRequest`
+
+```json
+{
+    "type": "BotInvitedJoinGroupRequestEvent",
+    "eventId": 12345678,
+    "fromId": 123456,
+    "groupId": 654321,
+    "groupName": "Group",
+    "nick": "Nick Name",
+    "message": ""
+}
+```
+| 名字	| 类型	| 说明 |
+|-------|-------|-----|
+| eventId | Long	| 事件标识，响应该事件时的标识 |
+| fromId |	Long	| 邀请人（好友）的QQ号 |
+| groupId |	Long	| 被邀请进入群的群号 |
+| groupName |	String	| 被邀请进入群的群名称 |
+| nick |	String	| 邀请人（好友）的昵称 |
+| message |	String |	邀请消息 |
+
+接收 `invitedJoinGroupRequest` 事件后，可以通过 `bot.handleBotInvitedJoinGroupRequest(eventId, fromId, groupId, operate, message)` 处理入群邀请。
+
+#### Bot主动退出一个群
+
+eventName: `leaveActive`
+
+```json5
+{
+    "type": "BotLeaveEventActive",
+    "group": {
+        "id": 123456789,
+        "name": "Miral Technology",
+        "permission": "MEMBER"
+    }
+}
+```
+
+| 名字             | 类型   | 说明                                                         |
+| ---------------- | ------ | ------------------------------------------------------------ |
+| group            | Object | Bot退出的群的信息                                            |
+| group.id         | Long   | 群号                                                         |
+| group.name       | String | 群名                                                         |
+| group.permission | String | Bot在群中的权限，ADMINISTRATOR或MEMBER |
+
+
+
+#### Bot被踢出一个群
+
+eventName: `leaveKick`
+
+```json5
+{
+    "type": "BotLeaveEventKick",
+    "group": {
+        "id": 123456789,
+        "name": "Miral Technology",
+        "permission": "MEMBER"
+    }
+}
+```
+
+| 名字             | 类型   | 说明                                                         |
+| ---------------- | ------ | ------------------------------------------------------------ |
+| group            | Object | Bot被踢出的群的信息                                            |
+| group.id         | Long   | 群号                                                         |
+| group.name       | String | 群名                                                         |
+| group.permission | String | Bot在群中的权限，ADMINISTRATOR或MEMBER |

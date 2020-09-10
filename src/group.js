@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const getMemberList = async ({
+const getMemberList = async ({ //获取群成员列表
   target,
   host,
   sessionKey,
@@ -14,7 +14,7 @@ const getMemberList = async ({
   return data;
 };
 
-const setMute = async ({
+const setMute = async ({ //群禁言群成员
   target,
   memberId,
   time,
@@ -29,7 +29,7 @@ const setMute = async ({
    });
    return data;
 };
-const setUnmute = async ({
+const setUnmute = async ({ //群解除群成员禁言
   target,
   memberId,
   host,
@@ -43,7 +43,7 @@ const setUnmute = async ({
   return data;
 };
 
-const setMuteAll = async ({
+const setMuteAll = async ({ //群全体禁言
   target,
   host,
   sessionKey,
@@ -55,7 +55,7 @@ const setMuteAll = async ({
   return data;
 };
 
-const setUnmuteAll = async ({
+const setUnmuteAll = async ({ //群解除全体禁言
   target,
   host,
   sessionKey,
@@ -67,7 +67,7 @@ const setUnmuteAll = async ({
   return { data };
 };
 
-const setKick = async ({
+const setKick = async ({ //移除群成员
   target,
   memberId,
   msg,
@@ -83,7 +83,7 @@ const setKick = async ({
   return data;
 }
 
-const getConfig = async ({
+const getConfig = async ({ //获取群设置
   target,
   host,
   sessionKey,
@@ -96,7 +96,7 @@ const getConfig = async ({
   });
   return data;
 };
-const setConfig = async ({
+const setConfig = async ({ //修改群设置
   target,
   config,
   host,
@@ -110,7 +110,7 @@ const setConfig = async ({
   return data;
 };
 
-const getMemberInfo = async ({
+const getMemberInfo = async ({ //获取群员资料
   target,
   memberId,
   host,
@@ -126,7 +126,7 @@ const getMemberInfo = async ({
   return data;
 };
 
-const setMemberInfo = async ({
+const setMemberInfo = async ({ //修改群员资料
   target,
   memberId,
   info,
@@ -142,7 +142,7 @@ const setMemberInfo = async ({
   return data;
 }
 
-const handleMemberJoinRequest = async({
+const handleMemberJoinRequest = async({ //获取入群申请
   sessionKey,
   host,
   eventId,

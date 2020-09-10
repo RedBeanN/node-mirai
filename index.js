@@ -13,9 +13,29 @@ const release = require('./src/release');
 const fetchMessage = require('./src/fetchMessage');
 const recall = require('./src/recall');
 
-const { sendFriendMessage, sendGroupMessage, sendTempMessage, sendQuotedFriendMessage, sendQuotedGroupMessage, sendQuotedTempMessage, uploadImage, sendImageMessage, sendFlashImageMessage } = require('./src/sendMessage');
+const {
+  sendFriendMessage,
+  sendGroupMessage,
+  sendTempMessage,
+  sendQuotedFriendMessage,
+  sendQuotedGroupMessage,
+  sendQuotedTempMessage,
+  uploadImage,
+  sendImageMessage,
+  sendFlashImageMessage
+} = require('./src/sendMessage');
 
-const { getFriendList, getGroupList, getMessageById, registerCommand, sendCommand, getManagers } = require('./src/manage');
+const {
+  getFriendList,
+  getGroupList,
+  getMessageById,
+  registerCommand,
+  sendCommand,
+  getManagers,
+  botInvitedJoinGroupRequestHandler,
+  quitGroup
+} = require('./src/manage');
+
 const group = require('./src/group');
 
 /**
@@ -221,7 +241,7 @@ class NodeMirai {
   /**
    * @method NodeMirai#sendImageMessage
    * @async
-   * @param { url } url 图片所在路径
+   * @param { string | Buffer | ReadStream } url 图片所在路径
    * @param { message } target 发送目标对象
    * @return { object } {
    *  code: 0,
@@ -283,7 +303,7 @@ class NodeMirai {
   /**
    * @method NodeMirai#uploadImage
    * @async
-   * @param { string } url 图片所在路径
+   * @param { string | Buffer | ReadStream } url 图片所在路径
    * @param { message } target 发送目标对象
    * @returns { object } {
    *  imageId: "{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}.jpg",
@@ -675,6 +695,20 @@ class NodeMirai {
       sessionKey: this.sessionKey,
     });
   }
+
+  /**
+   * @method NodeMirai#quit
+   * @description BOT 主动离群
+   * @param { number } target 要离开的群的群号
+   * @returns {Promise<*>}
+   */
+  quit(target) {
+    return quitGroup({
+      host: this.host,
+      sessionKey: this.sessionKey,
+      target
+    });
+  }
   
   /**
    * @method NodeMirai#handleMemberJoinRequest
@@ -694,6 +728,29 @@ class NodeMirai {
       message,
       host: this.host,
       sessionKey: this.sessionKey,
+    });
+  }
+
+  /**
+   * @method NodeMirai#handleBotInvitedJoinGroupRequest
+   * @description 处理 BOT 被邀请入群的申请
+   * @param { number } eventId 被邀请入群事件 (botInvitedJoinGroupRequest) ID
+   * @param { number } fromId  邀请人群者的 QQ 号
+   * @param { number } groupId 被邀请进入群的群号
+   * @param { number } operate 响应的操作类型, 0同意邀请，1拒绝邀请
+   * @param { string } message 回复的信息
+   * @returns {Promise<*>}
+   */
+  handleBotInvitedJoinGroupRequest(eventId, fromId, groupId, operate, message = "") {
+    // 由于方法是单独引入的，所以使用 [event]Handler 而不是 handle[Event] 作为函数名
+    return botInvitedJoinGroupRequestHandler({
+      eventId,
+      fromId,
+      groupId,
+      operate,
+      message,
+      host: this.host,
+      sessionKey: this.sessionKey
     });
   }
 

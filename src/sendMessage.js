@@ -1,11 +1,10 @@
 const axios = require('axios');
 const fs = require('fs');
-// const request = require('request');
 const FormData = require('form-data');
 
 const { Plain, Image, FlashImage } = require('./MessageComponent');
 
-const sendFriendMessage = async ({
+const sendFriendMessage = async ({ //发送好友消息
   messageChain,
   target,
   sessionKey,
@@ -19,7 +18,8 @@ const sendFriendMessage = async ({
   });
   return data;
 };
-const sendQuotedFriendMessage = async ({
+
+const sendQuotedFriendMessage = async ({ // 好友中引用一条消息的messageId进行回复
   messageChain,
   qq,
   quote,
@@ -35,7 +35,7 @@ const sendQuotedFriendMessage = async ({
   return data;
 };
 
-const sendGroupMessage = async ({
+const sendGroupMessage = async ({ // 发送群消息
   messageChain,
   target,
   sessionKey,
@@ -49,7 +49,7 @@ const sendGroupMessage = async ({
   });
   return data;
 };
-const sendQuotedGroupMessage = async ({
+const sendQuotedGroupMessage = async ({ // 群消息中引用一条消息的 messageId 进行回复
   messageChain,
   target,
   quote,
@@ -65,7 +65,7 @@ const sendQuotedGroupMessage = async ({
   return data;
 };
 
-const sendTempMessage = async ({
+const sendTempMessage = async ({ // 发送临时会话消息
   messageChain,
   qq,
   group,
@@ -80,7 +80,8 @@ const sendTempMessage = async ({
   });
   return data;
 };
-const sendQuotedTempMessage = async ({
+
+const sendQuotedTempMessage = async ({ // 发送临时会话引用一条消息的messageId进行回复
   messageChain,
   qq,
   group,
@@ -108,7 +109,9 @@ const uploadImage = async ({
   const form = new FormData();
   form.append('sessionKey', sessionKey);
   form.append('type', type);
-  form.append('img', img);
+  // #19: 当传入的 url 为 Buffer 类型时，只需指定文件名即可，此写法兼容 ReadStream；另外图片文件名的后缀类型并不会影响上传结果
+  form.append('img', img, { filename: "payload.jpg" });
+  
   const { data } = await axios.post(`${host}/uploadImage`, form, {
     headers: form.getHeaders(),
   });
