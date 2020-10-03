@@ -359,7 +359,6 @@ class NodeMirai {
    * @async
    * @param { MessageChain[] } MessageChain MessageChain 数组
    * @param { number } qq 发送对象的 qq 号
-   * @param { number } group 发送对象的群号
    * @param { number } quote 引用的 Message 的 id
    * @return { object } {
    *  code: 0,
@@ -367,11 +366,10 @@ class NodeMirai {
    *  messageId: 123456
    * }
    */
-  async sendQuotedFriendMessage (message, qq, group, quote) {
+  async sendQuotedFriendMessage (message, qq, quote) {
     return sendQuotedFriendMessage({
       messageChain: message,
       qq,
-      group,
       quote,
       sessionKey: this.sessionKey,
       host: this.host,

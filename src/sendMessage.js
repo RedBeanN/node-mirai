@@ -21,14 +21,14 @@ const sendFriendMessage = async ({ //发送好友消息
 
 const sendQuotedFriendMessage = async ({ // 好友中引用一条消息的messageId进行回复
   messageChain,
-  target,
+  qq,
   quote,
   sessionKey,
   host = 8080,
 }) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
   const { data } = await axios.post(`${host}/sendFriendMessage`, {
-    messageChain, target, sessionKey, quote,
+    messageChain, target: qq, sessionKey, quote,
   }).catch(e => {
     console.error('Unknown Error @ sendQuotedFriendMessage:', e.message);
   });
