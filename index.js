@@ -33,7 +33,8 @@ const {
   sendCommand,
   getManagers,
   botInvitedJoinGroupRequestHandler,
-  quitGroup
+  quitGroup,
+  handleNewFriendRequest
 } = require('./src/manage');
 
 const group = require('./src/group');
@@ -751,6 +752,28 @@ class NodeMirai {
       message,
       host: this.host,
       sessionKey: this.sessionKey
+    });
+  }
+
+  /**
+   * @method NodeMirai#handleNewFriendRequest
+   * @description 处理好友申请
+   * @param { number } eventId 好友申请事件 (newFriendRequest) ID
+   * @param { number } fromId 申请人 QQ 号
+   * @param { number } groupId 申请人如果通过某个群添加好友，该项为该群群号；否则为0
+   * @param { number } operate 响应操作，0同意，1拒绝，2拒绝并拉黑
+   * @param { string } message 回复的消息
+   * @returns {Promise<*>}
+   */
+  handleNewFriendRequest (eventId, fromId, groupId, operate, message = "") {
+    return handleNewFriendRequest({
+      eventId,
+      fromId,
+      groupId,
+      operate,
+      message,
+      host: this.host,
+      sessionKey: this.sessionKey,
     });
   }
 
