@@ -901,11 +901,14 @@ class NodeMirai {
     if (this.enableWebsocket) {
       this.onSignal('verified', () => {
         const wsHost = `${this.host.replace('http', 'ws')}/all?sessionKey=${this.sessionKey}`;
+        // 拿到 ws 实例，后边还要发 ping 包
         const ws = new WebSocket(wsHost);
+        // 分发消息
         ws.on('message', message => {
           this.emitEventListener(JSON.parse(message));
         });
         ws.on('open',() => {
+          // 建立连接后，每分钟向服务端发个 ping 包
           const interval = setInterval(() => {
             ws.ping((err) => {
               if (err) {
@@ -914,6 +917,7 @@ class NodeMirai {
             });
           }, 60000);
           ws.on('close',(code, reason) => {
+            // 连接关闭后，移除定时器
             clearInterval(interval);
           });
         });
