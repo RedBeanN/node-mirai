@@ -6,3 +6,5 @@ jsdoc*
 docs/
 
 .idea
+
+.vscode
