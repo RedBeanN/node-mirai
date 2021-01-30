@@ -901,9 +901,22 @@ class NodeMirai {
     if (this.enableWebsocket) {
       this.onSignal('verified', () => {
         const wsHost = `${this.host.replace('http', 'ws')}/all?sessionKey=${this.sessionKey}`;
-        (new WebSocket(wsHost)).on('message', message => {
+        const ws = new WebSocket(wsHost);
+        ws.on('message', message => {
           this.emitEventListener(JSON.parse(message));
-        })
+        });
+        ws.on('open',() => {
+          const interval = setInterval(() => {
+            ws.ping((err) => {
+              if (err) {
+                // todo sth.
+              }
+            });
+          }, 60000);
+          ws.on('close',(code, reason) => {
+            clearInterval(interval);
+          });
+        });
       });
     }
     else setInterval(async () => {
