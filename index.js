@@ -21,7 +21,9 @@ const {
   sendQuotedGroupMessage,
   sendQuotedTempMessage,
   uploadImage,
+  uploadVoice,
   sendImageMessage,
+  sendVoiceMessage,
   sendFlashImageMessage
 } = require('./src/sendMessage');
 
@@ -271,6 +273,29 @@ class NodeMirai {
     }
   }
   /**
+   * @method NodeMirai#sendVoiceMessage
+   * @async
+   * @param { string | Buffer | ReadStream } url 语音所在路径
+   * @param { target } group 发送目标对象（目前仅支持群组）
+   * @return { object } {
+   *  code: 0,
+   *  msg: "success",
+   *  messageId: 123456
+   * }
+   */
+  async sendVoiceMessage (url, target) {
+    if (target.type !== 'GroupMessage')
+      console.error('Error @ sendVoiceMessage: only support send voice to group');
+
+    return sendVoiceMessage({
+      url,
+      group: target.sender.group.id,
+      sessionKey: this.sessionKey,
+      host: this.host
+    });
+  }
+
+  /**
    * @method NodeMirai#sendFlashImageMessage
    * @async
    * @param { url } url 图片所在路径
@@ -334,6 +359,25 @@ class NodeMirai {
     });
   }
 
+
+  /**
+   * @method NodeMirai#uploadVoice
+   * @async
+   * @param { string | Buffer | ReadStream } url 声音所在路径
+   * @returns { object } {
+   *  voiceId: "{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}.amr",
+   *  url: "xxxxxxxxxxxxxxxxxxxx"
+   * }
+   */
+  async uploadVoice (url) {
+    return uploadVoice({
+      url,
+      type: 'group',
+      sessionKey: this.sessionKey,
+      host: this.host
+    });
+  }
+
   /**
    * @method NodeMirai#sendMessage
    * @description 发送消息给指定好友或群组
@@ -348,7 +392,7 @@ class NodeMirai {
       case 'GroupMessage':
         return this.sendGroupMessage(message, target.sender.group.id);
       case 'TempMessage':
-        return this.sendTempMessage(message, target.sender.id, target.sender.group,id);
+        return this.sendTempMessage(message, target.sender.id, target.sender.group.id);
       default:
         console.error('Invalid target @ sendMessage');
     }

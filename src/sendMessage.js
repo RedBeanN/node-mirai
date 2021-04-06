@@ -2,7 +2,7 @@ const axios = require('axios');
 const fs = require('fs');
 const FormData = require('form-data');
 
-const { Plain, Image, FlashImage } = require('./MessageComponent');
+const { Plain, Image, FlashImage, Voice } = require('./MessageComponent');
 
 const sendFriendMessage = async ({ //发送好友消息
   messageChain,
@@ -118,6 +118,24 @@ const uploadImage = async ({
   return data;
 };
 
+const uploadVoice = async({
+  url,
+  type,
+  sessionKey,
+  host
+}) => {
+  let voice = (typeof url === 'string') ? fs.createReadStream(url) : url;
+  const form = new FormData();
+  form.append('sessionKey', sessionKey);
+  form.append('type', type);
+  form.append('voice', voice);
+
+  const { data } = await axios.post(`${host}/uploadVoice`, form, {
+    headers: form.getHeaders()
+  });
+  return data;
+};
+
 const sendImageMessage = async ({
   url,
   qq,
@@ -147,6 +165,29 @@ const sendImageMessage = async ({
     target,
     sessionKey,
     host,
+  });
+};
+
+const sendVoiceMessage = async({
+  url,
+  group,
+  sessionKey,
+  host = 8080
+}) => {
+  const target = group,
+    type = 'group';
+  const voice = await uploadVoice({
+    url,
+    type,
+    sessionKey,
+    host
+  });
+  const messageChain = [Voice(voice)];
+  return sendGroupMessage({
+    messageChain,
+    target,
+    sessionKey,
+    host
   });
 };
 
@@ -190,6 +231,8 @@ module.exports = {
   sendTempMessage,
   sendQuotedTempMessage,
   uploadImage,
+  uploadVoice,
   sendImageMessage,
+  sendVoiceMessage,
   sendFlashImageMessage,
 };
