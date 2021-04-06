@@ -61,6 +61,7 @@ bot.on("MemberLeaveEventQuit", () => console.log("Someone has left the group."))
 |MemberMuteEvent|memberMute|
 |MemberUnmuteEvent|memberUnmute|
 |MemberJoinRequestEvent|memberJoinRequest|
+|NewFriendRequestEvent|newFriendRequest|
 
 另请参阅 [events.json](src/events.json).
 
@@ -68,7 +69,7 @@ bot.on("MemberLeaveEventQuit", () => console.log("Someone has left the group."))
 
 此列表来自 [mirai-http-api/EventType](https://github.com/project-mirai/mirai-api-http/blob/master/EventType.md)
 
-#### Bot登录成功
+### Bot登录成功
 
 eventName: `online`
 
@@ -85,7 +86,7 @@ callback parameter:
 | ---- | ---- | ------------------- |
 | qq   | Long | 登录成功的Bot的QQ号 |
 
-#### Bot主动离线
+### Bot主动离线
 
 eventName: `offlineActive`
 
@@ -102,7 +103,7 @@ callback parameter:
 | ---- | ---- | ------------------- |
 | qq   | Long | 主动离线的Bot的QQ号 |
 
-#### Bot被挤下线
+### Bot被挤下线
 
 eventName: `offlineForce`
 
@@ -119,7 +120,7 @@ callback parameter:
 | ---- | ---- | ------------------- |
 | qq   | Long | 被挤下线的Bot的QQ号 |
 
-#### Bot被服务器断开或因网络问题而掉线
+### Bot被服务器断开或因网络问题而掉线
 
 eventName: `offlineDropped`
 
@@ -136,7 +137,7 @@ callback parameter:
 | ---- | ---- | ----------------------------------------- |
 | qq   | Long | 被服务器断开或因网络问题而掉线的Bot的QQ号 |
 
-#### Bot主动重新登录
+### Bot主动重新登录
 
 eventName: `relogin`
 
@@ -153,7 +154,7 @@ callback parameter:
 | ---- | ---- | ----------------------- |
 | qq   | Long | 主动重新登录的Bot的QQ号 |
 
-#### Bot在群里的权限被改变. 操作人一定是群主
+### Bot在群里的权限被改变. 操作人一定是群主
 
 eventName: `groupPermissionChange`
 
@@ -181,7 +182,7 @@ callback parameter:
 | group.name       | String | 群名                                          |
 | group.permission | String | Bot在群中的权限，OWNER、ADMINISTRATOR或MEMBER |
 
-#### Bot被禁言
+### Bot被禁言
 
 eventName: `mute`
 
@@ -216,7 +217,7 @@ callback parameter:
 | operator.group.name       | String | 群名                                             |
 | operator.group.permission | String | Bot在群中的权限，OWNER或ADMINISTRATOR            |
 
-#### Bot被取消禁言
+### Bot被取消禁言
 
 eventName: `unmute`
 
@@ -249,7 +250,7 @@ callback parameter:
 | operator.group.name       | String | 群名                                             |
 | operator.group.permission | String | Bot在群中的权限，OWNER或ADMINISTRATOR            |
 
-#### Bot加入了一个新群
+### Bot加入了一个新群
 
 eventName: `joinGroup`
 
@@ -273,7 +274,7 @@ callback parameter:
 | group.name       | String | 群名                                                         |
 | group.permission | String | Bot在群中的权限，OWNER、ADMINISTRATOR或MEMBER（新加入群通常是Member） |
 
-#### 某个群名改变
+### 某个群名改变
 
 eventName: `groupNameChange`
 
@@ -303,7 +304,7 @@ callback parameter:
 | group.permission | String  | Bot在群中的权限，OWNER、ADMINISTRATOR或MEMBER |
 | isByBot          | Boolean | 是否Bot进行该操作                             |
 
-#### 某群入群公告改变
+### 某群入群公告改变
 
 eventName: `groupEntranceAnnouncementChange`
 
@@ -346,7 +347,7 @@ callback parameter:
 | operator.permission | String  | 操作者在群中的权限，OWNER或ADMINISTRATOR      |
 | operator.group      | Object  | 同group                                       |
 
-#### 全员禁言
+### 全员禁言
 
 eventName: `groupMuteAll`
 
@@ -389,7 +390,7 @@ callback parameter:
 | operator.permission | String  | 操作者在群中的权限，OWNER或ADMINISTRATOR      |
 | operator.group      | Object  | 同group                                       |
 
-#### 匿名聊天
+### 匿名聊天
 
 eventName: `groupAllowAnonymousChat`
 
@@ -432,7 +433,7 @@ callback parameter:
 | operator.permission | String  | 操作者在群中的权限，OWNER或ADMINISTRATOR      |
 | operator.group      | Object  | 同group                                       |
 
-#### 坦白说
+### 坦白说
 
 eventName: `groupAllowConfessTalk`
 
@@ -462,7 +463,7 @@ callback parameter:
 | group.permission | String  | Bot在群中的权限，OWNER、ADMINISTRATOR或MEMBER |
 | isByBot          | Boolean | 是否Bot进行该操作                             |
 
-#### 允许群员邀请好友加群
+### 允许群员邀请好友加群
 
 eventName: `groupAllowMemberInvite`
 
@@ -505,7 +506,7 @@ callback parameter:
 | operator.permission | String  | 操作者在群中的权限，OWNER或ADMINISTRATOR      |
 | operator.group      | Object  | 同group                                       |
 
-#### 新人入群的事件
+### 新人入群的事件
 
 eventName: `memberJoin`
 
@@ -538,7 +539,7 @@ callback parameter:
 | member.group.name       | String | 群名                                                         |
 | member.group.permission | String | Bot在群中的权限，OWNER、ADMINISTRATOR或MEMBER                |
 
-#### 成员被踢出群（该成员不是Bot）
+### 成员被踢出群（该成员不是Bot）
 
 eventName: `memberLeaveKick`
 
@@ -586,7 +587,7 @@ callback parameter:
 | operator.permission     | String  | 操作者在群中的权限，OWNER或ADMINISTRATOR      |
 | operator.group          | Object  | 同member.group                                |
 
-#### 成员主动离群（该成员不是Bot）
+### 成员主动离群（该成员不是Bot）
 
 eventName: `memberLeaveQuit`
 
@@ -619,7 +620,7 @@ callback parameter:
 | member.group.name       | String | 群名                                          |
 | member.group.permission | String | Bot在群中的权限，OWNER、ADMINISTRATOR或MEMBER |
 
-#### 群名片改动
+### 群名片改动
 
 eventName: `memberCardChange`
 
@@ -669,7 +670,7 @@ callback parameter:
 | operator.permission     | String  | 操作者在群中的权限，OWNER、ADMINISTRATOR或MEMBER         |
 | operator.group          | Object  | 同member.group                                           |
 
-#### 群头衔改动（只有群主有操作限权）
+### 群头衔改动（只有群主有操作限权）
 
 eventName: `memberSpecialTitleChange`
 
@@ -706,7 +707,7 @@ callback parameter:
 | member.group.name       | String | 群名                                                     |
 | member.group.permission | String | Bot在群中的权限，OWNER、ADMINISTRATOR或MEMBER            |
 
-#### 成员权限改变的事件（该成员不可能是Bot，见BotGroupPermissionChangeEvent）
+### 成员权限改变的事件（该成员不可能是Bot，见BotGroupPermissionChangeEvent）
 
 eventName: `memberPermissionChange`
 
@@ -743,7 +744,7 @@ callback parameter:
 | member.group.name       | String | 群名                                              |
 | member.group.permission | String | Bot在群中的权限，OWNER、ADMINISTRATOR或MEMBER     |
 
-#### 群成员被禁言事件（该成员不可能是Bot，见BotMuteEvent）
+### 群成员被禁言事件（该成员不可能是Bot，见BotMuteEvent）
 
 eventName: `memberMute`
 
@@ -793,7 +794,7 @@ callback parameter:
 | operator.permission     | String  | 操作者在群中的权限，OWNER、ADMINISTRATOR        |
 | operator.group          | Object  | 同member.group                                  |
 
-#### 群成员被取消禁言事件（该成员不可能是Bot，见BotUnmuteEvent）
+### 群成员被取消禁言事件（该成员不可能是Bot，见BotUnmuteEvent）
 
 eventName: `memberUnmute`
 
@@ -841,7 +842,6 @@ callback parameter:
 | operator.permission     | String  | 操作者在群中的权限，OWNER、ADMINISTRATOR            |
 | operator.group          | Object  | 同member.group                                      |
 
-
 ### 用户入群申请（Bot需要有管理员权限）
 
 eventName: `memberJoinRequest`
@@ -859,19 +859,21 @@ callback parameter:
 }
 ```
 
-| 名字        | 类型    | 说明                    | 
+| 名字        | 类型    | 说明                    |
 | ---------- | ------ | ----------------------- |
-| eventId	 | Long   |	事件标识，响应该事件时的标识 |
-| fromId	 | Long   |	申请人QQ号                |
-| groupId	 | Long   |	申请人申请入群的群号        |
-| groupName	 | String |	申请人申请入群的群名称      |
-| nick	     | String |	申请人的昵称或群名片        |
+| eventId    | Long   | 事件标识，响应该事件时的标识 |
+| fromId     | Long   | 申请人QQ号                |
+| groupId    | Long   | 申请人申请入群的群号        |
+| groupName  | String | 申请人申请入群的群名称      |
+| nick       | String | 申请人的昵称或群名片        |
 
 接收 `memberJoinRequest` 事件后，可以通过 `bot.handleMemberJoinRequest(eventId, fromId, groupId, operate, message)` 处理用户入群申请。
 
 ### Bot被邀请入群申请
 
 eventName: `invitedJoinGroupRequest`
+
+callback parameter:
 
 ```json
 {
@@ -884,20 +886,23 @@ eventName: `invitedJoinGroupRequest`
     "message": ""
 }
 ```
-| 名字	| 类型	| 说明 |
-|-------|-------|-----|
-| eventId | Long	| 事件标识，响应该事件时的标识 |
-| fromId |	Long	| 邀请人（好友）的QQ号 |
-| groupId |	Long	| 被邀请进入群的群号 |
-| groupName |	String	| 被邀请进入群的群名称 |
-| nick |	String	| 邀请人（好友）的昵称 |
-| message |	String |	邀请消息 |
+
+| 名字      | 类型      | 说明                      |
+|-----------|----------|--------------------------|
+| eventId   | Long     | 事件标识，响应该事件时的标识  |
+| fromId    | Long     | 邀请人（好友）的QQ号        |
+| groupId   | Long     | 被邀请进入群的群号          |
+| groupName | String   | 被邀请进入群的群名称        |
+| nick      | String   | 邀请人（好友）的昵称        |
+| message   | String   | 邀请消息                  |
 
 接收 `invitedJoinGroupRequest` 事件后，可以通过 `bot.handleBotInvitedJoinGroupRequest(eventId, fromId, groupId, operate, message)` 处理入群邀请。
 
-#### Bot主动退出一个群
+### Bot主动退出一个群
 
 eventName: `leaveActive`
+
+callback parameter:
 
 ```json5
 {
@@ -910,18 +915,18 @@ eventName: `leaveActive`
 }
 ```
 
-| 名字             | 类型   | 说明                                                         |
-| ---------------- | ------ | ------------------------------------------------------------ |
-| group            | Object | Bot退出的群的信息                                            |
-| group.id         | Long   | 群号                                                         |
-| group.name       | String | 群名                                                         |
-| group.permission | String | Bot在群中的权限，ADMINISTRATOR或MEMBER |
+| 名字             | 类型   | 说明                                    |
+| ---------------- | ------ | ------------------------------------- |
+| group            | Object | Bot退出的群的信息                       |
+| group.id         | Long   | 群号                                  |
+| group.name       | String | 群名                                  |
+| group.permission | String | Bot在群中的权限，ADMINISTRATOR或MEMBER  |
 
-
-
-#### Bot被踢出一个群
+### Bot被踢出一个群
 
 eventName: `leaveKick`
+
+callback parameter:
 
 ```json5
 {
@@ -940,3 +945,30 @@ eventName: `leaveKick`
 | group.id         | Long   | 群号                                                         |
 | group.name       | String | 群名                                                         |
 | group.permission | String | Bot在群中的权限，ADMINISTRATOR或MEMBER |
+
+### Bot接收到添加好友申请
+
+eventName: `newFriendRequest`
+
+callback parameter:
+
+```json5
+{
+    "type": "NewFriendRequestEvent",
+    "eventId": 12345678,
+    "fromId": 123456,
+    "groupId": 654321,
+    "nick": "Nick Name",
+    "message": ""
+}
+```
+
+| 名字     | 类型   | 说明                                             |
+| ------- | ------ | ----------------------------------------------- |
+| eventId | Long   | 事件标识，响应该事件时的标识                         |
+| fromId  | Long   | 申请人QQ号                                       |
+| groupId | Long   | 申请人如果通过某个群添加好友，该项为该群群号；否则为0    |
+| nick    | String | 申请人的昵称或群名片                                |
+| message | String | 申请消息                                          |
+
+接收 `newFriendRequest` 事件后，可以通过 `bot.handleNewFriendRequest(eventId, fromId, groupId, operate, message)` 处理添加好友申请。

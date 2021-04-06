@@ -27,5 +27,6 @@
   "MemberPermissionChangeEvent": "memberPermissionChange",
   "MemberMuteEvent": "memberMute",
   "MemberUnmuteEvent": "memberUnmute",
-  "MemberJoinRequestEvent": "memberJoinRequest"
+  "MemberJoinRequestEvent": "memberJoinRequest",
+  "NewFriendRequestEvent": "newFriendRequest"
 }

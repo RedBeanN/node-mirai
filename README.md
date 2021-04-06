@@ -4,7 +4,8 @@
 
 由于还在开发中, 所有 API 均为待定.
 
-最低支持: 
+最低支持:
+
 - `mirai-console-wrapper-0.2.0`
 - `mirai-core-0.31.1`
 - `mirai-api-http-1.3.2`
@@ -20,7 +21,7 @@ npm i -S node-mirai-sdk
 
 - 编写代码 (main.js)
 
-*PS: 注释中带 \* 为必须有*
+*PS: 注释中带 \* 为必须有。*
 
 ```javascript
 const Mirai = require('node-mirai-sdk');
@@ -104,7 +105,6 @@ node main.js
 
 - [事件订阅说明](https://github.com/RedBeanN/node-mirai/blob/master/event.md)
 - [API文档](https://redbean.tech/node-mirai-sdk)
-
 
 ```javascript
 const Mirai = require('node-mirai-sdk');

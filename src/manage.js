@@ -92,6 +92,26 @@ const quitGroup = async ({
   return data;
 }
 
+const handleNewFriendRequest = async({
+  sessionKey,
+  host,
+  eventId,
+  fromId,
+  groupId,
+  operate,
+  message
+}) => {
+  const { data } = await axios.post(`${host}/resp/newFriendRequestEvent`, {
+    sessionKey,
+    eventId,
+    fromId,
+    groupId,
+    operate,
+    message
+  });
+  return data;
+}
+
 module.exports = {
   getFriendList,
   getGroupList,
@@ -100,5 +120,6 @@ module.exports = {
   sendCommand,
   getManagers,
   botInvitedJoinGroupRequestHandler,
-  quitGroup
+  quitGroup,
+  handleNewFriendRequest
 };
