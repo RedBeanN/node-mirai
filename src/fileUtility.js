@@ -8,7 +8,7 @@ const FormData = require("form-data");
  * 上传群文件并发送
  * @param { string | Buffer | ReadStream } url 文件所在路径或 URL
  * @param { string } path 文件要上传到群文件中的位置（路径）
- * @param { message } target 要发送文件的目标
+ * @param { string } target 要发送文件的目标
  * @param { string } sessionKey
  * @param { string } host
  * @return { object } 
@@ -35,6 +35,133 @@ const uploadFileAndSend = async({
   return data;
 };
 
+/**
+ * 获取群文件指定路径下的文件列表
+ * @param { number | string } target 要获取的群号
+ * @param { string } dir 要获取的群文件路径
+ * @param { string } sessionKey
+ * @param { string } host
+ * @returns { object }
+ */
+const getGroupFileList = async({
+  target,
+  dir,
+  sessoinKey,
+  host 
+}) => {
+  const encodedDir = (dir === undefined) ? "/" : encodeURIComponent(dir);
+  const { data } = await axios.get(`${host}/groupFileList?sessionKey=${sessoinKey}&target=${target}&dir=${encodedDir}`);
+  return data;
+};
+
+/**
+ * 获取群文件指定详细信息
+ * @param { number | string } target 要获取的群号
+ * @param { string } id 文件唯一 ID 
+ * @param { string } sessionKey
+ * @param { string } host
+ * @returns { object }
+ */
+const getGroupFileInfo = async({
+  target,
+  id,
+  sessionKey,
+  host
+}) => {
+  const { data } = await axios.get(`${host}/groupFileInfo?sessionKey=${sessionKey}&target=${target}&id=${id}`);
+  return data;
+};
+
+
+/**
+ * 重命名指定群文件
+ * @param { number | string } target 目标群号
+ * @param { string } id 要重命名的文件唯一 ID 
+ * @param { string } rename 文件的新名称
+ * @param { string } sessionKey
+ * @param { string } host
+ * @returns { object }
+ */
+const renameGroupFile = async({
+  target,
+  id,
+  rename,
+  sessionKey,
+  host
+}) => {
+  const form = new FormData();
+  form.append('sessionKey', sessionKey);
+  form.append('target', target);
+  form.append('id', id);
+  form.append('rename', rename);
+
+  const { data } = await axios.post(`${host}/groupFileRename`, form, {
+    headers: form.getHeaders()
+  });
+
+  return data;
+};
+
+/**
+ * 移动指定群文件
+ * @param { number | string } target 目标群号
+ * @param { string } id 要移动的文件唯一 ID 
+ * @param { string } movePath 文件的新路径
+ * @param { string } sessionKey
+ * @param { string } host
+ * @returns { object }
+ */
+const moveGroupFile = async({
+  target,
+  id,
+  movePath,
+  sessionKey,
+  host
+}) => {
+  const form = new FormData();
+  form.append('sessionKey', sessionKey);
+  form.append('id', id);
+  form.append('target', target);
+  form.append('movePath', movePath);
+
+  const { data } = await axios.post(`${host}/groupFileMove`, form, {
+    headers: form.getHeaders()
+  });
+
+  return data;
+};
+
+/**
+ * 删除指定群文件
+ * @param { number | string } target 目标群号
+ * @param { string } id 要删除的文件唯一 ID
+ * @param { string } sessionKey
+ * @param { string } host
+ * @returns { object }
+ */
+const deleteGroupFile = async({
+  target,
+  id,
+  sessionKey,
+  host
+}) => {
+  const form = new FormData();
+  form.append('sessionKey', sessionKey);
+  form.append('id', id);
+  form.append('target', target);
+
+  const { data } = await axios.post(`${host}/groupFileDelete`, form, {
+    headers: form.getHeaders()
+  });
+
+  return data;
+};
+
 module.exports = { 
-  uploadFileAndSend
+  uploadFileAndSend,
+  getGroupFileList,
+  getGroupFileInfo,
+  renameGroupFile,
+  moveGroupFile,
+  deleteGroupFile
 };

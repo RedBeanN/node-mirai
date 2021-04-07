@@ -42,7 +42,12 @@ const {
 const group = require('./src/group');
 
 const {
-  uploadFileAndSend
+  uploadFileAndSend,
+  getGroupFileList,
+  getGroupFileInfo,
+  renameGroupFile,
+  moveGroupFile,
+  deleteGroupFile
 } = require('./src/fileUtility');
 
 /**
@@ -834,10 +839,117 @@ class NodeMirai {
    */
   uploadFileAndSend(url, path, target) {
     const { sessionKey, host } = this;
+    const realTarget = (typeof target === 'number') || (typeof target === 'string')
+      ? target
+      : target.sender.group.id;
     return uploadFileAndSend({
       url,
       path,
-      target,
+      target: realTarget,
+      sessionKey,
+      host
+    });
+  }
+
+  
+  /**
+   * @method NodeMirai#getGroupFileList
+   * @description 获取群文件指定路径下的文件列表
+   * @param { string } dir 要获取的群文件路径
+   * @param { number | string | message } target 要获取的群号
+   * @returns { object }
+   */
+  getGroupFileList(dir, target) {
+    const { sessionKey, host } = this;
+    const realTarget = (typeof target === 'number') || (typeof target === 'string')
+      ? target
+      : target.sender.group.id;
+    return getGroupFileList({
+      target: realTarget,
+      dir,
+      sessionKey,
+      host
+    });
+  }
+
+  /**
+   * @method NodeMirai#getGroupFileInfo
+   * @description 获取群文件指定详细信息
+   * @param { string } id 文件唯一 ID
+   * @param { number | string | message } target 要获取的群号
+  * @returns { object }
+   */
+  getGroupFileInfo(id, target) {
+    const { sessionKey, host } = this;
+    const realTarget = (typeof target === 'number') || (typeof target === 'string')
+      ? target
+      : target.sender.group.id;
+    return getGroupFileInfo({
+      target: realTarget,
+      id,
+      sessionKey,
+      host
+    });
+  }
+
+  /**
+   * @method NodeMirai#renameGroupFile
+   * @description 重命名指定群文件
+   * @param { string } id 要重命名的文件唯一 ID 
+   * @param { string } rename 文件的新名称
+   * @param { number | string } target 目标群号
+   * @returns { object }
+   */
+  renameGroupFile(id, rename, target) {
+    const { sessionKey, host } = this;
+    const realTarget = (typeof target === 'number') || (typeof target === 'string')
+      ? target
+      : target.sender.group.id;
+    return renameGroupFile({
+      target: realTarget,
+      id,
+      rename,
+      sessionKey,
+      host
+    });
+  }
+
+  /**
+   * @method NodeMirai#moveGroupFile
+   * @description 移动指定群文件
+   * @param { string } id 要移动的文件唯一 ID 
+   * @param { string } movePath 文件的新路径
+   * @param { number | string } target 目标群号
+   * @returns { object }
+   */
+  moveGroupFile(id, movePath, target) {
+    const { sessionKey, host } = this;
+    const realTarget = (typeof target === 'number') || (typeof target === 'string')
+      ? target
+      : target.sender.group.id;
+    return moveGroupFile({
+      target: realTarget,
+      id,
+      movePath,
+      sessionKey,
+      host
+    });
+  }
+
+  /**
+   * 删除指定群文件
+   * @param { string } id 要删除的文件唯一 ID
+   * @param { number | string } target 目标群号
+   * @returns { object }
+   */
+  deleteGroupFile(id, target) {
+    const { sessionKey, host } = this;
+    const realTarget = (typeof target === 'number') || (typeof target === 'string')
+      ? target
+      : target.sender.group.id;
+    return deleteGroupFile({
+      target: realTarget,
+      id,
       sessionKey,
       host
     });
