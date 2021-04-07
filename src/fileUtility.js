@@ -49,8 +49,10 @@ const getGroupFileList = async({
   sessoinKey,
   host 
 }) => {
-  const encodedDir = (dir === undefined) ? "/" : encodeURIComponent(dir);
-  const { data } = await axios.get(`${host}/groupFileList?sessionKey=${sessoinKey}&target=${target}&dir=${encodedDir}`);
+  let getUrl = `${host}/groupFileList?sessionKey=${sessionKey}&target=${target}`;
+  if (dir !== undefined)
+    getUrl += `&dir=${encodeURIComponent(dir)}`;
+  const { data } = await axios.get(getUrl);
   return data;
 };
 
@@ -89,14 +91,11 @@ const renameGroupFile = async({
   sessionKey,
   host
 }) => {
-  const form = new FormData();
-  form.append('sessionKey', sessionKey);
-  form.append('target', target);
-  form.append('id', id);
-  form.append('rename', rename);
-
-  const { data } = await axios.post(`${host}/groupFileRename`, form, {
-    headers: form.getHeaders()
+  const { data } = await axios.post(`${host}/groupFileRename`, {
+    sessionKey,
+    target,
+    id,
+    rename
   });
 
   return data;
@@ -118,14 +117,11 @@ const moveGroupFile = async({
   sessionKey,
   host
 }) => {
-  const form = new FormData();
-  form.append('sessionKey', sessionKey);
-  form.append('id', id);
-  form.append('target', target);
-  form.append('movePath', movePath);
-
-  const { data } = await axios.post(`${host}/groupFileMove`, form, {
-    headers: form.getHeaders()
+  const { data } = await axios.post(`${host}/groupFileMove`, {
+    sessionKey,
+    id,
+    target,
+    movePath
   });
 
   return data;
@@ -145,13 +141,10 @@ const deleteGroupFile = async({
   sessionKey,
   host
 }) => {
-  const form = new FormData();
-  form.append('sessionKey', sessionKey);
-  form.append('id', id);
-  form.append('target', target);
-
-  const { data } = await axios.post(`${host}/groupFileDelete`, form, {
-    headers: form.getHeaders()
+  const { data } = await axios.post(`${host}/groupFileDelete`, {
+    sessionKey,
+    id,
+    target
   });
 
   return data;

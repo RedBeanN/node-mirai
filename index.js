@@ -877,7 +877,7 @@ class NodeMirai {
    * @description 获取群文件指定详细信息
    * @param { string } id 文件唯一 ID
    * @param { number | string | message } target 要获取的群号
-  * @returns { object }
+   * @returns { object }
    */
   getGroupFileInfo(id, target) {
     const { sessionKey, host } = this;
