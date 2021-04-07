@@ -150,7 +150,6 @@ const toMiraiCode = component => {
       return `[mirai:face:${component.id}]`;
     case 'Poke':
       return `[mirai:poke:${component.name},${component.type},${component.id}]`;
-      break;
     case 'VipFace':
       // TODO: 当前版本(http-api1.7.2)尚未支持 VipFace 消息
       // return `[mirai:vipface:${component.id},${component.name},${component.count}]`;

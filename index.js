@@ -4,8 +4,10 @@ const WebSocket = require('ws');
 const Signal = require('./src/utils/Signal');
 
 const MessageComponent = require('./src/MessageComponent');
-const { Plain } = MessageComponent;
+const Target = require('./src/target');
 const events = require('./src/events.json');
+
+const { Plain } = MessageComponent;
 
 const init = require('./src/init');
 const verify = require('./src/verify');
@@ -707,6 +709,24 @@ class NodeMirai {
     });
   }
   /**
+   * @method NodeMirai#setEssence
+   * @description 设置群精华消息
+   * @param { number | string | message } target 要设置的群
+   * @param { number } id 精华消息 ID
+   */
+  setEssence(target, id) {
+    const { host, sessionKey } = this;
+    const realTarget = (typeof target === 'number') || (typeof target === 'string')
+      ? target
+      : target.sender.group.id;
+    return group.setEssence({
+      target: realTarget,
+      id,
+      host,
+      sessionKey
+    });
+  }
+  /**
    * @method NodeMirai#getGroupConfig
    * @description 获取群设置
    * @async
@@ -1151,5 +1171,6 @@ class NodeMirai {
 }
 
 NodeMirai.MessageComponent = MessageComponent;
+NodeMirai.Target = Target;
 
 module.exports = NodeMirai;

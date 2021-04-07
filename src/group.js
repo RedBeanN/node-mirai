@@ -67,7 +67,7 @@ const setUnmuteAll = async ({ //群解除全体禁言
   return { data };
 };
 
-const setKick = async ({ //移除群成员
+const setKick = async ({ // 移除群成员
   target,
   memberId,
   msg,
@@ -83,7 +83,18 @@ const setKick = async ({ //移除群成员
   return data;
 }
 
-const getConfig = async ({ //获取群设置
+const setEssence = async ({  // 设置群精华
+  target,
+  sessionKey
+}) => {
+  const { data } = await axios.post(`${host}/setEssence`, {
+    sessionKey,
+    target
+  });
+  return data;
+}
+
+const getConfig = async ({ // 获取群设置
   target,
   host,
   sessionKey,
@@ -169,6 +180,7 @@ module.exports = {
   setMuteAll,
   setUnmuteAll,
   setKick,
+  setEssence,
   getConfig,
   setConfig,
   getMemberInfo,
