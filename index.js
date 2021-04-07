@@ -41,6 +41,10 @@ const {
 
 const group = require('./src/group');
 
+const {
+  uploadFileAndSend
+} = require('./src/fileUtility');
+
 /**
  * @typedef { Object } MessageChain 消息链
  * @description 消息链对象, node-mirai-sdk 提供各类型的 .value() 方法获得各自的属性值
@@ -298,7 +302,7 @@ class NodeMirai {
   /**
    * @method NodeMirai#sendFlashImageMessage
    * @async
-   * @param { url } url 图片所在路径
+   * @param { string | Buffer | ReadStream } url 图片所在路径
    * @param { message } target 发送目标对象
    * @return { object } {
    *  code: 0,
@@ -818,6 +822,24 @@ class NodeMirai {
       message,
       host: this.host,
       sessionKey: this.sessionKey,
+    });
+  }
+
+  /**
+   * @method NodeMirai#uploadFileAndSend
+   * @description 上传（群）文件并发送
+   * @param { string | Buffer | ReadStream } url 文件所在路径或 URL
+   * @param { string } path 文件要上传到群文件中的位置（路径）
+   * @param { message } target 要发送文件的目标
+   */
+  uploadFileAndSend(url, path, target) {
+    const { sessionKey, host } = this;
+    return uploadFileAndSend({
+      url,
+      path,
+      target,
+      sessionKey,
+      host
     });
   }
 
