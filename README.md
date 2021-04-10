@@ -199,3 +199,27 @@ bot.onMessage(message => {
 });
 
 ```
+
+## 使用 `target` 构造
+
+(由 [@kirainmoe](https://github.com/kirainmoe) 提供)
+
+`Bot` 主动调用部分接口, 需要按照消息的格式, 构造发送对象 `target`:
+
+```javascript
+// 私聊发送图片给 12345678
+bot.sendImageMessage(url, { type: 'FriendMessage', sender: { id: 12345678 } });
+// 群聊发送图片到 998244353
+bot.sendImageMessage(url, { type: 'FriendMessage', sender: { group:  { id: 998244353 } } });
+
+```
+
+通过从 NodeMirai.Target 引入 Friend, Group 或 Temp 可以省去构造 target 的过程:
+
+```javascript
+const { Friend, Group, Temp } = require("node-mirai-sdk").Target;
+bot.sendImageMessage(url, Friend(12345678));
+bot.sendImageMessage(url, Group(998244353));
+bot.sendImageMessage(url, Temp(998244353, 12345678));               // 给群号为 998244353 的用户 12345678 发送临时消息图片
+
+```
