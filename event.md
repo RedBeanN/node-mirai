@@ -67,7 +67,7 @@ bot.on("MemberLeaveEventQuit", () => console.log("Someone has left the group."))
 
 ## 所有事件及 callback 参数
 
-此列表来自 [mirai-http-api/EventType](https://github.com/project-mirai/mirai-api-http/blob/master/EventType.md)
+此列表来自 [mirai-http-api/docs/EventType](https://github.com/project-mirai/mirai-api-http/blob/master/docs/EventType.md)
 
 ### Bot登录成功
 
