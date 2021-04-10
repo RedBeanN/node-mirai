@@ -4,8 +4,10 @@ const WebSocket = require('ws');
 const Signal = require('./src/utils/Signal');
 
 const MessageComponent = require('./src/MessageComponent');
-const { Plain } = MessageComponent;
+const Target = require('./src/target');
 const events = require('./src/events.json');
+
+const { Plain } = MessageComponent;
 
 const init = require('./src/init');
 const verify = require('./src/verify');
@@ -21,7 +23,9 @@ const {
   sendQuotedGroupMessage,
   sendQuotedTempMessage,
   uploadImage,
+  uploadVoice,
   sendImageMessage,
+  sendVoiceMessage,
   sendFlashImageMessage
 } = require('./src/sendMessage');
 
@@ -38,6 +42,15 @@ const {
 } = require('./src/manage');
 
 const group = require('./src/group');
+
+const {
+  uploadFileAndSend,
+  getGroupFileList,
+  getGroupFileInfo,
+  renameGroupFile,
+  moveGroupFile,
+  deleteGroupFile
+} = require('./src/fileUtility');
 
 /**
  * @typedef { Object } MessageChain 消息链
@@ -271,9 +284,32 @@ class NodeMirai {
     }
   }
   /**
+   * @method NodeMirai#sendVoiceMessage
+   * @async
+   * @param { string | Buffer | ReadStream } url 语音所在路径
+   * @param { target } group 发送目标对象（目前仅支持群组）
+   * @return { object } {
+   *  code: 0,
+   *  msg: "success",
+   *  messageId: 123456
+   * }
+   */
+  async sendVoiceMessage (url, target) {
+    if (target.type !== 'GroupMessage')
+      console.error('Error @ sendVoiceMessage: only support send voice to group');
+
+    return sendVoiceMessage({
+      url,
+      group: target.sender.group.id,
+      sessionKey: this.sessionKey,
+      host: this.host
+    });
+  }
+
+  /**
    * @method NodeMirai#sendFlashImageMessage
    * @async
-   * @param { url } url 图片所在路径
+   * @param { string | Buffer | ReadStream } url 图片所在路径
    * @param { message } target 发送目标对象
    * @return { object } {
    *  code: 0,
@@ -334,6 +370,25 @@ class NodeMirai {
     });
   }
 
+
+  /**
+   * @method NodeMirai#uploadVoice
+   * @async
+   * @param { string | Buffer | ReadStream } url 声音所在路径
+   * @returns { object } {
+   *  voiceId: "{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}.amr",
+   *  url: "xxxxxxxxxxxxxxxxxxxx"
+   * }
+   */
+  async uploadVoice (url) {
+    return uploadVoice({
+      url,
+      type: 'group',
+      sessionKey: this.sessionKey,
+      host: this.host
+    });
+  }
+
   /**
    * @method NodeMirai#sendMessage
    * @description 发送消息给指定好友或群组
@@ -348,7 +403,7 @@ class NodeMirai {
       case 'GroupMessage':
         return this.sendGroupMessage(message, target.sender.group.id);
       case 'TempMessage':
-        return this.sendTempMessage(message, target.sender.id, target.sender.group,id);
+        return this.sendTempMessage(message, target.sender.id, target.sender.group.id);
       default:
         console.error('Invalid target @ sendMessage');
     }
@@ -654,6 +709,24 @@ class NodeMirai {
     });
   }
   /**
+   * @method NodeMirai#setEssence
+   * @description 设置群精华消息
+   * @param { number | string | message } target 要设置的群
+   * @param { number } id 精华消息 ID
+   */
+  setEssence(target, id) {
+    const { host, sessionKey } = this;
+    const realTarget = (typeof target === 'number') || (typeof target === 'string')
+      ? target
+      : target.sender.group.id;
+    return group.setEssence({
+      target: realTarget,
+      id,
+      host,
+      sessionKey
+    });
+  }
+  /**
    * @method NodeMirai#getGroupConfig
    * @description 获取群设置
    * @async
@@ -774,6 +847,131 @@ class NodeMirai {
       message,
       host: this.host,
       sessionKey: this.sessionKey,
+    });
+  }
+
+  /**
+   * @method NodeMirai#uploadFileAndSend
+   * @description 上传（群）文件并发送
+   * @param { string | Buffer | ReadStream } url 文件所在路径或 URL
+   * @param { string } path 文件要上传到群文件中的位置（路径）
+   * @param { message } target 要发送文件的目标
+   */
+  uploadFileAndSend(url, path, target) {
+    const { sessionKey, host } = this;
+    const realTarget = (typeof target === 'number') || (typeof target === 'string')
+      ? target
+      : target.sender.group.id;
+    return uploadFileAndSend({
+      url,
+      path,
+      target: realTarget,
+      sessionKey,
+      host
+    });
+  }
+
+  
+  /**
+   * @method NodeMirai#getGroupFileList
+   * @description 获取群文件指定路径下的文件列表
+   * @param { string } dir 要获取的群文件路径
+   * @param { number | string | message } target 要获取的群号
+   * @returns { object }
+   */
+  getGroupFileList(dir, target) {
+    const { sessionKey, host } = this;
+    const realTarget = (typeof target === 'number') || (typeof target === 'string')
+      ? target
+      : target.sender.group.id;
+    return getGroupFileList({
+      target: realTarget,
+      dir,
+      sessionKey,
+      host
+    });
+  }
+
+  /**
+   * @method NodeMirai#getGroupFileInfo
+   * @description 获取群文件指定详细信息
+   * @param { string } id 文件唯一 ID
+   * @param { number | string | message } target 要获取的群号
+   * @returns { object }
+   */
+  getGroupFileInfo(id, target) {
+    const { sessionKey, host } = this;
+    const realTarget = (typeof target === 'number') || (typeof target === 'string')
+      ? target
+      : target.sender.group.id;
+    return getGroupFileInfo({
+      target: realTarget,
+      id,
+      sessionKey,
+      host
+    });
+  }
+
+  /**
+   * @method NodeMirai#renameGroupFile
+   * @description 重命名指定群文件
+   * @param { string } id 要重命名的文件唯一 ID 
+   * @param { string } rename 文件的新名称
+   * @param { number | string } target 目标群号
+   * @returns { object }
+   */
+  renameGroupFile(id, rename, target) {
+    const { sessionKey, host } = this;
+    const realTarget = (typeof target === 'number') || (typeof target === 'string')
+      ? target
+      : target.sender.group.id;
+    return renameGroupFile({
+      target: realTarget,
+      id,
+      rename,
+      sessionKey,
+      host
+    });
+  }
+
+  /**
+   * @method NodeMirai#moveGroupFile
+   * @description 移动指定群文件
+   * @param { string } id 要移动的文件唯一 ID 
+   * @param { string } movePath 文件的新路径
+   * @param { number | string } target 目标群号
+   * @returns { object }
+   */
+  moveGroupFile(id, movePath, target) {
+    const { sessionKey, host } = this;
+    const realTarget = (typeof target === 'number') || (typeof target === 'string')
+      ? target
+      : target.sender.group.id;
+    return moveGroupFile({
+      target: realTarget,
+      id,
+      movePath,
+      sessionKey,
+      host
+    });
+  }
+
+  /**
+   * 删除指定群文件
+   * @param { string } id 要删除的文件唯一 ID
+   * @param { number | string } target 目标群号
+   * @returns { object }
+   */
+  deleteGroupFile(id, target) {
+    const { sessionKey, host } = this;
+    const realTarget = (typeof target === 'number') || (typeof target === 'string')
+      ? target
+      : target.sender.group.id;
+    return deleteGroupFile({
+      target: realTarget,
+      id,
+      sessionKey,
+      host
     });
   }
 
@@ -973,5 +1171,6 @@ class NodeMirai {
 }
 
 NodeMirai.MessageComponent = MessageComponent;
+NodeMirai.Target = Target;
 
 module.exports = NodeMirai;

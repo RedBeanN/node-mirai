@@ -122,6 +122,20 @@ const Poke = name => {
 };
 Poke.value = poke => poke.name;
 
+const Voice = ({ voiceId, url = '' }) => {
+  return {
+    type: 'Voice',
+    voiceId,
+    url
+  };
+};
+Voice.value = voice => {
+  return {
+    voiceId: voice.voiceId,
+    url: voice.url
+  }
+};
+
 // Experimental
 // refer: https://github.com/mamoe/mirai/blob/master/docs/mirai-code-specification.md
 const toMiraiCode = component => {
@@ -135,15 +149,15 @@ const toMiraiCode = component => {
     case 'Face':
       return `[mirai:face:${component.id}]`;
     case 'Poke':
-      // TODO: 当前版本(mirai-core1.0.2/http-api1.7.2)尚未支持接收 Poke 消息
-      // return `[mirai:poke:${component.name},${component.type},${component.id}]`;
-      break;
+      return `[mirai:poke:${component.name},${component.type},${component.id}]`;
     case 'VipFace':
       // TODO: 当前版本(http-api1.7.2)尚未支持 VipFace 消息
       // return `[mirai:vipface:${component.id},${component.name},${component.count}]`;
       break;
     case 'Image':
       return `[mirai:image:${component.imageId}]`;
+    case 'Voice':
+      return `[mirai:voice:${component.voiceId}]`;
     case 'FlashImage':
       return `[mirai:flash:${component.imageId}]`;
   }
@@ -166,6 +180,7 @@ module.exports = {
   App,
   Quote,
   Poke,
+  Voice,
   toMiraiCode,
   parseMiraiCode,
 };
