@@ -129,7 +129,7 @@ const uploadVoice = async({
   form.append('sessionKey', sessionKey);
   form.append('type', type);
   form.append('voice', voice);
-
+    
   const { data } = await axios.post(`${host}/uploadVoice`, form, {
     headers: form.getHeaders()
   });

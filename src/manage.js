@@ -27,36 +27,36 @@ const getMessageById = async ({ //通过messageId获取一条被缓存的消息
 
 const registerCommand = async ({ //注册指令
   host,
-  authKey,
+  verifyKey,
   name,
   alias,
   description,
   usage
 }) => {
   const { data } = await axios.post(`${host}/command/register`, {
-    authKey, name, alias, description, usage,
+    verifyKey, name, alias, description, usage,
   });
   return { data };
 };
 
 const sendCommand = async ({ //发送指令
   host,
-  authKey,
+  verifyKey,
   name,
   args,
 }) => {
   const { data } = await axios.post(`${host}/command/send`, {
-    authKey, name, args,
+    verifyKey, name, args,
   });
   return data;
 };
 
 const getManagers = async ({ //获取Mangers
   host,
-  authKey,
+  verifyKey,
   qq,
 }) => {
-  const { data } = await axios.get(`${host}/managers?authKey=${authKey}&qq=${qq}`);
+  const { data } = await axios.get(`${host}/managers?verifyKey=${verifyKey}&qq=${qq}`);
   return data;
 };
 
