@@ -1,22 +1,26 @@
 # node-mirai
 
+[![NPM Version](https://img.shields.io/npm/v/node-mirai-sdk)](https://www.npmjs.com/package/node-mirai-sdk)
+
 [mirai](https://github.com/mamoe/mirai) 的 Node.js SDK.
 
 由于还在开发中, 所有 API 均为待定.
 
 最低支持:
 
-- `mirai-console-wrapper-0.2.0`
-- `mirai-core-0.31.1`
-- `mirai-api-http-1.3.2`
+- `mirai-core-2.6.2`
+- `mirai-api-http-2.0.0` (部分兼容 `1.x`)
 
 ## QuickStart / 快速开始
 
-- 运行你的 [mirai-api-http](https://github.com/mamoe/mirai-api-http) service
+- 运行你的 [mirai-api-http](https://github.com/project-mirai/mirai-api-http) service
 - 安装 [node-mirai-sdk](https://www.npmjs.com/package/node-mirai-sdk)
 
 ```bash
-npm i -S node-mirai-sdk
+# for mirai-api-http 2.x
+npm i -S node-mirai-sdk@beta
+# for mirai-api-http 1.x
+npm i -S node-mirai-sdk@0.2.4
 ```
 
 - 编写代码 (main.js)
@@ -30,12 +34,15 @@ const { Plain, At } = Mirai.MessageComponent;
 /**
 * 服务端设置(*)
 * host: mirai-api-http 的地址和端口，默认是 http://127.0.0.1:8080
-* authKey: mirai-api-http 的 authKey，建议手动指定
+* verifyKey: mirai-api-http 的 verifyKey，建议手动指定
 * qq: 当前 BOT 对应的 QQ 号
 * enableWebsocket: 是否开启 WebSocket，需要和 mirai-api-http 的设置一致
 */
 const bot = new Mirai({
   host: 'http://hostname:port',
+  // mirai-api-http-2.x
+  verifyKey: 'YourVerifyKey',
+  // mirai-api-http-1.x
   authKey: 'YourAuthKey',
   qq: 123456,
   enableWebsocket: false,
