@@ -2,6 +2,7 @@ const util = require('util');
 const WebSocket = require('ws');
 
 const Signal = require('./src/utils/Signal');
+const checkMAHVersion = require('./src/utils/checkMAHVersion');
 
 const MessageComponent = require('./src/MessageComponent');
 const Target = require('./src/target');
@@ -90,6 +91,7 @@ class NodeMirai {
    * @param { object } options
    * @param { string } options.host http-api 服务的地址
    * @param { string } options.verifyKey http-api 服务的verifyKey
+   * @param { string } options.authKey (Deprecated) http-api 1.x 版本的authKey
    * @param { number } options.qq bot 的 qq 号
    * @param { boolean } [options.enableWebsocket] 使用 ws 来获取消息和事件推送
    * @param { number } [options.interval] 拉取消息的周期(ms), 默认为200
@@ -97,12 +99,14 @@ class NodeMirai {
   constructor ({
     host,
     verifyKey,
+    authKey,
     qq,
     enableWebsocket = false,
     interval = 200,
   }) {
     this.host = host;
-    this.verifyKey = verifyKey;
+    // support 1.x authKey
+    this.verifyKey = verifyKey || authKey;
     this.qq = qq;
     this.interval = interval;
     this.signal = new Signal();
@@ -115,14 +119,17 @@ class NodeMirai {
     this.types = [];
     this.enableWebsocket = enableWebsocket;
     this.plugins = [];
-    this.auth();
+    this._is_mah_v1_ = false;
+    checkMAHVersion(this).then(() => {
+      this.auth();
+    });
   }
 
   /**
    * Bot 认证, 获取 sessionKey
    */
   auth () {
-    init(this.host, this.verifyKey).then(data => {
+    init(this.host, this.verifyKey, this._is_mah_v1_).then(data => {
       const { code, session } = data;
       if (code !== 0) {
         console.error('Failed @ auth: Invalid auth key');
@@ -149,7 +156,7 @@ class NodeMirai {
    * 校验 sessionKey, 必须在 authed 事件后进行
    */
   async verify () {
-    return verify(this.host, this.sessionKey, this.qq).then(({ code, msg}) => {
+    return verify(this.host, this.sessionKey, this.qq, this._is_mah_v1_).then(({ code, msg }) => {
       if (code !== 0) {
         console.error('Failed @ verify: Invalid session key');
         // process.exit(1);
