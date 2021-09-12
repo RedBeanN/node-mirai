@@ -11,7 +11,7 @@ const getMemberList = async ({ //获取群成员列表
       target,
     },
   });
-  return data;
+  return data.data || data;
 };
 
 const setMute = async ({ //群禁言群成员

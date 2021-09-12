@@ -5,7 +5,7 @@ const getFriendList = async ({ //获取好友列表
   sessionKey,
 }) => {
   const { data } = await axios.get(`${host}/friendList?sessionKey=${sessionKey}`);
-  return data;
+  return data.data || data;
 };
 
 const getGroupList = async ({ //获取群列表
@@ -13,7 +13,7 @@ const getGroupList = async ({ //获取群列表
   sessionKey,
 }) => {
   const { data } = await axios.get(`${host}/groupList?sessionKey=${sessionKey}`);
-  return data;
+  return data.data || data;
 };
 
 const getMessageById = async ({ //通过messageId获取一条被缓存的消息
