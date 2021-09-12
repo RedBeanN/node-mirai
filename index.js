@@ -94,6 +94,7 @@ class NodeMirai {
    * @param { string } options.authKey (Deprecated) http-api 1.x 版本的authKey
    * @param { number } options.qq bot 的 qq 号
    * @param { boolean } [options.enableWebsocket] 使用 ws 来获取消息和事件推送
+   * @param { boolean } [options.wsOnly] 完全使用 ws 来收发消息，为 true 时覆盖 enableWebsocket 且无需调用 verify
    * @param { number } [options.interval] 拉取消息的周期(ms), 默认为200
    */
   constructor ({
@@ -102,6 +103,7 @@ class NodeMirai {
     authKey,
     qq,
     enableWebsocket = false,
+    wsOnly = false,
     interval = 200,
   }) {
     this.host = host;
@@ -117,7 +119,10 @@ class NodeMirai {
       this.eventListeners[events[event]] = [];
     }
     this.types = [];
-    this.enableWebsocket = enableWebsocket;
+    // TODO: support wsOnly mode #32
+    this.wsOnly = wsOnly;
+    this.enableWebsocket = wsOnly || enableWebsocket;
+    this.wsHost = null;
     this.plugins = [];
     this._is_mah_v1_ = false;
     checkMAHVersion(this).then(() => {
@@ -128,8 +133,21 @@ class NodeMirai {
   /**
    * Bot 认证, 获取 sessionKey
    */
-  auth () {
-    init(this.host, this.verifyKey, this._is_mah_v1_).then(data => {
+  async auth () {
+    if (this.enableWebsocket && !this._is_mah_v1_) {
+      this.wsHost = new WebSocket(`${this.host.replace('http', 'ws')}/verifyKey=${this.verifyKey}&qq=${this.qq}`);
+      if (this.wsOnly) {
+        // skip binding sessionKey
+        this.signal.trigger('authed');
+        this.signal.trigger('verified');
+        this.startListeningEvents();
+        return {
+          code: 0,
+          msg: 'authed',
+        };
+      }
+    }
+    return init(this.host, this.verifyKey, this._is_mah_v1_).then(data => {
       const { code, session } = data;
       if (code !== 0) {
         console.error('Failed @ auth: Invalid auth key');
@@ -1107,10 +1125,13 @@ class NodeMirai {
     this.isEventListeningStarted = true;
     if (this.enableWebsocket) {
       this.onSignal('verified', () => {
-        const wsHost = `${this.host.replace('http', 'ws')}/all?sessionKey=${this.sessionKey}`;
-        (new WebSocket(wsHost)).on('message', message => {
+        if (!this.wsHost) {
+          const wsHost = `${this.host.replace('http', 'ws')}/all?sessionKey=${this.sessionKey}`;
+          this.wsHost = new WebSocket(wsHost);
+        }
+        this.wsHost.on('message', message => {
           this.emitEventListener(JSON.parse(message));
-        })
+        });
       });
     }
     else setInterval(async () => {
@@ -1124,7 +1145,14 @@ class NodeMirai {
       }
     }, this.interval);
   }
-  emitEventListener (message) {
+  emitEventListener (messageResp) {
+    // No `code` or `code = 0` presents a success response
+    if (messageResp.code) {
+      console.error(`Error: bad response with code ${messageResp.code}: ${messageResp.msg}`);
+      return;
+    }
+    // get response.data for 2.x or message for 1.x
+    const message = messageResp.data || messageResp;
     if (this.types.includes(message.type)) {
       message.reply = msg => this.reply(msg, message);
       message.quoteReply = msg => this.quoteReply(msg, message);
