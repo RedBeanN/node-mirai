@@ -8,7 +8,8 @@ const axios = require('axios');
  * @returns {Promise<*>}
  */
 const verify = async (host, sessionKey, qq) => {
-  const { data } = await axios.post(`${host}/verify`, {
+  console.log(host,sessionKey,qq);
+  const { data } = await axios.post(`${host}/bind`, {
     sessionKey, qq,
   });
   return data;

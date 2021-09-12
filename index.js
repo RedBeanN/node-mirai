@@ -89,20 +89,20 @@ class NodeMirai {
    * Create a NodeMirai bot
    * @param { object } options
    * @param { string } options.host http-api 服务的地址
-   * @param { string } options.authKey http-api 服务的 authKey
+   * @param { string } options.verifyKey http-api 服务的verifyKey
    * @param { number } options.qq bot 的 qq 号
    * @param { boolean } [options.enableWebsocket] 使用 ws 来获取消息和事件推送
    * @param { number } [options.interval] 拉取消息的周期(ms), 默认为200
    */
   constructor ({
     host,
-    authKey,
+    verifyKey,
     qq,
     enableWebsocket = false,
     interval = 200,
   }) {
     this.host = host;
-    this.authKey = authKey;
+    this.verifyKey = verifyKey;
     this.qq = qq;
     this.interval = interval;
     this.signal = new Signal();
@@ -122,7 +122,7 @@ class NodeMirai {
    * Bot 认证, 获取 sessionKey
    */
   auth () {
-    init(this.host, this.authKey).then(data => {
+    init(this.host, this.verifyKey).then(data => {
       const { code, session } = data;
       if (code !== 0) {
         console.error('Failed @ auth: Invalid auth key');
@@ -133,7 +133,9 @@ class NodeMirai {
       this.signal.trigger('authed');
       this.startListeningEvents();
       return { code, session };
-    }).catch(() => {
+    }).catch((code) => {
+      console.log('init 出错');
+      console.log(code);
       console.error('Failed @ auth: Invalid host');
       // process.exit(1);
       return {
@@ -978,7 +980,7 @@ class NodeMirai {
   getManagers () {
     return getManagers({
       host: this.host,
-      authKey: this.authKey,
+      verifyKey: this.verifyKey,
       qq: this.qq,
     });
   }
@@ -1000,7 +1002,7 @@ class NodeMirai {
   registerCommand (command) {
     return registerCommand(Object.assign({
       host: this.host,
-      authKey: this.authKey,
+      verifyKey: this.verifyKey,
     }, command));
   }
   /**
@@ -1013,7 +1015,7 @@ class NodeMirai {
   sendCommand (command) {
     return sendCommand(Object.assign({
       host: this.host,
-      authKey: this.authKey,
+      verifyKey: this.verifyKey,
     }, command));
   }
 
@@ -1070,7 +1072,7 @@ class NodeMirai {
     this.eventListeners[event].push(callback);
   }
   onCommand (callback) {
-    const ws = new WebSocket(`${this.host.replace('http', 'ws')}/command?authKey=${this.authKey}`);
+    const ws = new WebSocket(`${this.host.replace('http', 'ws')}/command?verifyKey=${this.verifyKey}`);
     ws.on('message', message => {
       callback(JSON.parse(message));
     });
