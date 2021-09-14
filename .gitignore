@@ -6,3 +6,6 @@ jsdoc*
 docs/
 
 .idea
+
+# typedefs are auto-generated so don't need to track
+types/
