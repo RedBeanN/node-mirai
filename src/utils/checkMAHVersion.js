@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-module.exports = async function checkMAHVersion (self) {
+const checkMAHVersion = (self) => {
   // ws-only mode is supported in v2
   if (this.wsOnly) return;
   return axios.get(`${self.host}/about`).then(({ data }) => {
@@ -12,3 +12,5 @@ module.exports = async function checkMAHVersion (self) {
     }
   });
 };
+
+module.exports = checkMAHVersion;
