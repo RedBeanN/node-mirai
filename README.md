@@ -18,7 +18,7 @@
 
 ```bash
 # for mirai-api-http 2.x
-npm i -S node-mirai-sdk@beta
+npm i -S node-mirai-sdk@latest
 # for mirai-api-http 1.x
 npm i -S node-mirai-sdk@0.2.4
 ```
