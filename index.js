@@ -1,4 +1,7 @@
 const util = require('util');
+/**
+ * @type { import('./src/typedef').WebSocket }
+ */
 const WebSocket = require('ws');
 
 const Signal = require('./src/utils/Signal');
@@ -54,48 +57,45 @@ const {
 } = require('./src/fileUtility');
 
 /**
- * @typedef { Object } MessageChain 消息链
- * @description 消息链对象, node-mirai-sdk 提供各类型的 .value() 方法获得各自的属性值
- * @property { string } type 消息类型
- * @property { number } [id] Source 类型中的消息 id, 或Quote类型中引用的源消息的 id
- * @property { number } [time] Source 类型中的时间戳
- * @property { number } [groupId] Quote 类型中源消息所在群的群号, 好友消息时为 0
- * @property { number } [senderId] Quote 类型中源消息发送者的 qq 号
- * @property { object } [origin] Quote 类型中源消息的 MessageChain
- * @property { string } [text] Plain 类型的文本
- * @property { number } [target] At 类型中 @ 目标的 qq 号
- * @property { string } [display] At 类型中 @ 目标的群名片
- * @property { number } [faceId] Face 类型中表情的编号
- * @property { string } [imageId] Image 类型中图片的 imageId
- * @property { string } [url] Image 类型中图片的 url, 可用于下载图片
- * @property { string } [xml] Xml 类型中的 xml 字符串
- * @property { string } [json] Json 类型中的 json 字符串
- * @property { string } [content] App 类型中的 app content 字符串
+ * @typedef { import('./src/typedef').Buffer } Buffer
+ * @typedef { import('./src/typedef').ReadStream } ReadStream
+ * @typedef { import('./src/typedef').httpApiResponse } httpApiResponse
+ * @typedef { import('./src/typedef').MessageChain } MessageChain
+ * @typedef { import('./src/typedef').message } message
+ * @typedef { import('./src/typedef').UserInfo } UserInfo
+ * @typedef { import('./src/typedef').GroupMember } GroupMember
+ * @typedef { import('./src/typedef').GroupInfo } GroupInfo
+ * @typedef { import('./src/typedef').GroupFile } GroupFile
+ * @typedef { import('./src/target').MessageTarget } MessageTarget
+ * @typedef { import('./src/target').GroupTarget } GroupTarget
  */
 /**
- * @typedef { Object } message 消息
- * @property { "FriendMessage"|"GroupMessage" } messageType 消息类型
- * @property { MessageChain[] } messageChain 消息链对象
- * @property { Sender } sender 发送者
- * @property { function } reply 快速回复消息
- * @property { function } quoteReply 快速引用回复消息
- * @property { function } recall 撤回本条消息
- */
-
-/**
- * Class NodeMirai
+ * @namespace NodeMirai
  */
 class NodeMirai {
+  static MessageComponent = MessageComponent
+  static Target = Target
+  /**
+   * @typedef { Object } BotConfig
+   * @property { string } host http-api 服务的地址
+   * @property { string } verifyKey http-api 服务的verifyKey
+   * @property { string } [authKey] (Deprecated) http-api 1.x 版本的authKey
+   * @property { number } qq bot 的 qq 号
+   * @property { boolean } [enableWebsocket] 使用 ws 来获取消息和事件推送
+   * @property { boolean } [wsOnly] 完全使用 ws 来收发消息，为 true 时覆盖 enableWebsocket 且无需调用 verify
+   * @property { number } [interval] 拉取消息的周期(ms), 默认为200
+   */
   /**
    * Create a NodeMirai bot
-   * @param { object } options
-   * @param { string } options.host http-api 服务的地址
-   * @param { string } options.verifyKey http-api 服务的verifyKey
-   * @param { string } options.authKey (Deprecated) http-api 1.x 版本的authKey
-   * @param { number } options.qq bot 的 qq 号
-   * @param { boolean } [options.enableWebsocket] 使用 ws 来获取消息和事件推送
-   * @param { boolean } [options.wsOnly] 完全使用 ws 来收发消息，为 true 时覆盖 enableWebsocket 且无需调用 verify
-   * @param { number } [options.interval] 拉取消息的周期(ms), 默认为200
+   * @constructor
+   * @param { BotConfig } config bot config
+   * @param { string } config.host http-api 服务的地址
+   * @param { string } config.verifyKey http-api 服务的verifyKey
+   * @param { string } [config.authKey] (Deprecated) http-api 1.x 版本的authKey
+   * @param { number } config.qq bot 的 qq 号
+   * @param { boolean } [config.enableWebsocket] 使用 ws 来获取消息和事件推送
+   * @param { boolean } [config.wsOnly] 完全使用 ws 来收发消息，为 true 时覆盖 enableWebsocket 且无需调用 verify
+   * @param { number } [config.interval] 拉取消息的周期(ms), 默认为200
    */
   constructor ({
     host,
@@ -118,10 +118,16 @@ class NodeMirai {
     for (let event in events) {
       this.eventListeners[events[event]] = [];
     }
+    /**
+     * @type { string[] }
+     */
     this.types = [];
     // TODO: support wsOnly mode #32
     this.wsOnly = wsOnly;
     this.enableWebsocket = wsOnly || enableWebsocket;
+    /**
+     * @type { WebSocket | null }
+     */
     this.wsHost = null;
     this.plugins = [];
     this._is_mah_v1_ = false;
@@ -131,7 +137,9 @@ class NodeMirai {
   }
 
   /**
-   * Bot 认证, 获取 sessionKey
+   * @method auth
+   * @description Bot 认证, 获取 sessionKey
+   * @returns { Promise<httpApiResponse> }
    */
   async auth () {
     if (this.enableWebsocket && !this._is_mah_v1_) {
@@ -154,6 +162,9 @@ class NodeMirai {
         // process.exit(1);
         return { code, session };
       }
+      /**
+       * @type { string }
+       */
       this.sessionKey = session;
       this.signal.trigger('authed');
       this.startListeningEvents();
@@ -171,7 +182,9 @@ class NodeMirai {
   }
 
   /**
-   * 校验 sessionKey, 必须在 authed 事件后进行
+   * @method verify
+   * @description 校验 sessionKey, 必须在 authed 事件后进行
+   * @returns { Promise<httpApiResponse> }
    */
   async verify () {
     return verify(this.host, this.sessionKey, this.qq, this._is_mah_v1_).then(({ code, msg }) => {
@@ -186,7 +199,9 @@ class NodeMirai {
   }
 
   /**
-   * 释放 sessionKey
+   * @method release
+   * @description 释放 sessionKey
+   * @returns { Promise<httpApiResponse> }
    */
   async release () {
     return release(this.host, this.sessionKey, this.qq).then(({ code, msg }) => {
@@ -199,6 +214,11 @@ class NodeMirai {
     });
   }
 
+  /**
+   * @method fetchMessage
+   * @param { number } count
+   * @returns { Promise<message[]> }
+   */
   async fetchMessage (count = 10) {
     return fetchMessage(this.host, this.sessionKey, count).catch(e => {
       console.error('Unknown error @ fetchMessage:', e.message);
@@ -210,14 +230,9 @@ class NodeMirai {
   /**
    * @method NodeMirai#sendFriendMessage
    * @description 发送好友消息
-   * @async
-   * @param { MessageChain[] } MessageChain MessageChain 数组
+   * @param { MessageChain[] } messageChain MessageChain 数组
    * @param { number } qq 发送对象的 qq 号
-   * @return { object } {
-   *  code: 0,
-   *  msg: "success",
-   *  messageId: 123456
-   * }
+   * @returns { Promise<httpApiResponse> }
    */
   async sendFriendMessage (messageChain, qq) {
     return sendFriendMessage({
@@ -230,19 +245,14 @@ class NodeMirai {
   /**
    * @method NodeMirai#sendGroupMessage
    * @description 发送群组消息
-   * @async
-   * @param { MessageChain[] } MessageChain MessageChain 数组
-   * @param { number } qq 发送群组的群号
-   * @return { object } {
-   *  code: 0,
-   *  msg: "success",
-   *  messageId: 123456
-   * }
+   * @param { MessageChain[] } messageChain MessageChain 数组
+   * @param { number } group 发送群组的群号
+   * @returns { Promise<httpApiResponse> }
    */
-  async sendGroupMessage (message, target) {
+  async sendGroupMessage (messageChain, group) {
     return sendGroupMessage({
-      messageChain: message,
-      target,
+      messageChain: messageChain,
+      target: group,
       sessionKey: this.sessionKey,
       host: this.host,
     });
@@ -250,21 +260,16 @@ class NodeMirai {
   /**
    * @method NodeMirai#sendTempMessage
    * @description 发送临时消息
-   * @async
-   * @param { MessageChain[] } MessageChain MessageChain 数组
+   * @param { MessageChain[] } messageChain MessageChain 数组
    * @param { number } qq 临时消息发送对象 QQ 号
    * @param { number } group 所在群号
-   * @return { object } {
-   *  code: 0,
-   *  msg: "success",
-   *  messageId: 123456
-   * }
+   * @returns { Promise<httpApiResponse> }
    */
-  async sendTempMessage (message, qq, group) {
+  async sendTempMessage (messageChain, qq, group) {
     // 兼容旧格式：高 32 位为群号，低 32 位为 QQ 号
     if (!group)
       return sendTempMessage({
-        messageChain: message,
+        messageChain: messageChain,
         qq: (qq & 0xFFFFFFFF),
         group: ((qq >> 32) & 0xFFFFFFFF),
         sessionKey: this.sessionKey,
@@ -272,7 +277,7 @@ class NodeMirai {
       });
     else
       return sendTempMessage({
-        messageChain: message,
+        messageChain: messageChain,
         qq,
         group,
         sessionKey: this.sessionKey,
@@ -281,14 +286,9 @@ class NodeMirai {
   }
   /**
    * @method NodeMirai#sendImageMessage
-   * @async
    * @param { string | Buffer | ReadStream } url 图片所在路径
-   * @param { message } target 发送目标对象
-   * @return { object } {
-   *  code: 0,
-   *  msg: "success",
-   *  messageId: 123456
-   * }
+   * @param { message | MessageTarget } target 发送目标对象
+   * @returns { Promise<httpApiResponse> }
    */
   async sendImageMessage (url, target) {
     switch (target.type) {
@@ -312,14 +312,9 @@ class NodeMirai {
   }
   /**
    * @method NodeMirai#sendVoiceMessage
-   * @async
    * @param { string | Buffer | ReadStream } url 语音所在路径
-   * @param { target } group 发送目标对象（目前仅支持群组）
-   * @return { object } {
-   *  code: 0,
-   *  msg: "success",
-   *  messageId: 123456
-   * }
+   * @param { GroupTarget } target 发送目标对象（目前仅支持群组）
+   * @returns { Promise<httpApiResponse> }
    */
   async sendVoiceMessage (url, target) {
     if (target.type !== 'GroupMessage')
@@ -335,14 +330,9 @@ class NodeMirai {
 
   /**
    * @method NodeMirai#sendFlashImageMessage
-   * @async
    * @param { string | Buffer | ReadStream } url 图片所在路径
-   * @param { message } target 发送目标对象
-   * @return { object } {
-   *  code: 0,
-   *  msg: "success",
-   *  messageId: 123456
-   * }
+   * @param { message | MessageTarget } target 发送目标对象
+   * @returns { Promise<httpApiResponse> }
    */
   async sendFlashImageMessage (url, target) {
     switch (target.type) {
@@ -366,13 +356,12 @@ class NodeMirai {
   }
   /**
    * @method NodeMirai#uploadImage
-   * @async
    * @param { string | Buffer | ReadStream } url 图片所在路径
-   * @param { message } target 发送目标对象
-   * @returns { object } {
-   *  imageId: "{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}.jpg",
-   *  url: "xxxxxxxxxxxxxxxxxxxx"
-   * }
+   * @param { message | MessageTarget } target 发送目标对象
+   * @returns {{
+   *  imageId: string,
+   *  url: string
+   * }}
    */
   async uploadImage (url, target) {
     let type;
@@ -400,12 +389,11 @@ class NodeMirai {
 
   /**
    * @method NodeMirai#uploadVoice
-   * @async
    * @param { string | Buffer | ReadStream } url 声音所在路径
-   * @returns { object } {
-   *  voiceId: "{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}.amr",
-   *  url: "xxxxxxxxxxxxxxxxxxxx"
-   * }
+   * @returns {{
+   *  voiceId: string,
+   *  url: string
+   * }}
    */
   async uploadVoice (url) {
     return uploadVoice({
@@ -419,9 +407,9 @@ class NodeMirai {
   /**
    * @method NodeMirai#sendMessage
    * @description 发送消息给指定好友或群组
-   * @async
    * @param { MessageChain[]|string } message 要发送的消息
-   * @param { message } target 发送目标对象
+   * @param { message | MessageTarget } target 发送目标对象
+   * @returns { Promise<httpApiResponse> }
    */
   async sendMessage (message, target) {
     switch (target.type) {
@@ -439,15 +427,10 @@ class NodeMirai {
   /**
    * @method NodeMirai#sendQuotedFriendMessage
    * @description 发送带引用的好友消息
-   * @async
-   * @param { MessageChain[] } MessageChain MessageChain 数组
+   * @param { MessageChain[] } message MessageChain 数组
    * @param { number } qq 发送对象的 qq 号
    * @param { number } quote 引用的 Message 的 id
-   * @return { object } {
-   *  code: 0,
-   *  msg: "success",
-   *  messageId: 123456
-   * }
+   * @returns { Promise<httpApiResponse> }
    */
   async sendQuotedFriendMessage (message, qq, quote) {
     return sendQuotedFriendMessage({
@@ -461,15 +444,10 @@ class NodeMirai {
   /**
    * @method NodeMirai#sendQuotedGroupMessage
    * @description 发送带引用的群组消息
-   * @async
-   * @param { MessageChain[] } MessageChain MessageChain 数组
+   * @param { MessageChain[] } message MessageChain 数组
    * @param { number } qq 发送群组的群号
    * @param { number} quote 引用的 Message 的 id
-   * @return { object } {
-   *  code: 0,
-   *  msg: "success",
-   *  messageId: 123456
-   * }
+   * @returns { Promise<httpApiResponse> }
    */
   async sendQuotedGroupMessage (message, target, quote) {
     return sendQuotedGroupMessage({
@@ -482,16 +460,11 @@ class NodeMirai {
   /**
    * @method NodeMirai#sendQuotedTempMessage
    * @description 发送带引用的临时消息
-   * @async
-   * @param { MessageChain[] } MessageChain MessageChain 数组
+   * @param { MessageChain[] } message MessageChain 数组
    * @param { number } qq 临时消息发送对象 QQ 号
    * @param { number } group 所在群号
    * @param { number} quote 引用的 Message 的 id
-   * @return { object } {
-   *  code: 0,
-   *  msg: "success",
-   *  messageId: 123456
-   * }
+   * @returns { Promise<httpApiResponse> }
    */
   async sendQuotedTempMessage (message, qq, group, quote) {
     // 兼容旧格式：高 32 位为群号，低 32 位为 QQ 号
@@ -519,9 +492,9 @@ class NodeMirai {
   /**
    * @method NodeMirai#sendQuotedMessage
    * @description 发送引用消息
-   * @async
    * @param { MessageChain[]|string } message 要发送的消息
    * @param { message } target 发送目标对象
+   * @returns { Promise<httpApiResponse> }
    */
   async sendQuotedMessage (message, target) {
     try {
@@ -540,14 +513,6 @@ class NodeMirai {
           // process.exit(1);
       }
     } catch (e) {
-      // 无法引用时退化到普通消息
-      // console.log('Back to send message');
-
-      /*
-      2020.4.20 因 mirai 0.37.5 更新导致 sequenceId not yet available 错误，但消息正常发出，导致消息重复，在此修复
-      https://github.com/mamoe/mirai-api-http/issues/66
-       */
-      // return this.sendMessage(message, target);
       console.error('Invalid target @ sendQuotedMessage');
     }
   }
@@ -556,8 +521,9 @@ class NodeMirai {
    * @method NodeMirai#reply
    * @description 回复一条消息, sendMessage 的别名方法
    * @param { MessageChain[]|string } replyMsg 回复的内容
-   * @param { message } srcMsg 源消息
+   * @param { message | MessageTarget } srcMsg 源消息
    * @param { boolean } [quote] 是否引用源消息
+   * @returns { Promise<httpApiResponse> }
    */
   reply (replyMsg, srcMsg, quote = false) {
     const replyMessage = typeof replyMsg === 'string' ? [Plain(replyMsg)] : replyMsg;
@@ -568,7 +534,8 @@ class NodeMirai {
    * @method NodeMirai#quoteReply
    * @description 引用回复一条消息, sendQuotedMessage 的别名方法
    * @param { MessageChain[]|string } replyMsg 回复的内容
-   * @param { message } srcMsg 源消息
+   * @param { message | MessageTarget } srcMsg 源消息
+   * @returns { Promise<httpApiResponse> }
    */
   quoteReply (replyMsg, srcMsg) {
     const replyMessage = typeof replyMsg === 'string' ? [Plain(replyMsg)] : replyMsg;
@@ -578,7 +545,8 @@ class NodeMirai {
   /**
    * @method NodeMirai#recall
    * @description 撤回一条消息
-   * @param { object|number } msg 要撤回的消息或消息 id
+   * @param { message|number } msg 要撤回的消息或消息 id
+   * @returns { Promise<httpApiResponse> }
    */
   recall (msg) {
     try {
@@ -596,8 +564,7 @@ class NodeMirai {
   /**
    * @method NodeMirai#getFriendList
    * @description 获取 bot 的好友列表
-   * @async
-   * @returns { Friend[] }
+   * @returns { Promise<UserInfo[]> }
    */
   getFriendList () {
     return getFriendList({
@@ -608,8 +575,7 @@ class NodeMirai {
   /**
    * @method NodeMirai#getGroupList
    * @description 获取 bot 的群组列表
-   * @async
-   * @returns { Group[] }
+   * @returns { Promise<GroupInfo[]> }
    */
   getGroupList () {
     return getGroupList({
@@ -620,7 +586,6 @@ class NodeMirai {
   /**
    * @method NodeMirai#getMessageById
    * @description 根据消息 id 获取消息内容
-   * @async
    * @param { number } messageId 指定的消息 id
    * @return { message }
    */
@@ -635,8 +600,8 @@ class NodeMirai {
   /**
    * @method NodeMirai#getGroupMemberList
    * @description 获取指定群的成员名单
-   * @async
    * @param { number } target 指定的群号
+   * @returns { Promise<GroupMember[]> }
    */
   getGroupMemberList (target) {
     return group.getMemberList({
@@ -648,10 +613,10 @@ class NodeMirai {
   /**
    * @method NodeMirai#setGroupMute
    * @description 禁言一位群员(需有相应权限)
-   * @async
    * @param { number } target 群号
    * @param { number } memberId 群员的 qq 号
    * @param { number } time 禁言时间(秒)
+   * @returns { Promise<httpApiResponse> }
    */
   setGroupMute (target, memberId, time = 600) {
     return group.setMute({
@@ -665,9 +630,9 @@ class NodeMirai {
   /**
    * @method NodeMirai#setGroupUnmute
    * @description 解除一位群员的禁言状态
-   * @async
    * @param { number } target 群号
    * @param { number } memberId 群员的 qq 号
+   * @returns { Promise<httpApiResponse> }
    */
   setGroupUnmute (target, memberId) {
     return group.setUnmute({
@@ -680,8 +645,8 @@ class NodeMirai {
   /**
    * @method NodeMirai#setGroupMuteAll
    * @description 设置全体禁言
-   * @async
    * @param { number } target 群号
+   * @returns { Promise<httpApiResponse> }
    */
   setGroupMuteAll (target) {
     return group.setMuteAll({
@@ -693,8 +658,8 @@ class NodeMirai {
   /**
    * @method NodeMirai#setGroupUnmuteAll
    * @description 解除全体禁言
-   * @async
    * @param { number } target 群号
+   * @returns { Promise<httpApiResponse> }
    */
   setGroupUnmuteAll (target) {
     return group.setUnmuteAll({
@@ -706,10 +671,10 @@ class NodeMirai {
   /**
    * @method NodeMirai#setGroupKick
    * @description 移除群成员
-   * @async
    * @param { number } target 群号
    * @param { number } memberId 群员的 qq 号
    * @param { string } msg 信息
+   * @returns { Promise<httpApiResponse> }
    */
   setGroupKick (target, memberId, msg = '您已被移出群聊') {
     return group.setKick({
@@ -723,9 +688,9 @@ class NodeMirai {
   /**
    * @method NodeMirai#setGroupConfig
    * @description 修改群设置
-   * @async
    * @param { number } target 群号
-   * @param { object } config 设置
+   * @param { Partial<GroupInfo> } config 设置
+   * @returns { Promise<httpApiResponse> }
    */
   setGroupConfig (target, config) {
     return group.setConfig({
@@ -738,8 +703,9 @@ class NodeMirai {
   /**
    * @method NodeMirai#setEssence
    * @description 设置群精华消息
-   * @param { number | string | message } target 要设置的群
+   * @param { number | string | GroupTarget } target 要设置的群
    * @param { number } id 精华消息 ID
+   * @returns { Promise<httpApiResponse> }
    */
   setEssence(target, id) {
     const { host, sessionKey } = this;
@@ -756,8 +722,8 @@ class NodeMirai {
   /**
    * @method NodeMirai#getGroupConfig
    * @description 获取群设置
-   * @async
    * @param { number } target 群号
+   * @returns { Promise<GroupInfo> }
    */
   getGroupConfig (target) {
     return group.getConfig({
@@ -771,7 +737,8 @@ class NodeMirai {
    * @description 设置群成员信息
    * @param { number } target 群号
    * @param { number } memberId 群员 qq 号
-   * @param { object } info 信息
+   * @param { Partial<GroupMember> } info 信息
+   * @returns { Promise<httpApiResponse> }
    */
   setGroupMemberInfo (target, memberId, info) {
     return group.setMemberInfo({
@@ -787,6 +754,7 @@ class NodeMirai {
    * @description 获取群成员信息
    * @param { number } target 群号
    * @param { number } memberId 群员 qq 号
+   * @returns { Promise<GroupMember> }
    */
   getGroupMemberInfo (target, memberId) {
     return group.getMemberInfo({
@@ -801,7 +769,7 @@ class NodeMirai {
    * @method NodeMirai#quit
    * @description BOT 主动离群
    * @param { number } target 要离开的群的群号
-   * @returns {Promise<*>}
+   * @returns { Promise<httpApiResponse> }
    */
   quit(target) {
     return quitGroup({
@@ -817,8 +785,9 @@ class NodeMirai {
    * @param { number } eventId 入群事件 (memberJoinRequest) ID
    * @param { number } fromId 申请入群人 QQ 号
    * @param { number } groupId 申请入群群号
-   * @param { number } operate 响应操作，0同意，1拒绝，2忽略，3拒绝并拉黑，4忽略并拉黑
+   * @param { 0|1|2|3|4 } operate 响应操作，0同意，1拒绝，2忽略，3拒绝并拉黑，4忽略并拉黑
    * @param { string } message 回复的消息
+   * @returns { Promise<httpApiResponse> }
    */
   handleMemberJoinRequest (eventId, fromId, groupId, operate, message = "") {
     return group.handleMemberJoinRequest({
@@ -838,9 +807,9 @@ class NodeMirai {
    * @param { number } eventId 被邀请入群事件 (botInvitedJoinGroupRequest) ID
    * @param { number } fromId  邀请人群者的 QQ 号
    * @param { number } groupId 被邀请进入群的群号
-   * @param { number } operate 响应的操作类型, 0同意邀请，1拒绝邀请
+   * @param { 0|1 } operate 响应的操作类型, 0同意邀请，1拒绝邀请
    * @param { string } message 回复的信息
-   * @returns {Promise<*>}
+   * @returns { Promise<httpApiResponse> }
    */
   handleBotInvitedJoinGroupRequest(eventId, fromId, groupId, operate, message = "") {
     // 由于方法是单独引入的，所以使用 [event]Handler 而不是 handle[Event] 作为函数名
@@ -861,9 +830,9 @@ class NodeMirai {
    * @param { number } eventId 好友申请事件 (newFriendRequest) ID
    * @param { number } fromId 申请人 QQ 号
    * @param { number } groupId 申请人如果通过某个群添加好友，该项为该群群号；否则为0
-   * @param { number } operate 响应操作，0同意，1拒绝，2拒绝并拉黑
+   * @param { 0|1|2 } operate 响应操作，0同意，1拒绝，2拒绝并拉黑
    * @param { string } message 回复的消息
-   * @returns {Promise<*>}
+   * @returns { Promise<httpApiResponse> }
    */
   handleNewFriendRequest (eventId, fromId, groupId, operate, message = "") {
     return handleNewFriendRequest({
@@ -882,7 +851,8 @@ class NodeMirai {
    * @description 上传（群）文件并发送
    * @param { string | Buffer | ReadStream } url 文件所在路径或 URL
    * @param { string } path 文件要上传到群文件中的位置（路径）
-   * @param { message } target 要发送文件的目标
+   * @param { GroupTarget } target 要发送文件的目标
+   * @returns { Promise<httpApiResponse> }
    */
   uploadFileAndSend(url, path, target) {
     const { sessionKey, host } = this;
@@ -903,8 +873,8 @@ class NodeMirai {
    * @method NodeMirai#getGroupFileList
    * @description 获取群文件指定路径下的文件列表
    * @param { string } dir 要获取的群文件路径
-   * @param { number | string | message } target 要获取的群号
-   * @returns { object }
+   * @param { number | string | GroupTarget } target 要获取的群号
+   * @returns { Promise<GroupFile[]> }
    */
   getGroupFileList(dir, target) {
     const { sessionKey, host } = this;
@@ -923,7 +893,7 @@ class NodeMirai {
    * @method NodeMirai#getGroupFileInfo
    * @description 获取群文件指定详细信息
    * @param { string } id 文件唯一 ID
-   * @param { number | string | message } target 要获取的群号
+   * @param { number | string | GroupTarget } target 要获取的群号
    * @returns { object }
    */
   getGroupFileInfo(id, target) {
@@ -944,8 +914,8 @@ class NodeMirai {
    * @description 重命名指定群文件
    * @param { string } id 要重命名的文件唯一 ID 
    * @param { string } rename 文件的新名称
-   * @param { number | string } target 目标群号
-   * @returns { object }
+   * @param { number | string | GroupTarget } target 目标群号
+   * @returns { Promise<httpApiResponse> }
    */
   renameGroupFile(id, rename, target) {
     const { sessionKey, host } = this;
@@ -966,8 +936,8 @@ class NodeMirai {
    * @description 移动指定群文件
    * @param { string } id 要移动的文件唯一 ID 
    * @param { string } movePath 文件的新路径
-   * @param { number | string } target 目标群号
-   * @returns { object }
+   * @param { number | string | GroupTarget } target 目标群号
+   * @returns { Promise<httpApiResponse> }
    */
   moveGroupFile(id, movePath, target) {
     const { sessionKey, host } = this;
@@ -986,8 +956,8 @@ class NodeMirai {
   /**
    * 删除指定群文件
    * @param { string } id 要删除的文件唯一 ID
-   * @param { number | string } target 目标群号
-   * @returns { object }
+   * @param { number | string | GroupTarget } target 目标群号
+   * @returns { Promise<httpApiResponse> }
    */
   deleteGroupFile(id, target) {
     const { sessionKey, host } = this;
@@ -1017,12 +987,12 @@ class NodeMirai {
   // command
   /**
    * @method NodeMirai#registerCommand
-   * @async
    * @param { Object } command 注册的 command 对象
    * @param { string } command.name
    * @param { string[] } command.alias
    * @param { string } command.description
    * @param { string } command.usage
+   * @returns { Promise<httpApiResponse> }
    */
   registerCommand (command) {
     return registerCommand(Object.assign({
@@ -1032,10 +1002,10 @@ class NodeMirai {
   }
   /**
    * @method NodeMirai#sendCommand
-   * @async
    * @param { Object } command 发送的 command 对象
    * @param { string } command.name
    * @param { string[] } command.args
+   * @returns { Promise<httpApiResponse> }
    */
   sendCommand (command) {
     return sendCommand(Object.assign({
@@ -1206,8 +1176,5 @@ class NodeMirai {
     }
   }
 }
-
-NodeMirai.MessageComponent = MessageComponent;
-NodeMirai.Target = Target;
 
 module.exports = NodeMirai;
