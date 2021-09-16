@@ -19,6 +19,8 @@
   "GroupAllowMemberInviteEvent": "groupAllowMemberInvite",
   "GroupRecallEvent": "groupRecall",
   "FriendRecallEvent": "friendRecall",
+  "FriendNickChangedEvent": "friendNickChanged",
+  "FriendInputStatusChangedEvent": "friendInputStatusChanged",
   "MemberJoinEvent": "memberJoin",
   "MemberLeaveEventKick": "memberLeaveKick",
   "MemberLeaveEventQuit": "memberLeaveQuit",
@@ -28,5 +30,6 @@
   "MemberMuteEvent": "memberMute",
   "MemberUnmuteEvent": "memberUnmute",
   "MemberJoinRequestEvent": "memberJoinRequest",
-  "NewFriendRequestEvent": "newFriendRequest"
+  "NewFriendRequestEvent": "newFriendRequest",
+  "NudgeEvent": "nudge"
 }
