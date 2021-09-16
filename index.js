@@ -950,12 +950,16 @@ class NodeMirai {
   /**
    * @method NodeMirai#getGroupFileInfo
    * @description 获取群文件指定详细信息
-   * @param { string } id 文件唯一 ID
-   * @param { number | string | GroupTarget } target 要获取的群号
-   * @returns { object }
+   * @param { string | GroupFile } id 文件唯一 ID 或文件对象
+   * @param { number | string | GroupTarget } [target] 要获取的群号
+   * @param { boolean } [withDownloadInfo] 是否携带下载信息, 无必要不要携带
+   * @returns { Promise<GroupFile> }
    */
-  getGroupFileInfo(id, target) {
+  getGroupFileInfo(id, target, withDownloadInfo) {
     const { sessionKey, host } = this;
+    if (!target && typeof id === 'object') {
+      target = id.contact.id;
+    }
     const realTarget = (typeof target === 'number') || (typeof target === 'string')
       ? target
       : target.sender.group.id;
@@ -963,7 +967,9 @@ class NodeMirai {
       target: realTarget,
       id,
       sessionKey,
-      host
+      host,
+      withDownloadInfo,
+      isV1: this._is_mah_v1_,
     });
   }
 

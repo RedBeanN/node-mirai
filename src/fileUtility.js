@@ -80,19 +80,29 @@ const getGroupFileList = async({
 
 /**
  * 获取群文件指定详细信息
- * @param { number | string } target 要获取的群号
- * @param { string } id 文件唯一 ID 
- * @param { string } sessionKey
- * @param { string } host
+ * @param { Object } config
+ * @param { number | string } config.target 要获取的群号
+ * @param { string | FileOrDir } config.id 文件唯一 ID 
+ * @param { string } config.sessionKey
+ * @param { string } config.host
  * @returns { object }
  */
 const getGroupFileInfo = async({
   target,
   id,
   sessionKey,
-  host
+  host,
+  withDownloadInfo,
+  isV1,
 }) => {
-  const { data } = await axios.get(`${host}/groupFileInfo?sessionKey=${sessionKey}&target=${target}&id=${id}`);
+  const realId = typeof id === 'object' ? id.id : id;
+  const getUrl = isV1
+    ? `${host}/groupFileInfo?sessionKey=${sessionKey}&target=${target}&id=${realId}`
+    : `${host}/file/info?sessionKey=${sessionKey}&target=${target}&id=${realId}`;
+  if (withDownloadInfo) {
+    getUrl += '&withDownloadInfo=true';
+  }
+  const { data } = await axios.get(getUrl);
   return data;
 };
 
