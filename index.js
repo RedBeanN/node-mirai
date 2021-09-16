@@ -57,7 +57,8 @@ const {
   getGroupFileInfo,
   renameGroupFile,
   moveGroupFile,
-  deleteGroupFile
+  deleteGroupFile,
+  makeDir,
 } = require('./src/fileUtility');
 
 /**
@@ -1021,6 +1022,35 @@ class NodeMirai {
       moveTo,
       sessionKey,
       host,
+      isV1: this._is_mah_v1_,
+    });
+  }
+
+  /**
+   * @typedef { httpApiResponse & { data: GroupFile } } makeDirResponse
+   */
+  /**
+   * @method NodeMirai#makeDir
+   * @description 创建文件夹
+   * @param { string | GroupFile | null } id 父目录id, 空串或null为根目录
+   * @param { string } directoryName 新建文件夹名
+   * @param { string | number } [target] 群号
+   * @returns { Promise<makeDirResponse> }
+   */
+  makeDir (id, directoryName, target) {
+    const { sessionKey, host } = this;
+    if (!target && typeof id === 'object' && id !== null) {
+      target = id.contact.id;
+    }
+    if (!target) {
+      console.warn(`Error: Expect providing a target if id is empty`);
+    }
+    return makeDir({
+      sessionKey,
+      host,
+      id,
+      target,
+      directoryName,
       isV1: this._is_mah_v1_,
     });
   }

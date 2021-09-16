@@ -211,11 +211,43 @@ const deleteGroupFile = async({
   return data;
 };
 
+/**
+ * NOTE: MAH seems not work correctly with parent directory
+ * @function makeDir
+ * @param { object } config
+ * @param { string } config.sessionKey
+ * @param { string } config.host
+ * @param { string | FileOrDir } config.id
+ * @param { number } config.target
+ * @param { string } config.directoryName
+ * @param { boolean } config.isV1
+ */
+const makeDir = async ({
+  sessionKey,
+  host,
+  id,
+  target,
+  directoryName,
+  isV1,
+}) => {
+  if (isV1) return { code: 400, message: 'not supported' };
+  const postUrl = `${host}/file/mkdir`;
+  const postData = {
+    sessionKey,
+    id: typeof id === 'string' ? id : id.id,
+    target,
+    directoryName,
+  };
+  const { data } = await axios.post(postUrl, postData);
+  return data;
+};
+
 module.exports = { 
   uploadFileAndSend,
   getGroupFileList,
   getGroupFileInfo,
   renameGroupFile,
   moveGroupFile,
-  deleteGroupFile
+  deleteGroupFile,
+  makeDir,
 };
