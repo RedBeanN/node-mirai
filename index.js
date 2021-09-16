@@ -131,7 +131,8 @@ class NodeMirai {
     this.wsHost = null;
     this.plugins = [];
     this._is_mah_v1_ = false;
-    checkMAHVersion(this).then(() => {
+    checkMAHVersion(this).then(isV1 => {
+      this._is_mah_v1_ = isV1;
       this.auth();
     });
   }
