@@ -10,11 +10,13 @@ const FormData = require("form-data");
 
 /**
  * 上传群文件并发送
- * @param { string | Buffer | ReadStream } url 文件所在路径或 URL
- * @param { string } path 文件要上传到群文件中的位置（路径）
- * @param { string } target 要发送文件的目标
- * @param { string } sessionKey
- * @param { string } host
+ * @param { object } config
+ * @param { string | Buffer | ReadStream } config.url 文件所在路径或 URL
+ * @param { string | FileOrDir } config.path 文件要上传到群文件中的位置（路径）
+ * @param { string } config.target 要发送文件的目标
+ * @param { string } config.sessionKey
+ * @param { string } config.host
+ * @param { boolean } config.isV1
  * @return { object } 
  */
 const uploadFileAndSend = async({
@@ -22,17 +24,21 @@ const uploadFileAndSend = async({
   path,
   target,
   sessionKey,
-  host
+  host,
+  isV1,
 }) => {
+  const postUrl = isV1
+    ? `${host}/uploadFileAndSend`
+    : `${host}/file/upload`;
   const file = (typeof url === "string") ? fs.createReadStream(url) : url,
     form = new FormData();
   form.append('sessionKey', sessionKey);
-  form.append('type', "Group");               // 当前只支持上传群文件
-  form.append('path', path);
+  form.append('type', isV1 ? "Group" : 'group');               // 当前只支持上传群文件
+  form.append('path', typeof path === 'string' ? path : path.path || '');
   form.append('target', target);
   form.append('file', file);
 
-  const { data } = await axios.post(`${host}/uploadFileAndSend`, form, {
+  const { data } = await axios.post(postUrl, form, {
     headers: form.getHeaders()
   });
 

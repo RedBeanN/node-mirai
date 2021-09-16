@@ -896,12 +896,15 @@ class NodeMirai {
    * @method NodeMirai#uploadFileAndSend
    * @description 上传（群）文件并发送
    * @param { string | Buffer | ReadStream } url 文件所在路径或 URL
-   * @param { string } path 文件要上传到群文件中的位置（路径）
-   * @param { GroupTarget } target 要发送文件的目标
+   * @param { string | GroupFile } path 文件要上传到群文件中的位置（路径）
+   * @param { number | GroupTarget } [target] 要发送文件的目标
    * @returns { Promise<httpApiResponse> }
    */
   uploadFileAndSend(url, path, target) {
     const { sessionKey, host } = this;
+    if (!target && typeof path === 'object') {
+      target = path.contact.id;
+    }
     const realTarget = (typeof target === 'number') || (typeof target === 'string')
       ? target
       : target.sender.group.id;
@@ -910,7 +913,8 @@ class NodeMirai {
       path,
       target: realTarget,
       sessionKey,
-      host
+      host,
+      isV1: this._is_mah_v1_,
     });
   }
 
