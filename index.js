@@ -36,6 +36,9 @@ const {
 const {
   getFriendList,
   getGroupList,
+  getBotProfile,
+  getFriendProfile,
+  getMemberProfile,
   getMessageById,
   registerCommand,
   sendCommand,
@@ -583,6 +586,32 @@ class NodeMirai {
       host: this.host,
       sessionKey: this.sessionKey,
     });
+  }
+  /**
+   * @method NodeMirai#getBotProfile
+   * @description 获取 bot 资料
+   * @returns { Promise<UserInfo> }
+   */
+  getBotProfile () {
+    return getBotProfile(this);
+  }
+  /**
+   * @method NodeMirai#getFriendProfile
+   * @param { number } qq 好友的 QQ 号
+   * @returns { Promise<UserInfo> }
+   */
+  getFriendProfile (qq) {
+    return getFriendProfile(Object.assign({}, this, { qq }));
+  }
+  /**
+   * @method NodeMirai#getGroupMemberProfile
+   * @description 获取群员的个人资料
+   * @param { number } group 群号
+   * @param { number } qq 群员的 QQ 号
+   * @returns { Promise<UserInfo> }
+   */
+  getGroupMemberProfile (group, qq) {
+    return getMemberProfile(Object.assign({}, this, { group, qq }));
   }
   /**
    * @method NodeMirai#getMessageById

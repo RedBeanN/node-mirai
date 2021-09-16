@@ -16,6 +16,31 @@ const getGroupList = async ({ //获取群列表
   return data.data || data;
 };
 
+const getBotProfile = async ({
+  host,
+  sessionKey,
+}) => {
+  const { data } = await axios.get(`${host}/botProfile?sessionKey=${sessionKey}`);
+  return data.data || data;
+};
+const getFriendProfile = async ({
+  host,
+  sessionKey,
+  qq,
+}) => {
+  const { data } = await axios.get(`${host}/friendProfile?sessionKey=${sessionKey}&target=${qq}`);
+  return data.data || data;
+};
+const getMemberProfile = async ({
+  host,
+  sessionKey,
+  group,
+  qq,
+}) => {
+  const { data } = await axios.get(`${host}/memberProfile?sessionKey=${sessionKey}&target=${group}&memberId=${qq}`);
+  return data.data || data;
+};
+
 const getMessageById = async ({ //通过messageId获取一条被缓存的消息
   messageId, 
   host,
@@ -115,6 +140,9 @@ const handleNewFriendRequest = async({
 module.exports = {
   getFriendList,
   getGroupList,
+  getBotProfile,
+  getFriendProfile,
+  getMemberProfile,
   getMessageById,
   registerCommand,
   sendCommand,
