@@ -30,7 +30,8 @@ const {
   uploadVoice,
   sendImageMessage,
   sendVoiceMessage,
-  sendFlashImageMessage
+  sendFlashImageMessage,
+  sendNudge,
 } = require('./src/sendMessage');
 
 const {
@@ -518,6 +519,20 @@ class NodeMirai {
       }
     } catch (e) {
       console.error('Invalid target @ sendQuotedMessage');
+    }
+  }
+
+  /**
+   * @method NodeMirai#sendNudge
+   * @description 发送戳一戳消息, 未提供群号时为好友消息
+   * @param { number } qq 好友或群员的QQ
+   * @param { number } group 群号
+   */
+  async sendNudge (qq, group) {
+    if (group) return sendNudge(Object.assign({}, this, { target: qq, subject: group, kind: 'Group' }))
+    else {
+      // TODO: Stranger is not supported. Expect returns an error if `qq` is not bot's friend
+      return sendNudge(Object.assign({}, this, { target: qq, subject: qq, kind: 'Friend' }));
     }
   }
 

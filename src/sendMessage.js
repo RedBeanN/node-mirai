@@ -223,6 +223,36 @@ const sendFlashImageMessage = async ({
   });
 };
 
+/**
+ * @function sendNudge 发送戳一戳消息
+ * @param { Object } option
+ * @param { string } option.sessionKey
+ * @param { number } option.target QQ号, 可以是Bot的QQ
+ * @param { number } option.subject 接收主体(QQ号或群号)
+ * @param { 'Group' | 'Friend' | 'Stranger' } option.type
+ */
+const sendNudge = async ({
+  sessionKey,
+  target,
+  subject,
+  kind,
+  host,
+}) => {
+  console.log({
+    sessionKey,
+    target,
+    subject,
+    kind,
+  });
+  const { data } = await axios.post(`${host}/sendNudge`, {
+    sessionKey,
+    target,
+    subject,
+    kind,
+  });
+  return data;
+};
+
 module.exports = {
   sendFriendMessage,
   sendQuotedFriendMessage,
@@ -235,4 +265,5 @@ module.exports = {
   sendImageMessage,
   sendVoiceMessage,
   sendFlashImageMessage,
+  sendNudge,
 };
