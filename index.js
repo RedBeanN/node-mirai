@@ -917,12 +917,23 @@ class NodeMirai {
   /**
    * @method NodeMirai#getGroupFileList
    * @description 获取群文件指定路径下的文件列表
-   * @param { string } dir 要获取的群文件路径
-   * @param { number | string | GroupTarget } target 要获取的群号
+   * @param { GroupFile | string | number } dir - - `GroupFile|string` 要获取的群文件路径对象, 使用 `string` 结果可能不准确
+   *  - `number` 获取指定群的群文件根目录 `bot.getGroupFileList(groupId)`
+   * @param { number | string | GroupTarget } [target] 要获取的群号, `dir` 为 `File` 时可不提供
+   * @param { boolean } [withDownloadInfo] 是否携带下载信息, 无必要不要携带
    * @returns { Promise<GroupFile[]> }
+   * 
    */
-  getGroupFileList(dir, target) {
+  getGroupFileList(dir, target, withDownloadInfo) {
     const { sessionKey, host } = this;
+    if (typeof dir === 'object') {
+      if (!target) target = dir.contact.id;
+      if (dir.isFile) console.warn(`Warning: Getting list of a file will get empty returns`);
+    }
+    // 兼容写法: getGroupFileList(groupid) 返回指定群的根目录
+    if (typeof dir === 'number' || typeof dir === 'bigint') {
+      [dir, target] = ['', dir];
+    }
     const realTarget = (typeof target === 'number') || (typeof target === 'string')
       ? target
       : target.sender.group.id;
@@ -930,7 +941,9 @@ class NodeMirai {
       target: realTarget,
       dir,
       sessionKey,
-      host
+      host,
+      withDownloadInfo,
+      isV1: this._is_mah_v1_,
     });
   }
 

@@ -5,6 +5,10 @@ const axios = require("axios");
 const FormData = require("form-data");
 
 /**
+ * @typedef { import('./typedef').GroupFile } FileOrDir
+ */
+
+/**
  * 上传群文件并发送
  * @param { string | Buffer | ReadStream } url 文件所在路径或 URL
  * @param { string } path 文件要上传到群文件中的位置（路径）
@@ -37,23 +41,41 @@ const uploadFileAndSend = async({
 
 /**
  * 获取群文件指定路径下的文件列表
- * @param { number | string } target 要获取的群号
- * @param { string } dir 要获取的群文件路径
- * @param { string } sessionKey
- * @param { string } host
- * @returns { object }
+ * @param { Object } config
+ * @param { number | string } config.target 要获取的群号
+ * @param { FileOrDir | string } config.dir 要获取的文件路径
+ * @param { string } config.sessionKey
+ * @param { string } config.host
+ * @param { boolean } config.withDownloadInfo
+ * @param { boolean } config.isV1
+ * @returns { Promise<FileOrDir[]> }
  */
 const getGroupFileList = async({
   target,
   dir,
-  sessoinKey,
-  host 
+  sessionKey,
+  host,
+  withDownloadInfo = false,
+  isV1 = false,
 }) => {
-  let getUrl = `${host}/groupFileList?sessionKey=${sessionKey}&target=${target}`;
-  if (dir !== undefined)
-    getUrl += `&dir=${encodeURIComponent(dir)}`;
+  let getUrl = isV1
+    ? `${host}/groupFileList?sessionKey=${sessionKey}&target=${target}`
+    : `${host}/file/list?sessionKey=${sessionKey}&target=${target}`;
+  if (withDownloadInfo) {
+    getUrl += '&withDownloadInfo=true';
+  }
+  // set dir to null for listing root path
+  if (!dir) {
+    getUrl += '&id=';
+  } else {
+    if (typeof dir === 'string') {
+      getUrl += `&${isV1 ? 'dir' : 'path'}=${dir}`;
+    } else {
+      getUrl += `&id=${dir.id}`;
+    }
+  }
   const { data } = await axios.get(getUrl);
-  return data;
+  return data.data || data;
 };
 
 /**

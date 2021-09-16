@@ -152,7 +152,7 @@ export type GroupInfo = {
  * @property { GroupPermissionInfo } contact 群权限信息
  * @property { boolean } isFile 是否为文件
  * @property { boolean } isDirectory 是否为文件夹
- * @property { object } downloadInfo 下载信息
+ * @property { object } [downloadInfo] 下载信息
  * @property { string } downloadInfo.sha1 sha1校验
  * @property { string } downloadInfo.md5 md5校验
  * @property { number } downloadInfo.downloadTimes 下载次数
@@ -182,7 +182,15 @@ export type GroupFile = {
    * 群权限信息
    */
   contact: GroupPermissionInfo,
-  downloadInfo: {
+  /**
+   * 是否为文件
+   */
+  isFile: boolean,
+  /**
+   * 是否为文件夹
+   */
+  isDirectory: boolean,
+  downloadInfo?: {
     /**
      * SHA1 校验
      */
