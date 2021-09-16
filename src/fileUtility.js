@@ -85,6 +85,8 @@ const getGroupFileList = async({
  * @param { string | FileOrDir } config.id 文件唯一 ID 
  * @param { string } config.sessionKey
  * @param { string } config.host
+ * @param { boolean } config.withDownloadInfo
+ * @param { boolean } config.isV1
  * @returns { object }
  */
 const getGroupFileInfo = async({
@@ -109,11 +111,13 @@ const getGroupFileInfo = async({
 
 /**
  * 重命名指定群文件
- * @param { number | string } target 目标群号
- * @param { string } id 要重命名的文件唯一 ID 
- * @param { string } rename 文件的新名称
- * @param { string } sessionKey
- * @param { string } host
+ * @param { object } config
+ * @param { number | string } config.target 目标群号
+ * @param { string } config.id 要重命名的文件唯一 ID 
+ * @param { string } config.rename 文件的新名称
+ * @param { string } config.sessionKey
+ * @param { string } config.host
+ * @param { boolean } config.isV1
  * @returns { object }
  */
 const renameGroupFile = async({
@@ -121,14 +125,20 @@ const renameGroupFile = async({
   id,
   rename,
   sessionKey,
-  host
+  host,
+  isV1,
 }) => {
-  const { data } = await axios.post(`${host}/groupFileRename`, {
+  const postUrl = isV1
+    ? `${host}/groupFileRename`
+    : `${host}/file/rename`;
+  const postData = {
     sessionKey,
     target,
-    id,
-    rename
-  });
+    id: id.id || id,
+    [isV1 ? 'rename' : 'renameTo']: rename,
+  };
+  console.log(postData);
+  const { data } = await axios.post(postUrl, postData);
 
   return data;
 };

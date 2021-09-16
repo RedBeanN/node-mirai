@@ -976,13 +976,16 @@ class NodeMirai {
   /**
    * @method NodeMirai#renameGroupFile
    * @description 重命名指定群文件
-   * @param { string } id 要重命名的文件唯一 ID 
+   * @param { string | GroupFile } id 要重命名的文件唯一 ID 或文件对象
    * @param { string } rename 文件的新名称
-   * @param { number | string | GroupTarget } target 目标群号
+   * @param { number | string | GroupTarget } [target] 目标群号
    * @returns { Promise<httpApiResponse> }
    */
   renameGroupFile(id, rename, target) {
     const { sessionKey, host } = this;
+    if (!target && typeof id === 'object') {
+      target = id.contact.id;
+    }
     const realTarget = (typeof target === 'number') || (typeof target === 'string')
       ? target
       : target.sender.group.id;
@@ -991,7 +994,8 @@ class NodeMirai {
       id,
       rename,
       sessionKey,
-      host
+      host,
+      isV1: this._is_mah_v1_,
     });
   }
 
