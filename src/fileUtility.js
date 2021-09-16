@@ -145,26 +145,38 @@ const renameGroupFile = async({
 
 /**
  * 移动指定群文件
- * @param { number | string } target 目标群号
- * @param { string } id 要移动的文件唯一 ID 
- * @param { string } movePath 文件的新路径
- * @param { string } sessionKey
- * @param { string } host
+ * @param { object } config
+ * @param { number | string } config.target 目标群号
+ * @param { string | FileOrDir } config.id 要移动的文件唯一 ID 
+ * @param { string | FileOrDir } config.moveTo 文件的新路径
+ * @param { string } config.sessionKey
+ * @param { string } config.host
+ * @param { boolean } config.isV1
  * @returns { object }
  */
 const moveGroupFile = async({
   target,
   id,
-  movePath,
+  moveTo,
   sessionKey,
-  host
+  host,
+  isV1,
 }) => {
-  const { data } = await axios.post(`${host}/groupFileMove`, {
+  const postUrl = isV1
+    ? `${host}/groupFileMove`
+    : `${host}/file/move`;
+  const postData = {
     sessionKey,
-    id,
+    id: typeof id === 'string' ? id : id.id,
     target,
-    movePath
-  });
+  };
+  if (typeof moveTo === 'object') {
+    postData.moveTo = moveTo.id;
+  } else {
+    postData[isV1 ? 'movePath' : 'moveToPath'] = moveTo;
+  }
+  console.log(postData, postUrl);
+  const { data } = await axios.post(postUrl, postData);
 
   return data;
 };

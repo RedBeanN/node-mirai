@@ -1002,22 +1002,26 @@ class NodeMirai {
   /**
    * @method NodeMirai#moveGroupFile
    * @description 移动指定群文件
-   * @param { string } id 要移动的文件唯一 ID 
-   * @param { string } movePath 文件的新路径
-   * @param { number | string | GroupTarget } target 目标群号
+   * @param { string | GroupFile } id 要移动的文件唯一 ID 或文件对象
+   * @param { string | GroupFile } moveTo 文件的新路径或文件夹对象, 使用 `string` 可能结果不准确
+   * @param { number | string | GroupTarget } [target] 目标群号
    * @returns { Promise<httpApiResponse> }
    */
-  moveGroupFile(id, movePath, target) {
+  moveGroupFile(id, moveTo, target) {
     const { sessionKey, host } = this;
+    if (!target && typeof moveTo === 'object') {
+      target = moveTo.contact.id;
+    }
     const realTarget = (typeof target === 'number') || (typeof target === 'string')
       ? target
       : target.sender.group.id;
     return moveGroupFile({
       target: realTarget,
       id,
-      movePath,
+      moveTo,
       sessionKey,
-      host
+      host,
+      isV1: this._is_mah_v1_,
     });
   }
 
