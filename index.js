@@ -144,7 +144,7 @@ class NodeMirai {
    */
   async auth () {
     if (this.enableWebsocket && !this._is_mah_v1_) {
-      this.wsHost = new WebSocket(`${this.host.replace('http', 'ws')}/verifyKey=${this.verifyKey}&qq=${this.qq}`);
+      this.wsHost = new WebSocket(`${this.host.replace('http', 'ws')}/all?verifyKey=${this.verifyKey}&qq=${this.qq}`);
       if (this.wsOnly) {
         // skip binding sessionKey
         this.signal.trigger('authed');
