@@ -46,7 +46,8 @@ const {
   getManagers,
   botInvitedJoinGroupRequestHandler,
   quitGroup,
-  handleNewFriendRequest
+  handleNewFriendRequest,
+  deleteFriend,
 } = require('./src/manage');
 
 const group = require('./src/group');
@@ -1080,6 +1081,16 @@ class NodeMirai {
       host,
       isV1: this._is_mah_v1_,
     });
+  }
+
+  /**
+   * @method NodeMirai#deleteFriend
+   * @description 删除好友
+   * @param { number } qq 好友的QQ号
+   * @returns { Promise<httpApiResponse> }
+   */
+  deleteFriend (qq) {
+    return deleteFriend(Object.assign({}, this, { target: qq }));
   }
 
   getManagers () {

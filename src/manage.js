@@ -135,7 +135,19 @@ const handleNewFriendRequest = async({
     message
   });
   return data;
-}
+};
+
+const deleteFriend = async ({
+  sessionKey,
+  host,
+  target,
+}) => {
+  const { data } = await axios.post(`${host}/deleteFriend`, {
+    sessionKey,
+    target,
+  });
+  return { data };
+};
 
 module.exports = {
   getFriendList,
@@ -149,5 +161,6 @@ module.exports = {
   getManagers,
   botInvitedJoinGroupRequestHandler,
   quitGroup,
-  handleNewFriendRequest
+  handleNewFriendRequest,
+  deleteFriend,
 };
