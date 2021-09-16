@@ -113,7 +113,7 @@ const getGroupFileInfo = async({
  * 重命名指定群文件
  * @param { object } config
  * @param { number | string } config.target 目标群号
- * @param { string } config.id 要重命名的文件唯一 ID 
+ * @param { string | FileOrDir } config.id 要重命名的文件唯一 ID 
  * @param { string } config.rename 文件的新名称
  * @param { string } config.sessionKey
  * @param { string } config.host
@@ -134,7 +134,7 @@ const renameGroupFile = async({
   const postData = {
     sessionKey,
     target,
-    id: id.id || id,
+    id: typeof id === 'string' ? id : id.id,
     [isV1 ? 'rename' : 'renameTo']: rename,
   };
   console.log(postData);
@@ -183,23 +183,30 @@ const moveGroupFile = async({
 
 /**
  * 删除指定群文件
- * @param { number | string } target 目标群号
- * @param { string } id 要删除的文件唯一 ID
- * @param { string } sessionKey
- * @param { string } host
+ * @param { object } config
+ * @param { number | string } config.target 目标群号
+ * @param { string | FileOrDir } config.id 要删除的文件唯一 ID
+ * @param { string } config.sessionKey
+ * @param { string } config.host
+ * @param { boolean } config.isV1
  * @returns { object }
  */
 const deleteGroupFile = async({
   target,
   id,
   sessionKey,
-  host
+  host,
+  isV1,
 }) => {
-  const { data } = await axios.post(`${host}/groupFileDelete`, {
+  const postUrl = isV1
+    ? `${host}/groupFileDelete`
+    : `${host}/file/delete`;
+  const postData = {
     sessionKey,
-    id,
+    id: typeof id === 'string' ? id : id.id,
     target
-  });
+  };
+  const { data } = await axios.post(postUrl, postData);
 
   return data;
 };

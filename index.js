@@ -1027,12 +1027,15 @@ class NodeMirai {
 
   /**
    * 删除指定群文件
-   * @param { string } id 要删除的文件唯一 ID
-   * @param { number | string | GroupTarget } target 目标群号
+   * @param { string | GroupFile } id 要删除的文件唯一 ID
+   * @param { number | string | GroupTarget } [target] 目标群号
    * @returns { Promise<httpApiResponse> }
    */
   deleteGroupFile(id, target) {
     const { sessionKey, host } = this;
+    if (!target && typeof id === 'object') {
+      target = id.contact.id;
+    }
     const realTarget = (typeof target === 'number') || (typeof target === 'string')
       ? target
       : target.sender.group.id;
@@ -1040,7 +1043,8 @@ class NodeMirai {
       target: realTarget,
       id,
       sessionKey,
-      host
+      host,
+      isV1: this._is_mah_v1_,
     });
   }
 
