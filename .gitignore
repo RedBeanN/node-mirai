@@ -9,3 +9,4 @@ docs/
 
 # typedefs are auto-generated so don't need to track
 types/
+/type.js

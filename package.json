@@ -6,7 +6,8 @@
   "types": "./types/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dts": "tsc ./index.js --declaration --allowJs --emitDeclarationOnly --outDir types --skipLibCheck"
+    "dts": "tsc ./index.js --declaration --allowJs --emitDeclarationOnly --outDir types --skipLibCheck",
+    "postdts": "tsc ./type.ts --skipLibCheck && tsc ./src/*.ts --outDir ./types/src/"
   },
   "keywords": [
     "mirai",
