@@ -1164,7 +1164,7 @@ class NodeMirai {
   /**
    * @method NodeMirai#onMessage
    * @description 订阅消息事件
-   * @param { messageCallback } callback 回调
+   * @param { (message: message, self?: NodeMirai) => void } callback 回调
    */
   onMessage (callback) {
     this.eventListeners.message.push(callback);
