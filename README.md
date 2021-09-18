@@ -207,6 +207,21 @@ bot.onMessage(message => {
 
 ```
 
+## TypeScript 支持(实验性)
+
+`types/index.d.ts` 为 `tsc` 自动生成, 部分枚举类型可通过 `node-mirai-sdk/type` 引入
+
+``` typescript
+import { events, Permission } from 'node-mirai-sdk/type'
+// ...
+bot.onEvent(events.groupPermissionChange, (event) => {
+  if (event.Permission === Permission.MEMBER) {
+    // do something
+  }
+})
+
+```
+
 ## 使用 `target` 构造
 
 (由 [@kirainmoe](https://github.com/kirainmoe) 提供)

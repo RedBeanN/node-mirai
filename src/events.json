@@ -29,7 +29,11 @@
   "MemberPermissionChangeEvent": "memberPermissionChange",
   "MemberMuteEvent": "memberMute",
   "MemberUnmuteEvent": "memberUnmute",
+  "MemberHonorChangeEvent": "memberHonorChange",
   "MemberJoinRequestEvent": "memberJoinRequest",
   "NewFriendRequestEvent": "newFriendRequest",
-  "NudgeEvent": "nudge"
+  "NudgeEvent": "nudge",
+  "OtherClientOnlineEvent": "otherClientOnline",
+  "OtherClientOfflineEvent": "otherClientOffline",
+  "CommandExecutedEvent": "commandExecuted"
 }

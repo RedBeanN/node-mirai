@@ -109,6 +109,7 @@ export type GroupMember = {
 }
 /**
  * @typedef { Object } GroupInfo 群资料
+ * @property { number } id 群号
  * @property { string } name 群名
  * @property { string } announcement 群公告
  * @property { boolean } confessTalk 是否开启坦白说
@@ -117,6 +118,10 @@ export type GroupMember = {
  * @property { boolean } anonymousChat 是否开启匿名聊天
  */
 export type GroupInfo = {
+  /**
+   * 群号
+   */
+  id: number,
   /**
    * 群名
    */

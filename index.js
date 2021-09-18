@@ -70,10 +70,13 @@ const {
  * @typedef { import('./src/typedef').message } message
  * @typedef { import('./src/typedef').UserInfo } UserInfo
  * @typedef { import('./src/typedef').GroupMember } GroupMember
+ * @typedef { import('./src/typedef').GroupPermissionInfo } GroupPermissionInfo
  * @typedef { import('./src/typedef').GroupInfo } GroupInfo
  * @typedef { import('./src/typedef').GroupFile } GroupFile
  * @typedef { import('./src/target').MessageTarget } MessageTarget
  * @typedef { import('./src/target').GroupTarget } GroupTarget
+ * @typedef { import('./src/events').EventMap } EventMap
+ * @typedef { import('./src/events').AllEventMap } AllEventMap
  */
 /**
  * @namespace NodeMirai
@@ -85,11 +88,11 @@ class NodeMirai {
    * @typedef { Object } BotConfig
    * @property { string } host http-api 服务的地址
    * @property { string } verifyKey http-api 服务的verifyKey
-   * @property { string } [authKey] (Deprecated) http-api 1.x 版本的authKey
    * @property { number } qq bot 的 qq 号
    * @property { boolean } [enableWebsocket] 使用 ws 来获取消息和事件推送
    * @property { boolean } [wsOnly] 完全使用 ws 来收发消息，为 true 时覆盖 enableWebsocket 且无需调用 verify
    * @property { number } [interval] 拉取消息的周期(ms), 默认为200
+   * @property { string } [authKey] (Deprecated) http-api 1.x 版本的authKey
    */
   /**
    * Create a NodeMirai bot
@@ -97,20 +100,20 @@ class NodeMirai {
    * @param { BotConfig } config bot config
    * @param { string } config.host http-api 服务的地址
    * @param { string } config.verifyKey http-api 服务的verifyKey
-   * @param { string } [config.authKey] (Deprecated) http-api 1.x 版本的authKey
    * @param { number } config.qq bot 的 qq 号
    * @param { boolean } [config.enableWebsocket] 使用 ws 来获取消息和事件推送
    * @param { boolean } [config.wsOnly] 完全使用 ws 来收发消息，为 true 时覆盖 enableWebsocket 且无需调用 verify
    * @param { number } [config.interval] 拉取消息的周期(ms), 默认为200
+   * @param { string } [config.authKey] (Deprecated) http-api 1.x 版本的authKey
    */
   constructor ({
     host,
     verifyKey,
-    authKey,
     qq,
     enableWebsocket = false,
     wsOnly = false,
     interval = 200,
+    authKey,
   }) {
     this.host = host;
     // support 1.x authKey
@@ -596,7 +599,7 @@ class NodeMirai {
   /**
    * @method NodeMirai#getGroupList
    * @description 获取 bot 的群组列表
-   * @returns { Promise<GroupInfo[]> }
+   * @returns { Promise<GroupPermissionInfo[]> }
    */
   getGroupList () {
     return getGroupList({
@@ -1135,24 +1138,13 @@ class NodeMirai {
     }, command));
   }
 
-  /**
-   * @callback messageCallback
-   * @param { message } message
-   */
-  /**
-   * @callback signalCallback
-   */
-  /**
-   * @callback eventCallback
-   * @param { object } message
-   */
-
   // event listener
   /**
    * @method NodeMirai#on
    * @description 事件监听
-   * @param { string } name 事件名
-   * @param { messageCallback|signalCallback|eventCallback } callback 回调
+   * @template { keyof AllEventMap } N
+   * @param { N } name
+   * @param { (message: AllEventMap[N], self?: NodeMirai) => void } callback
    */
   on (name, callback) {
     if (name === 'message') return this.onMessage(callback);
@@ -1164,7 +1156,7 @@ class NodeMirai {
    * @method NodeMirai#onSignal
    * @description 订阅 authed, verified, 或 released 信号
    * @param { "authed"|"verified"|"released" } signalName 信号
-   * @param { signalCallback } callback 回调
+   * @param { () => void } callback 回调
    */
   onSignal (signalName, callback) {
     return this.signal.on(signalName, callback);
@@ -1178,11 +1170,11 @@ class NodeMirai {
     this.eventListeners.message.push(callback);
   }
   /**
+   * @template { keyof EventMap } E
    * @method NodeMirai#onEvent
-   * @description 订阅事件
-   * @param { string } event 事件名
-   * @param { eventCallback } callback 事件回调
-   */
+   * @param { E } event
+   * @param { (event: EventMap[E], self?: NodeMirai) => void } callback
+    */
   onEvent (event, callback) {
     if (!this.eventListeners[event]) this.eventListeners[event] = [];
     this.eventListeners[event].push(callback);
