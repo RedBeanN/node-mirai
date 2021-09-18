@@ -22,6 +22,15 @@
  * @property { number } [groupId]
  * @property { number } [senderId]
  * @property { MessageChain[] } [origin]
+ * 
+ * @typedef { Object } music
+ * @property { 'QQMusic'|'NeteaseCloudMusic'|'MiguMusic'|'KugouMusic'|'KuwoMusic' } kind
+ * @property { string } title
+ * @property { string } summary
+ * @property { string } jumpUrl
+ * @property { string } pictureUrl
+ * @property { string } musicUrl
+ * @property { string } [brief]
  */
 
 /**
@@ -236,8 +245,8 @@ const Quote = id => {
 };
 /**
  * @method Quote#value
- * @param { quote } quote
- * @returns { MessageChain }
+ * @param { MessageChain } quote
+ * @returns { quote }
  */
 Quote.value = quote => {
   return {
@@ -293,7 +302,50 @@ Voice.value = voice => {
 // TODO: Deprecate Voice and use Audio instead
 const Audio = Voice;
 
-// TODO: Impl: File Dice MusicShare MiraiCode
+/**
+ * @function MusicShare
+ * @param { music } music
+ * @returns { MessageChain }
+ */
+const MusicShare = ({
+  kind,
+  title,
+  summary,
+  jumpUrl,
+  pictureUrl,
+  musicUrl,
+  brief,
+}) => {
+  return {
+    type: 'MusicShare',
+    kind, title, summary, jumpUrl, pictureUrl, musicUrl,
+    brief: brief || `[分享]${title}`,
+  };
+};
+// seems this is unnecessary
+MusicShare.value = () => {};
+
+/**
+ * @function Dice
+ * @param { number } value 骰子点数
+ * @returns { MessageChain }
+ */
+const Dice = (value) => {
+  return {
+    type: 'Dice',
+    value,
+  };
+};
+/**
+ * @method Dice#value
+ * @param { MessageChain } dice
+ * @returns { number }
+ */
+Dice.value = dice => {
+  return dice.value;
+};
+
+// TODO: Impl: File MiraiCode
 
 // Experimental
 // refer: https://github.com/mamoe/mirai/blob/dev/docs/Messages.md#%E6%B6%88%E6%81%AF%E9%93%BE%E7%9A%84-mirai-%E7%A0%81
@@ -352,6 +404,8 @@ module.exports = {
   Poke,
   Voice,
   Audio,
+  MusicShare,
+  Dice,
   toMiraiCode,
   parseMiraiCode,
 };
