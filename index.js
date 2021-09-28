@@ -854,7 +854,7 @@ class NodeMirai {
   /**
    * @method NodeMirai#handleBotInvitedJoinGroupRequest
    * @description 处理 BOT 被邀请入群的申请
-   * @param { number } eventId 被邀请入群事件 (botInvitedJoinGroupRequest) ID
+   * @param { number } eventId 被邀请入群事件 (invitedJoinGroupRequest) ID
    * @param { number } fromId  邀请人群者的 QQ 号
    * @param { number } groupId 被邀请进入群的群号
    * @param { 0|1 } operate 响应的操作类型, 0同意邀请，1拒绝邀请
