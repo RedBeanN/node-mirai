@@ -96,7 +96,7 @@ bot.onMessage(async message => {
  * 'group' - 只监听群
  * 'temp' - 只监听临时会话
 */
-bot.listen('all');
+bot.listen('all'); // 相当于 bot.listen('friend', 'group', 'temp')
 
 // 退出前向 mirai-http-api 发送释放指令(*)
 process.on('exit', () => {

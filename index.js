@@ -1189,18 +1189,22 @@ class NodeMirai {
   /**
    * @method NodeMirai#listen
    * @description 启动事件监听
-   * @param { "all"|"friend"|"group" } type 类型
+   * @param { ["all"] | Array<"friend"|"group"|"temp"> } types 类型
    */
-  listen (type = 'all') {
+  listen (...types) {
     this.types = [];
-    switch (type) {
-      case 'group': this.types.push('GroupMessage'); break;
-      case 'friend': this.types.push('FriendMessage'); break;
-      case 'temp': this.types.push('TempMessage'); break;
-      case 'all': this.types.push('FriendMessage', 'GroupMessage', 'TempMessage'); break;
-      default:
-        console.error('Invalid listen type. Type should be "all", "friend", "group" or "temp"');
-        // process.exit(1);
+    if (types.includes('all')) {
+      this.types.push('FriendMessage', 'GroupMessage', 'TempMessage');
+      return;
+    }
+    for (const type of types) {
+      switch (type) {
+        case 'group': this.types.push('GroupMessage'); break;
+        case 'friend': this.types.push('FriendMessage'); break;
+        case 'temp': this.types.push('TempMessage'); break;
+        default:
+          console.error('Invalid listen type. Type should be "all", "friend", "group" or "temp"');
+      }
     }
   }
   startListeningEvents () {
