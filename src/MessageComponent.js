@@ -7,15 +7,15 @@
  * 
  * @typedef { Object } at
  * @property { number } target
- * @property { string } display
+ * @property { string } [display]
  * 
  * @typedef { Object } image
  * @property { string } imageId
- * @property { string } url
+ * @property { string } [url]
  * 
  * @typedef { Object } voice
  * @property { string } voiceId
- * @property { string } url
+ * @property { string } [url]
  * 
  * @typedef { Object } quote
  * @property { number } id
