@@ -240,7 +240,7 @@ class NodeMirai {
   /**
    * @method NodeMirai#sendFriendMessage
    * @description 发送好友消息
-   * @param { MessageChain[] } messageChain MessageChain 数组
+   * @param { string | MessageChain[] } messageChain MessageChain 数组
    * @param { number } qq 发送对象的 qq 号
    * @returns { Promise<httpApiResponse> }
    */
@@ -255,7 +255,7 @@ class NodeMirai {
   /**
    * @method NodeMirai#sendGroupMessage
    * @description 发送群组消息
-   * @param { MessageChain[] } messageChain MessageChain 数组
+   * @param { string | MessageChain[] } messageChain MessageChain 数组
    * @param { number } group 发送群组的群号
    * @returns { Promise<httpApiResponse> }
    */
@@ -270,7 +270,7 @@ class NodeMirai {
   /**
    * @method NodeMirai#sendTempMessage
    * @description 发送临时消息
-   * @param { MessageChain[] } messageChain MessageChain 数组
+   * @param { string | MessageChain[] } messageChain MessageChain 数组
    * @param { number } qq 临时消息发送对象 QQ 号
    * @param { number } group 所在群号
    * @returns { Promise<httpApiResponse> }
@@ -368,10 +368,10 @@ class NodeMirai {
    * @method NodeMirai#uploadImage
    * @param { string | Buffer | ReadStream } url 图片所在路径
    * @param { message | MessageTarget } target 发送目标对象
-   * @returns {{
+   * @returns {Promise<{
    *  imageId: string,
    *  url: string
-   * }}
+   * }>}
    */
   async uploadImage (url, target) {
     let type;
@@ -400,10 +400,10 @@ class NodeMirai {
   /**
    * @method NodeMirai#uploadVoice
    * @param { string | Buffer | ReadStream } url 声音所在路径
-   * @returns {{
+   * @returns {Promise<{
    *  voiceId: string,
    *  url: string
-   * }}
+   * }>}
    */
   async uploadVoice (url) {
     return uploadVoice({
