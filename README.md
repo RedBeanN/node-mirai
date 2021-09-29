@@ -28,7 +28,11 @@ npm i -S node-mirai-sdk@0.2.4
 *PS: 注释中带 \* 为必须有。*
 
 ```javascript
+// es5 CommonJS
 const Mirai = require('node-mirai-sdk');
+// es6 module or typescript
+import * as Mirai from 'node-mirai-sdk';
+
 const { Plain, At } = Mirai.MessageComponent;
 
 /**
