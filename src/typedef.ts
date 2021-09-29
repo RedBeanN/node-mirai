@@ -413,16 +413,16 @@ export type httpApiResponse = {
 }
 /**
  * @callback replyFunction
- * @param { string | MessageChain } message 回复的消息
- * @returns { httpApiResponse }
+ * @param { string | MessageChain[] } message 回复的消息
+ * @returns { Promise<httpApiResponse> }
  */
-declare function replyFunction(message: string | MessageChain): httpApiResponse;
+declare function replyFunction(message: string | MessageChain[]): Promise<httpApiResponse>;
 /**
  * @callback recallFunction
- * @param { string | MessageChain } message 回复的消息
- * @returns { httpApiResponse }
+ * @param { string | MessageChain[] } message 回复的消息
+ * @returns { Promise<httpApiResponse> }
  */
-declare function recallFunction(message: string | MessageChain): httpApiResponse;
+declare function recallFunction(message: string | MessageChain[]): Promise<httpApiResponse>;
 
 /**
  * @typedef { Object } message 消息
