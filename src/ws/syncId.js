@@ -6,7 +6,7 @@ let _id = 0;
 let _skipId = -1;
 
 const syncId = () => {
-  return _id++ === _skipId ? _id : _id++;
+  return _id++ === _skipId ? _id++ : _id;
 };
 syncId.skip = n => _skipId = n;
 
