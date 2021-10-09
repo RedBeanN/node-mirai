@@ -33,6 +33,7 @@ const {
   sendFlashImageMessage,
   sendNudge,
 } = require('./src/sendMessage');
+const ws = require('./src/ws');
 
 const {
   getFriendList,
@@ -103,6 +104,7 @@ class NodeMirai {
    * @param { number } config.qq bot 的 qq 号
    * @param { boolean } [config.enableWebsocket] 使用 ws 来获取消息和事件推送
    * @param { boolean } [config.wsOnly] 完全使用 ws 来收发消息，为 true 时覆盖 enableWebsocket 且无需调用 verify
+   * @param { number } [config.syncId] wsOnly 模式下用于标记 server 主动推送的消息
    * @param { number } [config.interval] 拉取消息的周期(ms), 默认为200
    * @param { string } [config.authKey] (Deprecated) http-api 1.x 版本的authKey
    */
@@ -112,6 +114,7 @@ class NodeMirai {
     qq,
     enableWebsocket = false,
     wsOnly = false,
+    syncId = -1,
     interval = 200,
     authKey,
   }) {
@@ -133,6 +136,7 @@ class NodeMirai {
     this.types = [];
     // TODO: support wsOnly mode #32
     this.wsOnly = wsOnly;
+    this.syncId = syncId;
     this.enableWebsocket = wsOnly || enableWebsocket;
     /**
      * @type { WebSocket | null }
@@ -159,6 +163,7 @@ class NodeMirai {
         this.signal.trigger('authed');
         this.signal.trigger('verified');
         this.startListeningEvents();
+        ws.init(this.wsHost, this.syncId, this);
         return {
           code: 0,
           msg: 'authed',
@@ -197,6 +202,7 @@ class NodeMirai {
    * @returns { Promise<httpApiResponse> }
    */
   async verify () {
+    if (this.wsOnly) return;
     return verify(this.host, this.sessionKey, this.qq, this._is_mah_v1_).then(({ code, msg }) => {
       if (code !== 0) {
         console.error('Failed @ verify: Invalid session key');
@@ -241,16 +247,11 @@ class NodeMirai {
    * @method NodeMirai#sendFriendMessage
    * @description 发送好友消息
    * @param { string | MessageChain[] } messageChain MessageChain 数组
-   * @param { number } qq 发送对象的 qq 号
+   * @param { number } target 发送对象的 qq 号
    * @returns { Promise<httpApiResponse> }
    */
-  async sendFriendMessage (messageChain, qq) {
-    return sendFriendMessage({
-      messageChain: messageChain,
-      target: qq,
-      sessionKey: this.sessionKey,
-      host: this.host,
-    });
+  async sendFriendMessage (messageChain, target) {
+    return sendFriendMessage({ messageChain, target }, this);
   }
   /**
    * @method NodeMirai#sendGroupMessage
@@ -1210,6 +1211,7 @@ class NodeMirai {
   startListeningEvents () {
     if (this.isEventListeningStarted) return;
     this.isEventListeningStarted = true;
+    if (this.wsOnly) return;
     if (this.enableWebsocket) {
       this.onSignal('verified', () => {
         if (!this.wsHost) {
