@@ -105,8 +105,16 @@ const botInvitedJoinGroupRequestHandler = async({
   fromId,
   groupId,
   operate,
-  message
+  message,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.resp_botInvitedJoinGroupRequestEvent({
+    eventId,
+    fromId,
+    groupId,
+    operate,
+    message,
+  });
   const { data } = await axios.post(`${host}/resp/botInvitedJoinGroupRequestEvent`, {
     sessionKey,
     eventId,
