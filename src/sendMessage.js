@@ -1,18 +1,18 @@
 const axios = require('axios');
 const fs = require('fs');
 const FormData = require('form-data');
+const wsMessage = require('./ws/sendMessage');
 
 const { Plain, Image, FlashImage, Voice } = require('./MessageComponent');
 
 const sendFriendMessage = async ({ //发送好友消息
   messageChain,
   target,
-  sessionKey,
-  host = 8080,
-}) => {
+}, bot) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
-  const { data } = await axios.post(`${host}/sendFriendMessage`, {
-    messageChain, target, sessionKey,
+  if (bot.wsOnly) return wsMessage.sendFriendMessage({ messageChain, target });
+  const { data } = await axios.post(`${bot.host}/sendFriendMessage`, {
+    messageChain, target, sessionKey: bot.sessionKey,
   }).catch(e => {
     console.error('Unknown Error @ sendFriendMessage:', e.message);
   });
