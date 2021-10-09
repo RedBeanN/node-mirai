@@ -1,9 +1,12 @@
 const axios = require('axios');
+const ws = require('./ws/send');
 
 const getFriendList = async ({ //获取好友列表
   host,
   sessionKey,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.friendList();
   const { data } = await axios.get(`${host}/friendList?sessionKey=${sessionKey}`);
   return data.data || data;
 };
@@ -11,7 +14,9 @@ const getFriendList = async ({ //获取好友列表
 const getGroupList = async ({ //获取群列表
   host,
   sessionKey,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.groupList();
   const { data } = await axios.get(`${host}/groupList?sessionKey=${sessionKey}`);
   return data.data || data;
 };
@@ -19,7 +24,9 @@ const getGroupList = async ({ //获取群列表
 const getBotProfile = async ({
   host,
   sessionKey,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.botProfile();
   const { data } = await axios.get(`${host}/botProfile?sessionKey=${sessionKey}`);
   return data.data || data;
 };
@@ -27,7 +34,9 @@ const getFriendProfile = async ({
   host,
   sessionKey,
   qq,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.friendProfile({ target: qq });
   const { data } = await axios.get(`${host}/friendProfile?sessionKey=${sessionKey}&target=${qq}`);
   return data.data || data;
 };
@@ -36,7 +45,9 @@ const getMemberProfile = async ({
   sessionKey,
   group,
   qq,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.memberProfile({ target: group, memberId: qq });
   const { data } = await axios.get(`${host}/memberProfile?sessionKey=${sessionKey}&target=${group}&memberId=${qq}`);
   return data.data || data;
 };
@@ -45,7 +56,9 @@ const getMessageById = async ({ //通过messageId获取一条被缓存的消息
   messageId, 
   host,
   sessionKey,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.messageFromId({ messageId });
   const { data } = await axios.get(`${host}/messageFromId?sessionKey=${sessionKey}&id=${messageId}`);
   return data;
 };

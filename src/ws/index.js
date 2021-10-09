@@ -18,9 +18,12 @@ const init = (wsHost, syncId = -1, bot) => {
     if (messageMap.has(_id)) {
       const [r, j] = messageMap.get(_id);
       if (data.data && data.data.code === 0) {
-        r(data.data);
+        // unwrap deep data...
+        r(data.data.data);
       } else {
-        j(data.data);
+        // some api does not response a wrapped { code, data } object
+        if (!('code' in data.data)) r(data.data);
+        else j(data.data);
       }
     }
   });

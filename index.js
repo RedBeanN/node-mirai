@@ -573,6 +573,7 @@ class NodeMirai {
     return getFriendList({
       host: this.host,
       sessionKey: this.sessionKey,
+      wsOnly: this.wsOnly,
     });
   }
   /**
@@ -584,6 +585,7 @@ class NodeMirai {
     return getGroupList({
       host: this.host,
       sessionKey: this.sessionKey,
+      wsOnly: this.wsOnly,
     });
   }
   /**
@@ -623,6 +625,7 @@ class NodeMirai {
       messageId,
       host: this.host,
       sessionKey: this.sessionKey,
+      wsOnly,
     });
   }
 
@@ -633,11 +636,7 @@ class NodeMirai {
    * @returns { Promise<GroupMember[]> }
    */
   getGroupMemberList (target) {
-    return group.getMemberList({
-      target,
-      host: this.host,
-      sessionKey: this.sessionKey,
-    });
+    return group.getMemberList(Object.assign({}, this, { target }));
   }
   /**
    * @method NodeMirai#setGroupMute
