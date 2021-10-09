@@ -264,9 +264,7 @@ class NodeMirai {
     return sendGroupMessage({
       messageChain: messageChain,
       target: group,
-      sessionKey: this.sessionKey,
-      host: this.host,
-    });
+    }, this);
   }
   /**
    * @method NodeMirai#sendTempMessage
@@ -283,17 +281,13 @@ class NodeMirai {
         messageChain: messageChain,
         qq: (qq & 0xFFFFFFFF),
         group: ((qq >> 32) & 0xFFFFFFFF),
-        sessionKey: this.sessionKey,
-        host: this.host,
-      });
+      }, this);
     else
       return sendTempMessage({
         messageChain: messageChain,
         qq,
         group,
-        sessionKey: this.sessionKey,
-        host: this.host,
-      });
+      }, this);
   }
   /**
    * @method NodeMirai#sendImageMessage
@@ -307,16 +301,12 @@ class NodeMirai {
         return sendImageMessage({
           url,
           qq: target.sender.id,
-          sessionKey: this.sessionKey,
-          host: this.host,
-        });
+        }, this);
       case 'GroupMessage':
         return sendImageMessage({
           url,
           group: target.sender.group.id,
-          sessionKey: this.sessionKey,
-          host: this.host,
-        });
+        }, this);
       default:
         console.error('Error @ sendImageMessage: unknown target type');
     }
@@ -334,9 +324,7 @@ class NodeMirai {
     return sendVoiceMessage({
       url,
       group: target.sender.group.id,
-      sessionKey: this.sessionKey,
-      host: this.host
-    });
+    }, this);
   }
 
   /**
@@ -351,16 +339,12 @@ class NodeMirai {
         return sendFlashImageMessage({
           url,
           qq: target.sender.id,
-          sessionKey: this.sessionKey,
-          host: this.host,
-        });
+        }, this);
       case 'GroupMessage':
         return sendFlashImageMessage({
           url,
           group: target.sender.group.id,
-          sessionKey: this.sessionKey,
-          host: this.host,
-        });
+        }, this);
       default:
         console.error('Error @ sendFlashImageMessage: unknown target type');
     }
@@ -392,9 +376,7 @@ class NodeMirai {
     return uploadImage({
       url,
       type,
-      sessionKey: this.sessionKey,
-      host: this.host,
-    });
+    }, this);
   }
 
 
@@ -410,9 +392,7 @@ class NodeMirai {
     return uploadVoice({
       url,
       type: 'group',
-      sessionKey: this.sessionKey,
-      host: this.host
-    });
+    }, this);
   }
 
   /**
@@ -439,18 +419,16 @@ class NodeMirai {
    * @method NodeMirai#sendQuotedFriendMessage
    * @description 发送带引用的好友消息
    * @param { MessageChain[] } message MessageChain 数组
-   * @param { number } qq 发送对象的 qq 号
+   * @param { number } target 发送对象的 qq 号
    * @param { number } quote 引用的 Message 的 id
    * @returns { Promise<httpApiResponse> }
    */
-  async sendQuotedFriendMessage (message, qq, quote) {
+  async sendQuotedFriendMessage (message, target, quote) {
     return sendQuotedFriendMessage({
       messageChain: message,
-      qq,
+      target,
       quote,
-      sessionKey: this.sessionKey,
-      host: this.host,
-    });
+    }, this);
   }
   /**
    * @method NodeMirai#sendQuotedGroupMessage
@@ -464,9 +442,7 @@ class NodeMirai {
     return sendQuotedGroupMessage({
       messageChain: message,
       target, quote,
-      sessionKey: this.sessionKey,
-      host: this.host,
-    });
+    }, this);
   }
   /**
    * @method NodeMirai#sendQuotedTempMessage
@@ -488,7 +464,7 @@ class NodeMirai {
         quote: group,
         sessionKey: this.sessionKey,
         host: this.host,
-      });    
+      }, this);    
     else
       return sendQuotedTempMessage({
         messageChain: message,
@@ -497,7 +473,7 @@ class NodeMirai {
         quote,
         sessionKey: this.sessionKey,
         host: this.host,
-      });
+      }, this);
   }
 
   /**
@@ -524,6 +500,7 @@ class NodeMirai {
           // process.exit(1);
       }
     } catch (e) {
+      console.log(e);
       console.error('Invalid target @ sendQuotedMessage');
     }
   }
@@ -580,6 +557,7 @@ class NodeMirai {
         target,
         sessionKey: this.sessionKey,
         host: this.host,
+        wsOnly: this.wsOnly,
       });
     } catch (e) {
       console.error('Error @ recall', e.message);

@@ -21,14 +21,15 @@ const sendFriendMessage = async ({ //发送好友消息
 
 const sendQuotedFriendMessage = async ({ // 好友中引用一条消息的messageId进行回复
   messageChain,
-  qq,
+  target,
   quote,
-  sessionKey,
-  host = 8080,
-}) => {
+}, bot) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
-  const { data } = await axios.post(`${host}/sendFriendMessage`, {
-    messageChain, target: qq, sessionKey, quote,
+  if (bot.wsOnly) return wsMessage.sendFriendMessage({
+    messageChain, target, quote
+  });
+  const { data } = await axios.post(`${bot.host}/sendFriendMessage`, {
+    messageChain, target, sessionKey: bot.sessionKey, quote,
   }).catch(e => {
     console.error('Unknown Error @ sendQuotedFriendMessage:', e.message);
   });
@@ -38,12 +39,13 @@ const sendQuotedFriendMessage = async ({ // 好友中引用一条消息的messag
 const sendGroupMessage = async ({ // 发送群消息
   messageChain,
   target,
-  sessionKey,
-  host = 8080,
-}) => {
+}, bot) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
-  const { data } = await axios.post(`${host}/sendGroupMessage`, {
-    messageChain, target, sessionKey,
+  if (bot.wsOnly) return wsMessage.sendGroupMessage({
+    messageChain, target,
+  });
+  const { data } = await axios.post(`${bot.host}/sendGroupMessage`, {
+    messageChain, target, sessionKey: bot.sessionKey,
   }).catch(e => {
     console.error('Unknown Error @ sendGroupMessage:', e.message);
   });
@@ -53,12 +55,13 @@ const sendQuotedGroupMessage = async ({ // 群消息中引用一条消息的 mes
   messageChain,
   target,
   quote,
-  sessionKey,
-  host = 8080,
-}) => {
+}, bot) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
-  const { data } = await axios.post(`${host}/sendGroupMessage`, {
-    messageChain, target, sessionKey, quote,
+  if (bot.wsOnly) return wsMessage.sendGroupMessage({
+    messageChain, target, quote,
+  });
+  const { data } = await axios.post(`${bot.host}/sendGroupMessage`, {
+    messageChain, target, sessionKey: bot.sessionKey, quote,
   }).catch(e => {
     console.error('Unknown Error @ sendQuotedGroupMessage:', e.message);
   });
@@ -69,12 +72,13 @@ const sendTempMessage = async ({ // 发送临时会话消息
   messageChain,
   qq,
   group,
-  sessionKey,
-  host = 8080,
-}) => {
+}, bot) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
-  const { data } = await axios.post(`${host}/sendTempMessage`, {
-    messageChain, qq, group, sessionKey,
+  if (bot.wsOnly) return wsMessage.sendTempMessage({
+    messageChain, qq, group,
+  });
+  const { data } = await axios.post(`${bot.host}/sendTempMessage`, {
+    messageChain, qq, group, sessionKey: bot.sessionKey,
   }).catch(e => {
     console.error('Unknown Error @ sendTempMessage:', e.message);
   });
@@ -86,12 +90,13 @@ const sendQuotedTempMessage = async ({ // 发送临时会话引用一条消息�
   qq,
   group,
   quote,
-  sessionKey,
-  host = 8080,
-}) => {
+}, bot) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
-  const { data } = await axios.post(`${host}/sendTempMessage`, {
-    messageChain, qq, group, sessionKey, quote,
+  if (bot.wsOnly) return wsMessage.sendTempMessage({
+    messageChain, qq, group, quote,
+  });
+  const { data } = await axios.post(`${bot.host}/sendTempMessage`, {
+    messageChain, qq, group, sessionKey: bot.sessionKey, quote,
   }).catch(e => {
     console.error('Unknown Error @ sendQuotedTempMessage:', e.message);
   });
@@ -101,18 +106,19 @@ const sendQuotedTempMessage = async ({ // 发送临时会话引用一条消息�
 const uploadImage = async ({
   url,
   type,
-  sessionKey,
-  host,
-}) => {
+}, bot) => {
+  if (bot.wsOnly) {
+    console.warn(`[Warn] uploadImage is not supported in wsOnly mode. Use http instead`);
+  }
   let img = url;
   if (typeof url === 'string') img = fs.createReadStream(url);
   const form = new FormData();
-  form.append('sessionKey', sessionKey);
+  form.append('sessionKey', bot.sessionKey);
   form.append('type', type);
   // #19: 当传入的 url 为 Buffer 类型时，只需指定文件名即可，此写法兼容 ReadStream；另外图片文件名的后缀类型并不会影响上传结果
   form.append('img', img, { filename: "payload.jpg" });
   
-  const { data } = await axios.post(`${host}/uploadImage`, form, {
+  const { data } = await axios.post(`${bot.host}/uploadImage`, form, {
     headers: form.getHeaders(),
   });
   return data;
@@ -121,16 +127,17 @@ const uploadImage = async ({
 const uploadVoice = async({
   url,
   type,
-  sessionKey,
-  host
-}) => {
+}, bot) => {
+  if (bot.wsOnly) {
+    console.warn(`[Warn] uploadVoice is not supported in wsOnly mode. Use http instead`);
+  }
   let voice = (typeof url === 'string') ? fs.createReadStream(url) : url;
   const form = new FormData();
-  form.append('sessionKey', sessionKey);
+  form.append('sessionKey', bot.sessionKey);
   form.append('type', type);
   form.append('voice', voice);
     
-  const { data } = await axios.post(`${host}/uploadVoice`, form, {
+  const { data } = await axios.post(`${bot.host}/uploadVoice`, form, {
     headers: form.getHeaders()
   });
   return data;
@@ -140,9 +147,7 @@ const sendImageMessage = async ({
   url,
   qq,
   group,
-  sessionKey,
-  host = 8080,
-}) => {
+}, bot) => {
   let type, send, target;
   if (qq) {
     type = 'friend';
@@ -163,41 +168,31 @@ const sendImageMessage = async ({
   return send({
     messageChain,
     target,
-    sessionKey,
-    host,
-  });
+  }, bot);
 };
 
 const sendVoiceMessage = async({
   url,
   group,
-  sessionKey,
-  host = 8080
-}) => {
+}, bot) => {
   const target = group,
     type = 'group';
   const voice = await uploadVoice({
     url,
     type,
-    sessionKey,
-    host
-  });
+  }, bot);
   const messageChain = [Voice(voice)];
   return sendGroupMessage({
     messageChain,
     target,
-    sessionKey,
-    host
-  });
+  }, bot);
 };
 
 const sendFlashImageMessage = async ({
   url,
   qq,
   group,
-  sessionKey,
-  host = 8080,
-}) => {
+}, bot) => {
   let type, send, target;
   if (qq) {
     type = 'friend';
@@ -211,16 +206,12 @@ const sendFlashImageMessage = async ({
   const image = await uploadImage({
     url,
     type,
-    sessionKey,
-    host,
-  });
+  }, bot);
   const messageChain = [FlashImage(image)];
   return send({
     messageChain,
     target,
-    sessionKey,
-    host,
-  });
+  }, bot);
 };
 
 /**
@@ -232,17 +223,21 @@ const sendFlashImageMessage = async ({
  * @param { 'Group' | 'Friend' | 'Stranger' } option.type
  */
 const sendNudge = async ({
-  sessionKey,
   target,
   subject,
   kind,
   host,
+  sessionKey,
+  wsOnly,
 }) => {
   console.log({
     sessionKey,
     target,
     subject,
     kind,
+  });
+  if (wsOnly) return wsMessage.sendNudge({
+    target, subject, kind,
   });
   const { data } = await axios.post(`${host}/sendNudge`, {
     sessionKey,
