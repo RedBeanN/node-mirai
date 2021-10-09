@@ -156,7 +156,9 @@ const deleteFriend = async ({
   sessionKey,
   host,
   target,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.deleteFriend({ target });
   const { data } = await axios.post(`${host}/deleteFriend`, {
     sessionKey,
     target,
