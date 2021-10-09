@@ -23,7 +23,9 @@ const init = (wsHost, syncId = -1, bot) => {
       } else {
         // some api does not response a wrapped { code, data } object
         if (!('code' in data.data)) r(data.data);
-        else j(data.data);
+        // don't reject a success response with non-zero code
+        // else j(data.data);
+        else r(data.data);
       }
     }
   });

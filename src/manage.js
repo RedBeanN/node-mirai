@@ -121,8 +121,10 @@ const botInvitedJoinGroupRequestHandler = async({
 const quitGroup = async ({
   sessionKey,
   host,
-  target
+  target,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.quit({ target });
   const { data } = await axios.post(`${host}/quit`, {
     sessionKey,
     target

@@ -1,10 +1,13 @@
 const axios = require('axios');
+const ws = require('./ws/send');
 
 const getMemberList = async ({ //获取群成员列表
   target,
   host,
   sessionKey,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.memberList({ target });
   const { data } = await axios.get(`${host}/memberList`, {
     params: {
       sessionKey,
@@ -20,7 +23,9 @@ const setMute = async ({ //群禁言群成员
   time,
   host,
   sessionKey,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.mute({ target, memberId, time });
   const { data } = await axios.post(`${host}/mute`, {
     sessionKey,
     target,
@@ -34,7 +39,9 @@ const setUnmute = async ({ //群解除群成员禁言
   memberId,
   host,
   sessionKey,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.unmute({ target, memberId });
   const { data } = await axios.post(`${host}/unmute`, {
     sessionKey,
     target,
@@ -47,7 +54,9 @@ const setMuteAll = async ({ //群全体禁言
   target,
   host,
   sessionKey,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.muteAll({ target });
   const { data } = await axios.post(`${host}/muteAll`, {
     sessionKey,
     target,
@@ -59,7 +68,9 @@ const setUnmuteAll = async ({ //群解除全体禁言
   target,
   host,
   sessionKey,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.unmuteAll({ target });
   const { data } = await axios.post(`${host}/unmuteAll`, {
     sessionKey,
     target,
@@ -73,7 +84,9 @@ const setKick = async ({ // 移除群成员
   msg,
   host,
   sessionKey,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.kick({ target, memberId, msg });
   const { data } = await axios.post(`${host}/kick`, {
     sessionKey,
     target,
@@ -85,8 +98,10 @@ const setKick = async ({ // 移除群成员
 
 const setEssence = async ({  // 设置群精华
   target,
-  sessionKey
+  sessionKey,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.setEssence({ target });
   const { data } = await axios.post(`${host}/setEssence`, {
     sessionKey,
     target
@@ -98,7 +113,9 @@ const getConfig = async ({ // 获取群设置
   target,
   host,
   sessionKey,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.groupConfig({ target }, 'get');
   const { data } = await axios.get(`${host}/groupConfig`, {
     params: {
       sessionKey,
@@ -112,7 +129,9 @@ const setConfig = async ({ //修改群设置
   config,
   host,
   sessionKey,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.groupConfig({ target, config }, 'update');
   const { data } = await axios.post(`${host}/groupConfig`, {
     target,
     sessionKey,
@@ -126,7 +145,9 @@ const getMemberInfo = async ({ //获取群员资料
   memberId,
   host,
   sessionKey,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.memberInfo({ target, memberId }, 'get');
   const { data } = await axios.get(`${host}/memberInfo`, {
     params: {
       sessionKey,
@@ -143,7 +164,9 @@ const setMemberInfo = async ({ //修改群员资料
   info,
   host,
   sessionKey,
+  wsOnly,
 }) => {
+  if (wsOnly) return ws.memberInfo({ target, memberId, info }, 'update');
   const { data } = await axios.post(`${host}/memberInfo`, {
     target,
     memberId,

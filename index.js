@@ -621,12 +621,7 @@ class NodeMirai {
    * @return { message }
    */
   getMessageById (messageId) {
-    return getMessageById({
-      messageId,
-      host: this.host,
-      sessionKey: this.sessionKey,
-      wsOnly,
-    });
+    return getMessageById(Object.assign({}, this, { messageId }));
   }
 
   /**
@@ -647,13 +642,9 @@ class NodeMirai {
    * @returns { Promise<httpApiResponse> }
    */
   setGroupMute (target, memberId, time = 600) {
-    return group.setMute({
-      target,
-      memberId,
-      time,
-      host: this.host,
-      sessionKey: this.sessionKey,
-    });
+    return group.setMute(Object.assign({}, this, {
+      target, memberId, time,
+    }));
   }
   /**
    * @method NodeMirai#setGroupUnmute
@@ -663,12 +654,9 @@ class NodeMirai {
    * @returns { Promise<httpApiResponse> }
    */
   setGroupUnmute (target, memberId) {
-    return group.setUnmute({
-      target,
-      memberId,
-      host: this.host,
-      sessionKey: this.sessionKey,
-    });
+    return group.setUnmute(Object.assign({}, this, {
+      target, memberId,
+    }));
   }
   /**
    * @method NodeMirai#setGroupMuteAll
@@ -677,11 +665,7 @@ class NodeMirai {
    * @returns { Promise<httpApiResponse> }
    */
   setGroupMuteAll (target) {
-    return group.setMuteAll({
-      target,
-      host: this.host,
-      sessionKey: this.sessionKey,
-    });
+    return group.setMuteAll(Object.assign({}, this, { target }));
   }
   /**
    * @method NodeMirai#setGroupUnmuteAll
@@ -690,11 +674,7 @@ class NodeMirai {
    * @returns { Promise<httpApiResponse> }
    */
   setGroupUnmuteAll (target) {
-    return group.setUnmuteAll({
-      target,
-      host: this.host,
-      sessionKey: this.sessionKey,
-    });
+    return group.setUnmuteAll(Object.assign({}, this, { target }));
   }
   /**
    * @method NodeMirai#setGroupKick
@@ -705,13 +685,9 @@ class NodeMirai {
    * @returns { Promise<httpApiResponse> }
    */
   setGroupKick (target, memberId, msg = '您已被移出群聊') {
-    return group.setKick({
-      target,
-      memberId,
-      msg,
-      host: this.host,
-      sessionKey: this.sessionKey,
-    });
+    return group.setKick(Object.assign({}, this, {
+      target, memberId, msg,
+    }));
   }
   /**
    * @method NodeMirai#setGroupConfig
@@ -721,12 +697,9 @@ class NodeMirai {
    * @returns { Promise<httpApiResponse> }
    */
   setGroupConfig (target, config) {
-    return group.setConfig({
-      target,
-      config,
-      host: this.host,
-      sessionKey: this.sessionKey,
-    });
+    return group.setConfig(Object.assign({}, this, {
+      target, config,
+    }));
   }
   /**
    * @method NodeMirai#setEssence
@@ -744,7 +717,8 @@ class NodeMirai {
       target: realTarget,
       id,
       host,
-      sessionKey
+      sessionKey,
+      wsOnly: this.wsOnly,
     });
   }
   /**
@@ -754,11 +728,7 @@ class NodeMirai {
    * @returns { Promise<GroupInfo> }
    */
   getGroupConfig (target) {
-    return group.getConfig({
-      target,
-      host: this.host,
-      sessionKey: this.sessionKey,
-    });
+    return group.getConfig(Object.assign({}, this, target));
   }
   /**
    * @method NodeMirai#setGroupMemberInfo
@@ -769,13 +739,9 @@ class NodeMirai {
    * @returns { Promise<httpApiResponse> }
    */
   setGroupMemberInfo (target, memberId, info) {
-    return group.setMemberInfo({
-      target,
-      memberId,
-      info,
-      host: this.host,
-      sessionKey: this.sessionKey,
-    });
+    return group.setMemberInfo(Object.assign({}, this, {
+      target, memberId, info,
+    }));
   }
   /**
    * @method NodeMirai#getGroupMemberInfo
@@ -785,12 +751,9 @@ class NodeMirai {
    * @returns { Promise<GroupMember> }
    */
   getGroupMemberInfo (target, memberId) {
-    return group.getMemberInfo({
-      target,
-      memberId,
-      host: this.host,
-      sessionKey: this.sessionKey,
-    });
+    return group.getMemberInfo(Object.assign({}, this, {
+      target, memberId,
+    }));
   }
 
   /**
@@ -800,11 +763,7 @@ class NodeMirai {
    * @returns { Promise<httpApiResponse> }
    */
   quit(target) {
-    return quitGroup({
-      host: this.host,
-      sessionKey: this.sessionKey,
-      target
-    });
+    return quitGroup(Object.assign({}, this, { target }));
   }
   
   /**

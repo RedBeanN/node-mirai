@@ -21,7 +21,7 @@ const sendMessage = new Proxy({}, {
    */
   get(_, method) {
     const command = method.replace('Quoted', '');
-    return content => ws.send({ command, content });
+    return (content, subCommand) => ws.send({ command, content, subCommand });
   }
 });
 
