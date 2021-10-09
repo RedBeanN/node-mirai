@@ -1,7 +1,7 @@
 const axios = require('axios');
 const fs = require('fs');
 const FormData = require('form-data');
-const wsMessage = require('./ws/sendMessage');
+const wsMessage = require('./ws/send');
 
 const { Plain, Image, FlashImage, Voice } = require('./MessageComponent');
 

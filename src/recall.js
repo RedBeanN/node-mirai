@@ -1,5 +1,5 @@
 const axios = require('axios');
-const ws = require('./ws/sendMessage');
+const ws = require('./ws/send');
 
 const recall = async ({ //撤回消息,管理BOT不能撤回群主消息,会报错
   target,

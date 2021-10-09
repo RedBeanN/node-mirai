@@ -1,4 +1,4 @@
-const ws = require('./');
+const ws = require('.');
 
 // const sendFriendMessage = (content) => {
 //   return ws.send({
