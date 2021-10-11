@@ -858,6 +858,7 @@ class NodeMirai {
       sessionKey,
       host,
       isV1: this._is_mah_v1_,
+      wsOnly: this.wsOnly,
     });
   }
 
@@ -892,6 +893,7 @@ class NodeMirai {
       host,
       withDownloadInfo,
       isV1: this._is_mah_v1_,
+      wsOnly: this.wsOnly,
     });
   }
 
@@ -918,6 +920,7 @@ class NodeMirai {
       host,
       withDownloadInfo,
       isV1: this._is_mah_v1_,
+      wsOnly: this.wsOnly,
     });
   }
 
@@ -944,6 +947,7 @@ class NodeMirai {
       sessionKey,
       host,
       isV1: this._is_mah_v1_,
+      wsOnly: this.wsOnly,
     });
   }
 
@@ -970,6 +974,7 @@ class NodeMirai {
       sessionKey,
       host,
       isV1: this._is_mah_v1_,
+      wsOnly: this.wsOnly,
     });
   }
 
@@ -999,6 +1004,7 @@ class NodeMirai {
       target,
       directoryName,
       isV1: this._is_mah_v1_,
+      wsOnly: this.wsOnly,
     });
   }
 
@@ -1022,6 +1028,7 @@ class NodeMirai {
       sessionKey,
       host,
       isV1: this._is_mah_v1_,
+      wsOnly: this.wsOnly,
     });
   }
 

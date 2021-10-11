@@ -3,6 +3,7 @@
 const fs = require("fs");
 const axios = require("axios");
 const FormData = require("form-data");
+const ws = require('./ws/send');
 
 /**
  * @typedef { import('./typedef').GroupFile } FileOrDir
@@ -17,6 +18,7 @@ const FormData = require("form-data");
  * @param { string } config.sessionKey
  * @param { string } config.host
  * @param { boolean } config.isV1
+ * @param { boolean } config.wsOnly
  * @return { object } 
  */
 const uploadFileAndSend = async({
@@ -26,7 +28,9 @@ const uploadFileAndSend = async({
   sessionKey,
   host,
   isV1,
+  wsOnly,
 }) => {
+  if (wsOnly) console.warn(`Upload file through ws is not supported yet`);
   const postUrl = isV1
     ? `${host}/uploadFileAndSend`
     : `${host}/file/upload`;
@@ -54,6 +58,7 @@ const uploadFileAndSend = async({
  * @param { string } config.host
  * @param { boolean } config.withDownloadInfo
  * @param { boolean } config.isV1
+ * @param { boolean } config.wsOnly
  * @returns { Promise<FileOrDir[]> }
  */
 const getGroupFileList = async({
@@ -63,7 +68,13 @@ const getGroupFileList = async({
   host,
   withDownloadInfo = false,
   isV1 = false,
+  wsOnly = false,
 }) => {
+  if (wsOnly) return ws.file_list({
+    id: typeof dir === 'string' ? dir : dir && dir.id,
+    path: typeof dir === 'string' ? dir : null,
+    target, withDownloadInfo,
+  });
   let getUrl = isV1
     ? `${host}/groupFileList?sessionKey=${sessionKey}&target=${target}`
     : `${host}/file/list?sessionKey=${sessionKey}&target=${target}`;
@@ -93,6 +104,7 @@ const getGroupFileList = async({
  * @param { string } config.host
  * @param { boolean } config.withDownloadInfo
  * @param { boolean } config.isV1
+ * @param { boolean } config.wsOnly
  * @returns { object }
  */
 const getGroupFileInfo = async({
@@ -102,8 +114,13 @@ const getGroupFileInfo = async({
   host,
   withDownloadInfo,
   isV1,
+  wsOnly,
 }) => {
   const realId = typeof id === 'object' ? id.id : id;
+  if (wsOnly) return ws.file_info({
+    id: realId,
+    target, withDownloadInfo,
+  });
   const getUrl = isV1
     ? `${host}/groupFileInfo?sessionKey=${sessionKey}&target=${target}&id=${realId}`
     : `${host}/file/info?sessionKey=${sessionKey}&target=${target}&id=${realId}`;
@@ -124,6 +141,7 @@ const getGroupFileInfo = async({
  * @param { string } config.sessionKey
  * @param { string } config.host
  * @param { boolean } config.isV1
+ * @param { boolean } config.wsOnly
  * @returns { object }
  */
 const renameGroupFile = async({
@@ -133,14 +151,21 @@ const renameGroupFile = async({
   sessionKey,
   host,
   isV1,
+  wsOnly,
 }) => {
+  const realId = typeof id === 'string' ? id : id.id;
+  if (wsOnly) return ws.file_rename({
+    id: realId,
+    renameTo: rename,
+    target,
+  });
   const postUrl = isV1
     ? `${host}/groupFileRename`
     : `${host}/file/rename`;
   const postData = {
     sessionKey,
     target,
-    id: typeof id === 'string' ? id : id.id,
+    id: realId,
     [isV1 ? 'rename' : 'renameTo']: rename,
   };
   console.log(postData);
@@ -158,6 +183,7 @@ const renameGroupFile = async({
  * @param { string } config.sessionKey
  * @param { string } config.host
  * @param { boolean } config.isV1
+ * @param { boolean } config.wsOnly
  * @returns { object }
  */
 const moveGroupFile = async({
@@ -167,13 +193,21 @@ const moveGroupFile = async({
   sessionKey,
   host,
   isV1,
+  wsOnly,
 }) => {
+  const realId = typeof id === 'string' ? id : id.id;
+  if (wsOnly) return ws.file_move({
+    id: realId,
+    moveTo: moveTo.id || null,
+    moveToPath: typeof moveTo === 'string' ? moveTo : null,
+    target,
+  });
   const postUrl = isV1
     ? `${host}/groupFileMove`
     : `${host}/file/move`;
   const postData = {
     sessionKey,
-    id: typeof id === 'string' ? id : id.id,
+    id: realId,
     target,
   };
   if (typeof moveTo === 'object') {
@@ -195,6 +229,7 @@ const moveGroupFile = async({
  * @param { string } config.sessionKey
  * @param { string } config.host
  * @param { boolean } config.isV1
+ * @param { boolean } config.wsOnly
  * @returns { object }
  */
 const deleteGroupFile = async({
@@ -203,13 +238,19 @@ const deleteGroupFile = async({
   sessionKey,
   host,
   isV1,
+  wsOnly,
 }) => {
+  const realId = typeof id === 'string' ? id : id.id;
+  if (wsOnly) ws.file_delete({
+    id: realId,
+    target,
+  });
   const postUrl = isV1
     ? `${host}/groupFileDelete`
     : `${host}/file/delete`;
   const postData = {
     sessionKey,
-    id: typeof id === 'string' ? id : id.id,
+    id: realId,
     target
   };
   const { data } = await axios.post(postUrl, postData);
@@ -227,6 +268,7 @@ const deleteGroupFile = async({
  * @param { number } config.target
  * @param { string } config.directoryName
  * @param { boolean } config.isV1
+ * @param { boolean } config.wsOnly
  */
 const makeDir = async ({
   sessionKey,
@@ -235,12 +277,18 @@ const makeDir = async ({
   target,
   directoryName,
   isV1,
+  wsOnly,
 }) => {
+  const realId = typeof id === 'string' ? id : id.id;
+  if (wsOnly) return ws.file_mkdir({
+    id: realId,
+    target, directoryName,
+  });
   if (isV1) return { code: 400, message: 'not supported' };
   const postUrl = `${host}/file/mkdir`;
   const postData = {
     sessionKey,
-    id: typeof id === 'string' ? id : id.id,
+    id: realId,
     target,
     directoryName,
   };
