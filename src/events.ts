@@ -224,6 +224,18 @@ interface newFriendRequest {
   groupId: number,
   nick: string,
   message: string,
+  /**
+   * 接受好友申请
+   */
+  accept: (msg?: string) => void,
+  /**
+   * 拒绝好友申请
+   */
+  reject: (msg?: string) => void,
+  /**
+   * 拒绝并拉黑, 不再接收该用户的好友申请
+   */
+  rejectAndBlock: (msg?: string) => void,
 }
 interface memberJoinRequest {
   type: 'MemberJoinRequestEvent',
@@ -242,6 +254,14 @@ interface invitedJoinGroupRequest {
   groupName: string,
   nick: string,
   message: string,
+  /**
+   * 接受邀请
+   */
+  accept: (msg?: string) => void,
+  /**
+   * 拒绝邀请
+   */
+  reject: (msg?: string) => void,
 }
 interface otherClientOnline {
   type: 'OtherClientOnlineEvent',

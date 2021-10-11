@@ -807,7 +807,8 @@ class NodeMirai {
       operate,
       message,
       host: this.host,
-      sessionKey: this.sessionKey
+      sessionKey: this.sessionKey,
+      wsOnly: this.wsOnly,
     });
   }
 
@@ -830,6 +831,7 @@ class NodeMirai {
       message,
       host: this.host,
       sessionKey: this.sessionKey,
+      wsOnly: this.wsOnly,
     });
   }
 
@@ -1187,6 +1189,25 @@ class NodeMirai {
       }
     }
     else if (message.type in events) {
+      if (message.type === 'NewFriendRequestEvent' || message.type === 'BotInvitedJoinGroupEvent') {
+        const self = this;
+        const args = [message.eventId, message.fromId, message.groupId];
+        const methods = {
+          accept (msg) {
+            return self.handleNewFriendRequest(...args, 0, msg);
+          },
+          reject (msg) {
+            return self.handleNewFriendRequest(...args, 1, msg);
+          },
+          rejectAndBlock: null,
+        };
+        if (message.type === 'NewFriendRequestEvent') {
+          methods.rejectAndBlock = (msg) => {
+            return self.handleNewFriendRequest(...args, 2, msg);
+          };
+        }
+        Object.assign(message, methods);
+      }
       for (let listener of this.eventListeners[events[message.type]]) {
         listener(message, this);
       }
