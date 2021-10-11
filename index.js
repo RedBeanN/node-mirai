@@ -92,6 +92,7 @@ class NodeMirai {
    * @property { number } qq bot 的 qq 号
    * @property { boolean } [enableWebsocket] 使用 ws 来获取消息和事件推送
    * @property { boolean } [wsOnly] 完全使用 ws 来收发消息，为 true 时覆盖 enableWebsocket 且无需调用 verify
+   * @property { number } [syncId] wsOnly 模式下用于标记 server 主动推送的消息
    * @property { number } [interval] 拉取消息的周期(ms), 默认为200
    * @property { string } [authKey] (Deprecated) http-api 1.x 版本的authKey
    */
@@ -134,7 +135,7 @@ class NodeMirai {
      * @type { string[] }
      */
     this.types = [];
-    // TODO: support wsOnly mode #32
+
     this.wsOnly = wsOnly;
     this.syncId = syncId;
     this.enableWebsocket = wsOnly || enableWebsocket;
@@ -785,6 +786,7 @@ class NodeMirai {
       message,
       host: this.host,
       sessionKey: this.sessionKey,
+      wsOnly: this.wsOnly,
     });
   }
 
@@ -1196,7 +1198,7 @@ class NodeMirai {
       }
     }
     else if (message.type in events) {
-      if (message.type === 'NewFriendRequestEvent' || message.type === 'BotInvitedJoinGroupEvent') {
+      if (['NewFriendRequestEvent', 'BotInvitedJoinGroupEvent', 'MemberJoinRequestEvent'].includes(message.type)) {
         const self = this;
         const args = [message.eventId, message.fromId, message.groupId];
         const methods = {
@@ -1207,11 +1209,18 @@ class NodeMirai {
             return self.handleNewFriendRequest(...args, 1, msg);
           },
           rejectAndBlock: null,
+          ignore: null,
+          ignoreAndBlock: null,
         };
         if (message.type === 'NewFriendRequestEvent') {
           methods.rejectAndBlock = (msg) => {
             return self.handleNewFriendRequest(...args, 2, msg);
           };
+        }
+        if (message.type === 'MemberJoinRequestEvent') {
+          methods.ignore = msg => self.handleMemberJoinRequest(...args, 2, msg);
+          methods.rejectAndBlock = msg => self.handleMemberJoinRequest(...args, 3, msg);
+          methods.ignoreAndBlock = msg => self.handleMemberJoinRequest(...args, 4, msg);
         }
         Object.assign(message, methods);
       }

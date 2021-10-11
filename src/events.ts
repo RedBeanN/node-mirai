@@ -1,4 +1,4 @@
-import { Permission, GroupPermissionInfo, GroupMember, MessageChain, MessageType, message } from "./typedef"
+import { Permission, GroupPermissionInfo, GroupMember, MessageChain, MessageType, message, httpApiResponse } from "./typedef"
 
 export enum events {
   online = "online",
@@ -227,15 +227,15 @@ interface newFriendRequest {
   /**
    * 接受好友申请
    */
-  accept: (msg?: string) => void,
+  accept: (msg?: string) => Promise<httpApiResponse>,
   /**
    * 拒绝好友申请
    */
-  reject: (msg?: string) => void,
+  reject: (msg?: string) => Promise<httpApiResponse>,
   /**
    * 拒绝并拉黑, 不再接收该用户的好友申请
    */
-  rejectAndBlock: (msg?: string) => void,
+  rejectAndBlock: (msg?: string) => Promise<httpApiResponse>,
 }
 interface memberJoinRequest {
   type: 'MemberJoinRequestEvent',
@@ -245,6 +245,26 @@ interface memberJoinRequest {
   groupName: string,
   nick: string,
   message: string,
+  /**
+   * 接受加群申请
+   */
+  accept: (msg?: string) => Promise<httpApiResponse>,
+  /**
+   * 拒绝加群申请
+   */
+  reject: (msg?: string) => Promise<httpApiResponse>,
+  /**
+   * 忽略加群申请
+   */
+  ignore: (msg?: string) => Promise<httpApiResponse>,
+  /**
+   * 拒绝并拉黑
+   */
+  rejectAndBlock: (msg?: string) => Promise<httpApiResponse>,
+  /**
+   * 忽略并拉黑
+   */
+  ignoreAndBlock: (msg?: string) => Promise<httpApiResponse>,
 }
 interface invitedJoinGroupRequest {
   type: 'BotInvitedJoinGroupRequestEvent',
@@ -257,11 +277,11 @@ interface invitedJoinGroupRequest {
   /**
    * 接受邀请
    */
-  accept: (msg?: string) => void,
+  accept: (msg?: string) => Promise<httpApiResponse>,
   /**
    * 拒绝邀请
    */
-  reject: (msg?: string) => void,
+  reject: (msg?: string) => Promise<httpApiResponse>,
 }
 interface otherClientOnline {
   type: 'OtherClientOnlineEvent',
