@@ -6,18 +6,19 @@ class Signal {
     //   'authed': [],
     //   'verified': [],
     // };
-    this.signalList = [];
+    this.signalList = ['authed', 'verified'];
+    this.signals = [];
   }
   on (signalName, callback) {
     // if (!this.signalList[signalName]) this.signalList[signalName] = [];
     // this.signalList[signalName].push(callback);
     waitFor(() => {
-      if (this.signalList.includes(signalName)) return true;
+      if (this.signals.includes(signalName)) return true;
       return false;
     }, callback);
   }
   trigger (signalName) {
-    this.signalList.push(signalName);
+    this.signals.push(signalName);
     // if (!this.signalList[signalName]) return;
     // for (let callback of this.signalList[signalName]) callback();
   }
