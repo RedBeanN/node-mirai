@@ -161,9 +161,8 @@ const sendImageMessage = async ({
   const image = await uploadImage({
     url,
     type,
-    sessionKey,
     host,
-  });
+  }, bot);
   const messageChain = [Image(image)];
   return send({
     messageChain,
