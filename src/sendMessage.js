@@ -161,7 +161,6 @@ const sendImageMessage = async ({
   const image = await uploadImage({
     url,
     type,
-    host,
   }, bot);
   const messageChain = [Image(image)];
   return send({
@@ -229,12 +228,6 @@ const sendNudge = async ({
   sessionKey,
   wsOnly,
 }) => {
-  console.log({
-    sessionKey,
-    target,
-    subject,
-    kind,
-  });
   if (wsOnly) return wsMessage.sendNudge({
     target, subject, kind,
   });
