@@ -1,5 +1,6 @@
 /**
  * @typedef { import('./typedef').MessageChain } MessageChain
+ * @typedef { import('./typedef').message } message
  * 
  * @typedef { Object } source
  * @property { number } id
@@ -31,6 +32,14 @@
  * @property { string } pictureUrl
  * @property { string } musicUrl
  * @property { string } [brief]
+ * 
+ * @typedef { Object } forwardNode
+ * @property { number } senderId
+ * @property { number } time
+ * @property { string } senderName
+ * @property { MessageChain[] } [messageChain]
+ * @property { number } [messageId]
+ * @typedef { Array<forwardNode> } nodeList
  */
 
 /**
@@ -345,6 +354,46 @@ Dice.value = dice => {
   return dice.value;
 };
 
+/**
+ * @function Forward 转发消息
+ * @param { nodeList | message[] | number[] } messages 可以传入消息数组、消息ID数组或自行构建`nodeList`，三者可以混合
+ * @returns { MessageChain }
+ */
+const Forward = (messages) => {
+  if (!Array.isArray(messages)) throw new Error('messages must be array')
+  const nodeList = messages.map(/** @param {forwardNode|message|number} msg */msg => {
+    // 消息ID可以直接作为节点
+    if (typeof msg === 'number') {
+      return { messageId: msg };
+    }
+    if (msg.sender) {
+      /** @type { message } */
+      const time = msg.messageChain[0].type === 'Source' ? msg.messageChain[0].time : 0;
+      return {
+        senderId: msg.sender.id,
+        time: 0,
+        senderName: msg.sender.memberName || msg.sender.nickname,
+        messageChain: msg.messageChain,
+        messageId: null
+      };
+    }
+    /** @see https://github.com/project-mirai/mirai-api-http/issues/482 */
+    return Object.assign({ messageId: null }, msg);
+  })
+  return {
+    type: 'Forward',
+    nodeList,
+  };
+};
+/**
+ * @function Forward#value
+ * @param { MessageChain } forward
+ * @returns { nodeList }
+ */
+Forward.value = forward => {
+  return forward.nodeList;
+};
+
 // TODO: Impl: File MiraiCode
 
 // Experimental
@@ -406,6 +455,7 @@ module.exports = {
   Audio,
   MusicShare,
   Dice,
+  Forward,
   toMiraiCode,
   parseMiraiCode,
 };

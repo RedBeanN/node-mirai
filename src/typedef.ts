@@ -61,7 +61,7 @@ export enum ChainType {
   Voice = 'Voice',
   Audio = 'Audio',
   MusicShare = 'MusicShare',
-  ForwardMessage = 'ForwardMessage',
+  ForwardMessage = 'Forward',
   File = 'File',
   MiraiCode = 'MiraiCode',
 }
@@ -278,6 +278,24 @@ export type httpApiResponse = {
 }
 
 /**
+ * @typedef { Object } forwardNode
+ * @property { number } senderId 发送人QQ
+ * @property { number } time 发送时间
+ * @property { string } senderName 显示名称
+ * @property { MessageChain[] } [messageChain]
+ */
+export type forwardNode = {
+  senderId: number,
+  time: number,
+  senderName: string,
+  messageChain: MessageChain[]
+}
+/**
+ * @typedef { Array<forwardNode & {messageId:number}> } forwardNodeList
+ */
+export type forwardNodeList = Array<forwardNode & { messageId?: number }>
+
+/**
  * @typedef { Object } MessageChain 消息链对象, node-mirai-sdk 提供各类型的 .value() 方法获得各自的属性值
  * @property { string } type 消息类型
  * @property { number | string } [id] Source 类型中的消息 id, 或Quote类型中引用的源消息的 id, 或文件 id
@@ -306,6 +324,7 @@ export type httpApiResponse = {
  * @property { string } [musicUrl] MusicShare - 音源路径
  * @property { string } [brief] MusicShare - 简介
  * @property { string } [code] MiraiCode
+ * @property { forwardNodeList } [nodeList] ForwardMessage - 转发消息列表
  */
  export type MessageChain = {
   type: ChainType,
@@ -410,6 +429,10 @@ export type httpApiResponse = {
    */
   brief?: string,
   code?: string,
+  /**
+   * Forward - 消息列表
+   */
+  nodeList: forwardNodeList,
 }
 /**
  * @callback replyFunction
