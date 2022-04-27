@@ -32,6 +32,8 @@ npm i -S node-mirai-sdk@0.2.4
 const Mirai = require('node-mirai-sdk');
 // es6 module or typescript
 import * as Mirai from 'node-mirai-sdk';
+// typescript with `esModuleInterop: true`
+import Mirai from 'node-mirai-sdk';
 
 const { Plain, At } = Mirai.MessageComponent;
 
@@ -41,6 +43,7 @@ const { Plain, At } = Mirai.MessageComponent;
 * verifyKey: mirai-api-http 的 verifyKey，建议手动指定
 * qq: 当前 BOT 对应的 QQ 号
 * enableWebsocket: 是否开启 WebSocket，需要和 mirai-api-http 的设置一致
+* wsOnly: 使用 WebSocket 发送数据
 */
 const bot = new Mirai({
   host: 'http://hostname:port',
@@ -50,6 +53,7 @@ const bot = new Mirai({
   authKey: 'YourAuthKey',
   qq: 123456,
   enableWebsocket: false,
+  wsOnly: false, // 由于 WebSocket Adapter 不支持发送文件，部分功能仍需使用 HTTP Adapter
 });
 
 // auth 认证(*)
@@ -119,7 +123,7 @@ node main.js
 
 ```javascript
 const Mirai = require('node-mirai-sdk');
-const { Plain, At, FlashImage, Image, Face, AtAll, Xml, Json, App, Poke } = Mirai.MessageComponent;
+const { Plain, At, FlashImage, Image, Face, AtAll, Xml, Json, App, Poke, Forward } = Mirai.MessageComponent;
 
 // ...
 
@@ -173,6 +177,20 @@ bot.onMessage(message => {
 
     case "戳一戳测试":
       bot.reply([Poke('Poke')], message); // 戳一戳
+      break;
+
+    case "转发测试":
+      const forwardMessage = [Forward([
+        message, // 可以直接转发消息本体
+        message.messageChain.find(c => c.type === 'Source').id, // 也可以引用源消息ID
+        {
+          senderId: 10001, // QQ号
+          senderName: 'Pony', // 显示名称
+          time: Math.floor(Date.now() / 1000), // 时间戳以秒为单位
+          messageChain: [Plain('用_创造快乐')]
+        } // 或者自行构建消息列表
+      ])]; // 三者可以混合使用
+      reply(forwardMessage); // 转发消息
       break;
 
     case "全体禁言测试":
