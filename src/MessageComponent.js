@@ -11,7 +11,7 @@
  * @property { string } [display]
  * 
  * @typedef { Object } image
- * @property { string } imageId
+ * @property { string } [imageId]
  * @property { string } [url]
  * 
  * @typedef { Object } voice
