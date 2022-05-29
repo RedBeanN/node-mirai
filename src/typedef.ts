@@ -60,6 +60,7 @@ export enum ChainType {
   Dice = 'Dice',
   Voice = 'Voice',
   Audio = 'Audio',
+  MarketFace = 'MarketFace',
   MusicShare = 'MusicShare',
   ForwardMessage = 'Forward',
   File = 'File',
