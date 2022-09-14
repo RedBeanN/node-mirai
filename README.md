@@ -77,7 +77,7 @@ bot.onMessage(async message => {
   let msg = '';
   messageChain.forEach(chain => {
     if (chain.type === 'Plain')
-        msg += Plain.value(chain);       // 从 messageChain 中提取文字内容
+        msg += Plain.value(chain);                  // 从 messageChain 中提取文字内容
   });
 
   // 直接回复
@@ -88,7 +88,7 @@ bot.onMessage(async message => {
     quoteReply([At(sender.id), Plain('好的')]);     // 或者: bot.quoteReply(messageChain, message)
   // 撤回消息
   else if (msg.includes('撤回'))
-    bot.recall(message);
+    bot.recall(message, sender.group.id);           // 私聊为 sender.id
   // 发送图片，参数接受图片路径或 Buffer
   else if (msg.includes('来张图'))
     bot.sendImageMessage("./image.jpg", message);
@@ -124,23 +124,39 @@ node main.js
 ```javascript
 const Mirai = require('node-mirai-sdk');
 const { Plain, At, FlashImage, Image, Face, AtAll, Xml, Json, App, Poke, Forward } = Mirai.MessageComponent;
+const { Friend, Group } = Mirai.Target
 
 // ...
 
-bot.onMessage(message => {
-  const { type, sender, messageChain, reply, quoteReply } = message; //接受其他消息,进行提取关键消息
+bot.onMessage(async message => {
+  const { type, sender, messageChain, reply, quoteReply, recall } = message; //接受其他消息,进行提取关键消息
   let msg = ''; 
   messageChain.forEach(chain => {
     if (chain.type === 'Plain') msg += Plain.value(chain); //判断消息类型是不是文字
   });
 
   switch (msg) {
-    case "文字测试" :
-      bot.reply([Plain('文字测试')], message); // 回复文字
+    case "文字测试":
+      // 回复文字, 第一个参数可以是字符串或消息链, 第二个参数为原始消息或 `Mirai.Target` 构造的对象
+      bot.reply('文字测试', message);
+      bot.reply([Plain('文字测试')], Friend(123456))
+      // 可以使用从 `message` 解构的 `reply` 方法, 无需传入原始消息
+      reply('文字测试'); // message.reply('文字测试')
       break;
     
-    case "撤回测试" :
-      bot.recall(message);    // 撤回测试,注意:管理不能撤回群主消息
+    case "撤回测试":
+      // 撤回指定的消息
+      // 从 MAH 2.6.0 开始, 如果`message`不带有`sender`信息则需传入原始 QQ 或群号
+      // 撤回其他群员的消息需要 bot 有管理权限, 管理员不能撤回群主的消息
+      bot.recall(message, sender.group.id);
+      // 可以使用从 `message` 解构的 `recall` 方法, 无需传入原始消息
+      recall(); // message.recall()
+      break;
+    // 或者
+    case "撤回测试2":
+      // 发送消息的接口返回值均提供 `recall` 方法以供撤回, 无需传入原始 QQ 或群号
+      const res = await reply('这条消息将被撤回'); // bot.recall(res) throws error!
+      setTimeout(() => res.recall(), 2000);
       break;
 
     case "图片测试":
