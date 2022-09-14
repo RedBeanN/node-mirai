@@ -53,13 +53,14 @@ const getMemberProfile = async ({
 };
 
 const getMessageById = async ({ //通过messageId获取一条被缓存的消息
-  messageId, 
+  messageId,
+  target,
   host,
   sessionKey,
   wsOnly,
 }) => {
-  if (wsOnly) return ws.messageFromId({ messageId });
-  const { data } = await axios.get(`${host}/messageFromId?sessionKey=${sessionKey}&id=${messageId}`);
+  if (wsOnly) return ws.messageFromId({ messageId, target });
+  const { data } = await axios.get(`${host}/messageFromId?sessionKey=${sessionKey}&messageId=${messageId}&target=${target}`);
   return data;
 };
 
@@ -179,7 +180,25 @@ const deleteFriend = async ({
     sessionKey,
     target,
   });
-  return { data };
+  return data;
+};
+
+const getRoamingMessages = async ({
+  sessionKey,
+  host,
+  target,
+  timeStart,
+  timeEnd,
+  wsOnly,
+}) => {
+  if (wsOnly) return ws.roamingMessages({ timeStart, timeEnd, target });
+  const { data } = await axios.post(`${host}/roamingMessages`, {
+    sessionKey,
+    timeStart,
+    timeEnd,
+    target,
+  });
+  return data
 };
 
 module.exports = {
@@ -196,4 +215,5 @@ module.exports = {
   quitGroup,
   handleNewFriendRequest,
   deleteFriend,
+  getRoamingMessages,
 };

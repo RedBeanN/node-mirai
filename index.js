@@ -3,6 +3,8 @@ const util = require('util');
  * @type { import('./src/typedef').WebSocket }
  */
 const WebSocket = require('ws');
+const semver = require('semver');
+const { default: axios } = require('axios');
 
 const Signal = require('./src/utils/Signal');
 const checkMAHVersion = require('./src/utils/checkMAHVersion');
@@ -49,6 +51,7 @@ const {
   quitGroup,
   handleNewFriendRequest,
   deleteFriend,
+  getRoamingMessages,
 } = require('./src/manage');
 
 const group = require('./src/group');
@@ -64,6 +67,15 @@ const {
 } = require('./src/fileUtility');
 
 /**
+ * @typedef MessageResponse
+ * @property { number } code
+ * @property { string } msg
+ * @property { number } messageId
+ * @property { () => Promise<httpApiResponse> } recall
+ *
+ * @typedef { Promise<MessageResponse> } RecallableMessage
+ */
+/**
  * @typedef { import('./src/typedef').Buffer } Buffer
  * @typedef { import('./src/typedef').ReadStream } ReadStream
  * @typedef { import('./src/typedef').httpApiResponse } httpApiResponse
@@ -71,6 +83,7 @@ const {
  * @typedef { import('./src/typedef').message } message
  * @typedef { import('./src/typedef').UserInfo } UserInfo
  * @typedef { import('./src/typedef').GroupMember } GroupMember
+ * @typedef { import('./src/typedef').Friend } Friend
  * @typedef { import('./src/typedef').GroupPermissionInfo } GroupPermissionInfo
  * @typedef { import('./src/typedef').GroupInfo } GroupInfo
  * @typedef { import('./src/typedef').GroupFile } GroupFile
@@ -145,9 +158,23 @@ class NodeMirai {
     this.wsHost = null;
     this.plugins = [];
     this._is_mah_v1_ = false;
+    this.mahVersion = '2.0.0';
     checkMAHVersion(this).then(isV1 => {
       this._is_mah_v1_ = isV1;
       this.auth();
+    });
+  }
+
+  /**
+   * @method getBotList
+   * @returns { number[] }
+   */
+  async getBotList () {
+    if (semver.lt(this.mahVersion, '2.6.0')) throw new Error('The getBotList API requires mah version >= 2.6.0');
+    if (this.wsOnly) return ws.send({ command: 'botList' });
+    return axios.get(`${this.host}/botList`).then(({ data }) => {
+      if (data.code === 0) return data.data;
+      return data;
     });
   }
 
@@ -186,9 +213,8 @@ class NodeMirai {
       this.startListeningEvents();
       return { code, session };
     }).catch((code) => {
-      console.log('init 出错');
-      console.log(code);
-      console.error('Failed @ auth: Invalid host');
+      console.error('init error with code', code);
+      // console.error('Failed @ auth: Invalid host');
       // process.exit(1);
       return {
         code: 2,
@@ -245,11 +271,30 @@ class NodeMirai {
   }
 
   /**
+   * @method getRoamingMessages
+   * @description 获取漫游消息
+   * @param { number } timeStart 起始时间, UTC+8 时间戳, 单位为秒. 可以为 0, 即表示从可以获取的最早的消息起. 负数将会被看是 0
+   * @param { number } timeEnd 结束时间, 低于 `timeStart` 的值将会被看作是 `timeStart` 的值. 最大支持 `Number.MAX_SAFE_INTEGER`
+   * @param { number } target 好友 qq, 目前仅支持好友消息漫游
+   * @returns { message[] }
+   */
+  async getRoamingMessages (timeStart, timeEnd, target) {
+    return getRoamingMessages({
+      sessionKey: this.sessionKey,
+      host: this.host,
+      timeStart,
+      timeEnd,
+      target,
+      wsOnly: this.wsOnly,
+    });
+  }
+
+  /**
    * @method NodeMirai#sendFriendMessage
    * @description 发送好友消息
    * @param { string | MessageChain[] } messageChain MessageChain 数组
    * @param { number } target 发送对象的 qq 号
-   * @returns { Promise<httpApiResponse> }
+   * @returns { RecallableMessage }
    */
   async sendFriendMessage (messageChain, target) {
     return sendFriendMessage({ messageChain, target }, this);
@@ -259,7 +304,7 @@ class NodeMirai {
    * @description 发送群组消息
    * @param { string | MessageChain[] } messageChain MessageChain 数组
    * @param { number } group 发送群组的群号
-   * @returns { Promise<httpApiResponse> }
+   * @returns { RecallableMessage }
    */
   async sendGroupMessage (messageChain, group) {
     return sendGroupMessage({
@@ -273,7 +318,7 @@ class NodeMirai {
    * @param { string | MessageChain[] } messageChain MessageChain 数组
    * @param { number } qq 临时消息发送对象 QQ 号
    * @param { number } group 所在群号
-   * @returns { Promise<httpApiResponse> }
+   * @returns { RecallableMessage }
    */
   async sendTempMessage (messageChain, qq, group) {
     // 兼容旧格式：高 32 位为群号，低 32 位为 QQ 号
@@ -294,7 +339,7 @@ class NodeMirai {
    * @method NodeMirai#sendImageMessage
    * @param { string | Buffer | ReadStream } url 图片所在路径
    * @param { message | MessageTarget } target 发送目标对象
-   * @returns { Promise<httpApiResponse> }
+   * @returns { RecallableMessage }
    */
   async sendImageMessage (url, target) {
     switch (target.type) {
@@ -316,7 +361,7 @@ class NodeMirai {
    * @method NodeMirai#sendVoiceMessage
    * @param { string | Buffer | ReadStream } url 语音所在路径
    * @param { GroupTarget } target 发送目标对象（目前仅支持群组）
-   * @returns { Promise<httpApiResponse> }
+   * @returns { RecallableMessage }
    */
   async sendVoiceMessage (url, target) {
     if (target.type !== 'GroupMessage')
@@ -332,7 +377,7 @@ class NodeMirai {
    * @method NodeMirai#sendFlashImageMessage
    * @param { string | Buffer | ReadStream } url 图片所在路径
    * @param { message | MessageTarget } target 发送目标对象
-   * @returns { Promise<httpApiResponse> }
+   * @returns { RecallableMessage }
    */
   async sendFlashImageMessage (url, target) {
     switch (target.type) {
@@ -401,7 +446,7 @@ class NodeMirai {
    * @description 发送消息给指定好友或群组
    * @param { MessageChain[]|string } message 要发送的消息
    * @param { message | MessageTarget } target 发送目标对象
-   * @returns { Promise<httpApiResponse> }
+   * @returns { RecallableMessage }
    */
   async sendMessage (message, target) {
     switch (target.type) {
@@ -422,7 +467,7 @@ class NodeMirai {
    * @param { MessageChain[] } message MessageChain 数组
    * @param { number } target 发送对象的 qq 号
    * @param { number } quote 引用的 Message 的 id
-   * @returns { Promise<httpApiResponse> }
+   * @returns { RecallableMessage }
    */
   async sendQuotedFriendMessage (message, target, quote) {
     return sendQuotedFriendMessage({
@@ -437,7 +482,7 @@ class NodeMirai {
    * @param { MessageChain[] } message MessageChain 数组
    * @param { number } qq 发送群组的群号
    * @param { number} quote 引用的 Message 的 id
-   * @returns { Promise<httpApiResponse> }
+   * @returns { RecallableMessage }
    */
   async sendQuotedGroupMessage (message, target, quote) {
     return sendQuotedGroupMessage({
@@ -452,7 +497,7 @@ class NodeMirai {
    * @param { number } qq 临时消息发送对象 QQ 号
    * @param { number } group 所在群号
    * @param { number} quote 引用的 Message 的 id
-   * @returns { Promise<httpApiResponse> }
+   * @returns { RecallableMessage }
    */
   async sendQuotedTempMessage (message, qq, group, quote) {
     // 兼容旧格式：高 32 位为群号，低 32 位为 QQ 号
@@ -482,27 +527,23 @@ class NodeMirai {
    * @description 发送引用消息
    * @param { MessageChain[]|string } message 要发送的消息
    * @param { message } target 发送目标对象
-   * @returns { Promise<httpApiResponse> }
+   * @returns { RecallableMessage }
    */
   async sendQuotedMessage (message, target) {
-    try {
-      let quote = target.messageChain[0].type === 'Source' ? target.messageChain[0].id : -1;
-      if (quote < 0) throw new Error();
-      // console.log(target.type, quote);
-      switch (target.type) {
-        case 'FriendMessage':
-          return await this.sendQuotedFriendMessage(message, target.sender.id, quote);
-        case 'GroupMessage':
-          return await this.sendQuotedGroupMessage(message, target.sender.group.id, quote);
-        case 'TempMessage':
-          return await this.sendQuotedTempMessage(message, target.sender.id, target.sender.group.id, quote);
-        default:
-          console.error('Invalid target @ sendQuotedMessage');
-          // process.exit(1);
-      }
-    } catch (e) {
-      console.log(e);
-      console.error('Invalid target @ sendQuotedMessage');
+    let quote = target.messageChain[0].type === 'Source' ? target.messageChain[0].id : undefined;
+    // messageId 可以是负数
+    if (quote === undefined) throw new Error('Cannot get messageId from target');
+    // console.log(target.type, quote);
+    switch (target.type) {
+      case 'FriendMessage':
+        return await this.sendQuotedFriendMessage(message, target.sender.id, quote);
+      case 'GroupMessage':
+        return await this.sendQuotedGroupMessage(message, target.sender.group.id, quote);
+      case 'TempMessage':
+        return await this.sendQuotedTempMessage(message, target.sender.id, target.sender.group.id, quote);
+      default:
+        console.error('Invalid target @ sendQuotedMessage');
+        // process.exit(1);
     }
   }
 
@@ -526,7 +567,7 @@ class NodeMirai {
    * @param { MessageChain[]|string } replyMsg 回复的内容
    * @param { message | MessageTarget } srcMsg 源消息
    * @param { boolean } [quote] 是否引用源消息
-   * @returns { Promise<httpApiResponse> }
+   * @returns { RecallableMessage }
    */
   reply (replyMsg, srcMsg, quote = false) {
     const replyMessage = typeof replyMsg === 'string' ? [Plain(replyMsg)] : replyMsg;
@@ -538,7 +579,7 @@ class NodeMirai {
    * @description 引用回复一条消息, sendQuotedMessage 的别名方法
    * @param { MessageChain[]|string } replyMsg 回复的内容
    * @param { message | MessageTarget } srcMsg 源消息
-   * @returns { Promise<httpApiResponse> }
+   * @returns { RecallableMessage }
    */
   quoteReply (replyMsg, srcMsg) {
     const replyMessage = typeof replyMsg === 'string' ? [Plain(replyMsg)] : replyMsg;
@@ -549,26 +590,51 @@ class NodeMirai {
    * @method NodeMirai#recall
    * @description 撤回一条消息
    * @param { message|number } msg 要撤回的消息或消息 id
+   * @param { number } [targetId] (mah >= v2.6.0)撤回消息为消息 id 时, 需提供好友 qq 或群号
    * @returns { Promise<httpApiResponse> }
    */
-  recall (msg) {
-    try {
-      const target = msg.messageId || (msg.messageChain && msg.messageChain[0] && msg.messageChain[0].id) || msg;
+  async recall (msg, targetId) {
+    let messageId = msg
+    if (msg.messageId) messageId = msg.messageId
+    if (msg.messageChain && msg.messageChain[0] && msg.messageChain[0].id) {
+      messageId = msg.messageChain[0].id
+    }
+    if (typeof messageId !== 'number') throw new Error(`Cannot get messageId from ${msg}`)
+    /**
+     * API changed since mah v2.6.0
+     * @see https://github.com/project-mirai/mirai-api-http/releases/tag/v2.6.0
+     * @see https://github.com/project-mirai/mirai-api-http/commit/8ba96b5dd7362ef83bde9f210d43d319319bc896
+     */
+    if (semver.gte(this.mahVersion, '2.6.0')) {
+      const target = msg.sender
+        ? msg.sender.group
+          ? msg.sender.group.id
+          : msg.sender.id
+        : targetId
+      if (typeof target !== 'number') {
+        throw new Error(`Cannot get targetId. Recall by messageId must also pass targetId since mah 2.6.0`)
+      }
       return recall({
         target,
+        messageId,
+        sessionKey: this.sessionKey,
+        host: this.host,
+        wsOnly: this.wsOnly
+      });
+    } else {
+      return recall({
+        target: messageId,
         sessionKey: this.sessionKey,
         host: this.host,
         wsOnly: this.wsOnly,
       });
-    } catch (e) {
-      console.error('Error @ recall', e.message);
     }
   }
 
   /**
    * @method NodeMirai#getFriendList
    * @description 获取 bot 的好友列表
-   * @returns { Promise<UserInfo[]> }
+   * @returns { Promise<Friend[]> }
    */
   getFriendList () {
     return getFriendList({
@@ -619,10 +685,11 @@ class NodeMirai {
    * @method NodeMirai#getMessageById
    * @description 根据消息 id 获取消息内容
    * @param { number } messageId 指定的消息 id
-   * @return { message }
+   * @param { number } target 好友 QQ 或群号
+   * @return { Promise<{ code: 0|5, data: message }> }
    */
-  getMessageById (messageId) {
-    return getMessageById(Object.assign({}, this, { messageId }));
+  getMessageById (messageId, target) {
+    return getMessageById(Object.assign({}, this, { messageId, target }));
   }
 
   /**
@@ -883,7 +950,7 @@ class NodeMirai {
     }
     // 兼容写法: getGroupFileList(groupid) 返回指定群的根目录
     if (typeof dir === 'number' || typeof dir === 'bigint') {
-      [dir, target] = ['', dir];
+      [dir, target] = ['/', dir];
     }
     const realTarget = (typeof target === 'number') || (typeof target === 'string')
       ? target
@@ -1176,8 +1243,8 @@ class NodeMirai {
         messages.forEach(message => {
           return this.emitEventListener(message);
         });
-      } else if (messages.code) {
-        console.error(`Error @ fetchMessage:\n\tCode: ${messages.code}\n\tMessage: ${messages.message || messages.msg || messages}`);
+      // } else if (messages.code) {
+      //   console.error(`Error @ fetchMessage:\n\tCode: ${messages.code}\n\tMessage: ${messages.message || messages.msg || messages}`);
       }
     }, this.interval);
   }

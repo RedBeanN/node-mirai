@@ -33,7 +33,13 @@ export enum MessageType {
   FriendMessage = 'FriendMessage',
   GroupMessage = 'GroupMessage',
   TempMessage = 'TempMessage',
+  // TODO: Support following types
   StrangerMessage = 'StrangerMessage',
+  OtherClientMessage = 'OtherClientMessage',
+  FriendSyncMessage = 'FriendSyncMessage',
+  GroupSyncMessage = 'GroupSyncMessage',
+  TempSyncMessage = 'TempSyncMessage',
+  StrangerSyncMessage = 'StrangerSyncMessage',
 }
 /**
  * 好友资料 - 性别
@@ -243,12 +249,12 @@ export type GroupPermissionInfo = {
   permission: Permission,
 }
 /**
- * @typedef { Object } FriendSender
+ * @typedef { Object } Friend
  * @property { number } id 发送者的QQ
  * @property { string } nickname 发送者的昵称
  * @property { string } remark 发送者的备注
  */
-export type FriendSender = {
+export type Friend = {
   id: number,
   nickname: string,
   remark: string,
@@ -278,23 +284,30 @@ export type httpApiResponse = {
   messageId?: string,
 }
 
+export type MessageResponse = httpApiResponse & {
+  /**
+   * 撤回发出的消息
+   */
+  recall: () => Promise<httpApiResponse>
+}
+
 /**
- * @typedef { Object } forwardNode
+ * @typedef { Object } ForwardNode
  * @property { number } senderId 发送人QQ
  * @property { number } time 发送时间
  * @property { string } senderName 显示名称
  * @property { MessageChain[] } [messageChain]
  */
-export type forwardNode = {
+export type ForwardNode = {
   senderId: number,
   time: number,
   senderName: string,
   messageChain: MessageChain[]
 }
 /**
- * @typedef { Array<forwardNode & {messageId:number}> } forwardNodeList
+ * @typedef { Array<ForwardNode & {messageId:number}> } ForwardNodeList
  */
-export type forwardNodeList = Array<forwardNode & { messageId?: number }>
+export type ForwardNodeList = Array<ForwardNode & { messageId?: number }>
 
 /**
  * @typedef { Object } MessageChain 消息链对象, node-mirai-sdk 提供各类型的 .value() 方法获得各自的属性值
@@ -317,7 +330,7 @@ export type forwardNodeList = Array<forwardNode & { messageId?: number }>
  * @property { string } [name] Poke/File 类型中的 name
  * @property { number } [size] File 类型中的 size
  * @property { number } [value] Dice 类型中的骰子点数
- * @property { string } [kind] MusicShare - 类型
+ * @property { 'QQMusic'|'NeteaseCloudMusic'|'MiguMusic'|'KugouMusic'|'KuwoMusic' } [kind] MusicShare - 类型
  * @property { string } [title] MusicShare - 标题
  * @property { string } [summary] MusicShare - 概括
  * @property { string } [jumpUrl] MusicShare - 跳转路径
@@ -325,9 +338,9 @@ export type forwardNodeList = Array<forwardNode & { messageId?: number }>
  * @property { string } [musicUrl] MusicShare - 音源路径
  * @property { string } [brief] MusicShare - 简介
  * @property { string } [code] MiraiCode
- * @property { forwardNodeList } [nodeList] ForwardMessage - 转发消息列表
+ * @property { ForwardNodeList } [nodeList] ForwardMessage - 转发消息列表
  */
- export type MessageChain = {
+export type MessageChain = {
   type: ChainType,
   /**
    * Source 类型中的消息 id, 或Quote类型中引用的源消息的 id, 或文件 id
@@ -370,6 +383,22 @@ export type forwardNodeList = Array<forwardNode & { messageId?: number }>
    */
   imageId?: string,
   /**
+   * Image/FlashImage 类型中图片的宽度
+   */
+  width: number,
+  /**
+   * Image/FlashImage 类型中图片的高度
+   */
+  height: number,
+  /**
+   * Image/FlashImage 类型中图片是否为表情
+   */
+  isEmoji: boolean,
+  /**
+   * Image/FlashImage 类型中图片的大小 / File 类型中的 size
+   */
+  size?: number,
+  /**
    * Voice 类型中语音的 voiceId
    */
   voiceId?: string,
@@ -394,17 +423,13 @@ export type forwardNodeList = Array<forwardNode & { messageId?: number }>
    */
   name?: string,
   /**
-   * File 类型中的 size
-   */
-  size?: number,
-  /**
    * Dice 类型中的骰子点数
    */
   value?: number,
   /**
    * MusicShare - 类型
    */
-  kind?: string,
+  kind?: 'QQMusic'|'NeteaseCloudMusic'|'MiguMusic'|'KugouMusic'|'KuwoMusic',
   /**
    * MusicShare - 标题
    */
@@ -433,14 +458,14 @@ export type forwardNodeList = Array<forwardNode & { messageId?: number }>
   /**
    * Forward - 消息列表
    */
-  nodeList: forwardNodeList,
+  nodeList: ForwardNodeList,
 }
 /**
  * @callback replyFunction
  * @param { string | MessageChain[] } message 回复的消息
- * @returns { Promise<httpApiResponse> }
+ * @returns { Promise<MessageResponse> }
  */
-declare function replyFunction(message: string | MessageChain[]): Promise<httpApiResponse>;
+declare function replyFunction(message: string | MessageChain[]): Promise<MessageResponse>;
 /**
  * @callback recallFunction
  * @param { string | MessageChain[] } message 回复的消息
@@ -460,7 +485,7 @@ declare function recallFunction(message: string | MessageChain[]): Promise<httpA
 export type message = {
   type: MessageType,
   messageChain: MessageChain[],
-  sender: FriendSender | GroupSender,
+  sender: Friend | GroupSender,
   /**
    * 快速回复消息
    */

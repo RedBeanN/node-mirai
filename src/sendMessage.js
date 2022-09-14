@@ -3,20 +3,45 @@ const fs = require('fs');
 const FormData = require('form-data');
 const wsMessage = require('./ws/send');
 
+const Mirai = require('../')
 const { Plain, Image, FlashImage, Voice } = require('./MessageComponent');
+
+const withRecall = async (message, target, bot) => {
+  message.recall = () => {
+    bot.recall(message, target);
+  };
+  return message;
+};
+/**
+ * @function callApi
+ * @param { string } api
+ * @param { object } [payload]
+ * @param { Mirai } bot
+ */
+const callApi = async (api, payload, bot) => {
+  // callApi(api, bot) without payload
+  if (!bot && payload instanceof Mirai) {
+    bot = payload;
+    payload = {};
+  }
+  const data = bot.wsOnly
+    ? await wsMessage[api](payload)
+    : await axios.post(`${bot.host}/${api}`, Object.assign(payload, {
+      sessionKey: bot.sessionKey
+    })).then(({ data }) => data);
+  // console.log(res);
+  // Normal messages with `target`, tempMessage with `qq`
+  const target = payload.target || payload.qq || payload.group;
+  if (data && target) return withRecall(data, target, bot);
+  return data;
+};
 
 const sendFriendMessage = async ({ //发送好友消息
   messageChain,
   target,
 }, bot) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
-  if (bot.wsOnly) return wsMessage.sendFriendMessage({ messageChain, target });
-  const { data } = await axios.post(`${bot.host}/sendFriendMessage`, {
-    messageChain, target, sessionKey: bot.sessionKey,
-  }).catch(e => {
-    console.error('Unknown Error @ sendFriendMessage:', e.message);
-  });
-  return data;
+  return callApi('sendFriendMessage', { messageChain, target }, bot);
 };
 
 const sendQuotedFriendMessage = async ({ // 好友中引用一条消息的messageId进行回复
@@ -25,15 +50,7 @@ const sendQuotedFriendMessage = async ({ // 好友中引用一条消息的messag
   quote,
 }, bot) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
-  if (bot.wsOnly) return wsMessage.sendFriendMessage({
-    messageChain, target, quote
-  });
-  const { data } = await axios.post(`${bot.host}/sendFriendMessage`, {
-    messageChain, target, sessionKey: bot.sessionKey, quote,
-  }).catch(e => {
-    console.error('Unknown Error @ sendQuotedFriendMessage:', e.message);
-  });
-  return data;
+  return callApi('sendFriendMessage', { messageChain, target, quote }, bot);
 };
 
 const sendGroupMessage = async ({ // 发送群消息
@@ -41,15 +58,7 @@ const sendGroupMessage = async ({ // 发送群消息
   target,
 }, bot) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
-  if (bot.wsOnly) return wsMessage.sendGroupMessage({
-    messageChain, target,
-  });
-  const { data } = await axios.post(`${bot.host}/sendGroupMessage`, {
-    messageChain, target, sessionKey: bot.sessionKey,
-  }).catch(e => {
-    console.error('Unknown Error @ sendGroupMessage:', e.message);
-  });
-  return data;
+  return callApi('sendGroupMessage', { messageChain, target }, bot);
 };
 const sendQuotedGroupMessage = async ({ // 群消息中引用一条消息的 messageId 进行回复
   messageChain,
@@ -57,15 +66,7 @@ const sendQuotedGroupMessage = async ({ // 群消息中引用一条消息的 mes
   quote,
 }, bot) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
-  if (bot.wsOnly) return wsMessage.sendGroupMessage({
-    messageChain, target, quote,
-  });
-  const { data } = await axios.post(`${bot.host}/sendGroupMessage`, {
-    messageChain, target, sessionKey: bot.sessionKey, quote,
-  }).catch(e => {
-    console.error('Unknown Error @ sendQuotedGroupMessage:', e.message);
-  });
-  return data;
+  return callApi('sendGroupMessage', { messageChain, target, quote }, bot);
 };
 
 const sendTempMessage = async ({ // 发送临时会话消息
@@ -74,15 +75,7 @@ const sendTempMessage = async ({ // 发送临时会话消息
   group,
 }, bot) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
-  if (bot.wsOnly) return wsMessage.sendTempMessage({
-    messageChain, qq, group,
-  });
-  const { data } = await axios.post(`${bot.host}/sendTempMessage`, {
-    messageChain, qq, group, sessionKey: bot.sessionKey,
-  }).catch(e => {
-    console.error('Unknown Error @ sendTempMessage:', e.message);
-  });
-  return data;
+  return callApi('sendTempMessage', { messageChain, qq, group }, bot);
 };
 
 const sendQuotedTempMessage = async ({ // 发送临时会话引用一条消息的messageId进行回复
@@ -92,15 +85,7 @@ const sendQuotedTempMessage = async ({ // 发送临时会话引用一条消息�
   quote,
 }, bot) => {
   if (typeof messageChain === 'string') messageChain = [Plain(messageChain)];
-  if (bot.wsOnly) return wsMessage.sendTempMessage({
-    messageChain, qq, group, quote,
-  });
-  const { data } = await axios.post(`${bot.host}/sendTempMessage`, {
-    messageChain, qq, group, sessionKey: bot.sessionKey, quote,
-  }).catch(e => {
-    console.error('Unknown Error @ sendQuotedTempMessage:', e.message);
-  });
-  return data;
+  return callApi('sendTempMessage', { messageChain, qq, group, quote }, bot);
 };
 
 const uploadImage = async ({

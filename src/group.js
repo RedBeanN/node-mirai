@@ -98,13 +98,15 @@ const setKick = async ({ // 移除群成员
 
 const setEssence = async ({  // 设置群精华
   target,
+  id,
   sessionKey,
   wsOnly,
 }) => {
   if (wsOnly) return ws.setEssence({ target });
   const { data } = await axios.post(`${host}/setEssence`, {
     sessionKey,
-    target
+    target,
+    messageId: id
   });
   return data;
 }

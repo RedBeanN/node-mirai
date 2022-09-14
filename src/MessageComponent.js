@@ -33,13 +33,13 @@
  * @property { string } musicUrl
  * @property { string } [brief]
  * 
- * @typedef { Object } forwardNode
+ * @typedef { Object } ForwardNode
  * @property { number } senderId
  * @property { number } time
  * @property { string } senderName
  * @property { MessageChain[] } [messageChain]
  * @property { number } [messageId]
- * @typedef { Array<forwardNode> } nodeList
+ * @typedef { Array<ForwardNode> } nodeList
  */
 
 /**
@@ -361,7 +361,7 @@ Dice.value = dice => {
  */
 const Forward = (messages) => {
   if (!Array.isArray(messages)) throw new Error('messages must be array')
-  const nodeList = messages.map(/** @param {forwardNode|message|number} msg */msg => {
+  const nodeList = messages.map(/** @param {ForwardNode|message|number} msg */msg => {
     // 消息ID可以直接作为节点
     if (typeof msg === 'number') {
       return { messageId: msg };
