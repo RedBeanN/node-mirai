@@ -18,9 +18,12 @@
   "dependencies": {
     "axios": "^0.21.1",
     "form-data": "^3.0.0",
-    "ws": "^7.2.3"
+    "semver": "^7.3.7",
+    "ws": "^7.5.9"
   },
   "devDependencies": {
+    "@types/node": "^16.11.59",
+    "@types/ws": "^7.4.7",
     "docdash": "^1.2.0"
   }
 }
