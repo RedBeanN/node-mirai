@@ -11,6 +11,7 @@ export enum events {
   unmute = "unmute",
   leaveActive = "leaveActive",
   leaveKick = "leaveKick",
+  leaveDisband = "leaveDisband",
   joinGroup = "joinGroup",
   invitedJoinGroupRequest = "invitedJoinGroupRequest",
   groupNameChange = "groupNameChange",
@@ -116,6 +117,10 @@ interface leaveKick {
   type: 'BotLeaveEventKick',
   group: GroupPermissionInfo,
   operator: MemberWithPermission,
+}
+interface leaveDisband {
+  type: 'BotLeaveEventDisband',
+  group: GroupPermissionInfo
 }
 interface groupNameChange {
   type: 'GroupNameChangeEvent',
@@ -330,6 +335,7 @@ export interface EventMap {
   unmute: unmute,
   leaveActive: leaveActive,
   leaveKick: leaveKick,
+  leaveDisband: leaveDisband,
   joinGroup: joinGroup,
   invitedJoinGroupRequest: invitedJoinGroupRequest,
   groupNameChange: groupNameChange,

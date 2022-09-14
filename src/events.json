@@ -9,6 +9,7 @@
   "BotUnmuteEvent": "unmute",
   "BotLeaveEventActive": "leaveActive",
   "BotLeaveEventKick": "leaveKick",
+  "BotLeaveEventDisband": "leaveDisband",
   "BotJoinGroupEvent": "joinGroup",
   "BotInvitedJoinGroupRequestEvent": "invitedJoinGroupRequest",
   "GroupNameChangeEvent": "groupNameChange",
