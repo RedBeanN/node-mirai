@@ -138,6 +138,23 @@ const Face = faceId => {
  * @returns { number }
  */
 Face.value = face => face.faceId;
+/**
+ * @function MarketFace
+ * @param { string } name
+ * @returns { MessageChain }
+ */
+const MarketFace = name => {
+  return {
+    type: 'MarketFace',
+    name,
+  };
+};
+/**
+ * @function MarketFace#value
+ * @param { MessageChain } face
+ * @returns { string }
+ */
+MarketFace.value = face => face.name;
 
 /**
  * @function Image
@@ -396,47 +413,171 @@ Forward.value = forward => {
 
 // TODO: Impl: File MiraiCode
 
+const encodeText = (text = '') => {
+  return text
+    .replace(/\\/g, '\\\\') // This must be first since others will add `\`
+    .replace(/\[/g, '\\[')
+    .replace(/]/g, '\\]')
+    .replace(/:/g, '\\:')
+    .replace(/,/g, '\\,')
+    // .replace(/\n/g, '\\n')
+    // .replace(/\r/g, '\\r')
+};
+const decodeText = (text = '') => {
+  // Better use reverted order as `encodeText` does
+  return text
+    // .replace(/\\r/g, '\r')
+    // .replace(/\\n/g, '\n')
+    .replace(/\\,/g, ',')
+    .replace(/\\:/g, ':')
+    .replace(/\\]/g, ']')
+    .replace(/\\\[/g, '[')
+    .replace(/\\\\/g, '\\')
+};
+
 // Experimental
 // refer: https://github.com/mamoe/mirai/blob/dev/docs/Messages.md#%E6%B6%88%E6%81%AF%E9%93%BE%E7%9A%84-mirai-%E7%A0%81
 /**
  * @function toMiraiCode
  * @param { MessageChain } component
  * @returns { string }
+ * @throws { TypeError }
  */
 const toMiraiCode = component => {
   switch (component.type) {
     case 'Plain':
-      return Plain.value(component);
+      return encodeText(component.text);
     case 'AtAll':
       return '[mirai:atall]';
     case 'At':
-      return `[mirai:at:${component.target},${component.display}]`;
+      return `[mirai:at:${component.target}]`;
     case 'Face':
-      return `[mirai:face:${component.id}]`;
+      return `[mirai:face:${component.faceId}]`;
+    case 'MarketFace':
+      return `[mirai:market:${encodeText(component.name)}]`;
     case 'Poke':
-      return `[mirai:poke:${component.name},${component.type},${component.id}]`;
+      // This is from mirai-api-http, not from mirai-core, so there is no `type` or `id`
+      return `[mirai:poke:${encodeText(component.name)}]`;
     case 'VipFace':
       // TODO: 当前版本(http-api1.7.2)尚未支持 VipFace 消息
       // return `[mirai:vipface:${component.id},${component.name},${component.count}]`;
       break;
     case 'Image':
-      return `[mirai:image:${component.imageId}]`;
+      // 可以加参数，但是旧版本不支持，并且发送图片不用自带这些参数
+      // return `[mirai:image:${encodeText(component.imageId)},size=${component.size},type=${component.imageType},width=${component.width},height=${component.height},isEmoji=${component.isEmoji}]`;
+      return `[mirai:image:${encodeText(component.imageId)}]`;
     case 'Voice':
       return `[mirai:voice:${component.voiceId}]`;
     case 'FlashImage':
-      return `[mirai:flash:${component.imageId}]`;
+      return `[mirai:flash:${encodeText(component.imageId)}]`;
+    case 'Dice':
+      return `[mirai:dice:${component.value}]`;
+    case 'Quote':
+      return `[mirai:quote:${component.id}]`;
+    case 'Forward':
+      return `[mirai:forward:${encodeText(JSON.stringify(component.nodeList))}]`;
+    case 'App':
+      return `[mirai:app:${encodeText(component.content)}]`;
+    case 'Xml':
+      return `[mirai:xml:${encodeText(component.xml)}]`;
+    case 'File':
+      return `[mirai:file:${encodeText(component.id)},${encodeText(component.name)},${component.size}]`;
+    case 'MusicShare':
+      const args = [
+        component.kind,
+        component.title,
+        component.summary,
+        component.jumpUrl,
+        component.pictureUrl,
+        component.musicUrl,
+        component.brief,
+      ].map(str => encodeText(str)).join(',')
+      return `[mirai:musicshare:${args}]`;
   }
-  throw new Error(`Type ${component.type} is not yet supported`);
+  throw new TypeError(`Type ${component.type} is not yet supported`);
+};
+
+/**
+ * @function serialize
+ * @description Stringify message components to mirai code string
+ * @param { MessageChain[] } messageChain
+ * @returns { string }
+ */
+const serialize = messageChain => {
+  return messageChain.reduce((str, chain) => {
+    if (chain.type === 'Source') return str;
+    try {
+      return str + toMiraiCode(chain);
+    } catch (e) {
+      // Maybe fall back to a common component `[mirai:type]`?
+      // return str + `[mirai:${chain.type}]`;
+      console.warn(`Unsupported message type ${chain.type} is skipped. This may cause some errors.`, e.message || e);
+      return str;
+    }
+  }, '');
 };
 
 // TODO:
 /**
- * @todo
- * @function parseMiraiCode
- * @param { string } code
- * @returns { MessageChain }
+ * @function deserialize
+ * @description Parse serialized mirai code string to message components
+ * @param { string } string
+ * @returns { MessageChain[] }
  */
-const parseMiraiCode = code => {};
+const deserialize = string => {
+  // Split from `[` or `]`, but not `\\[` or `\\]`
+  // Even items are plain texts, and odd items are components starts like `mirai:type[:args]`
+  const codes = string.split(/(?<!\\)[\[\]]/);
+  // console.log(codes);
+  /** @type { MessageChain[] } */
+  return codes.map((c, index) => {
+    if (index % 2) {
+      // Is message component
+      if (!c.startsWith('mirai:')) throw new Error(`Invalid serialized mirai code [${c}]`);
+      const [_, type, ...args] = c.split(':');
+      const arguments = args.join(':').split(/(?<!\\),/).map(decodeText);
+      // Usually we only need the first arg
+      const arg0 = arguments[0];
+      // console.log(arg0, args);
+      switch (type) {
+        case 'image': return Image({ imageId: arg0 });
+        case 'flash': return FlashImage({ imageId: arg0 });
+        case 'at': return At(Number(arg0));
+        case 'atall': return AtAll();
+        case 'face': return Face(Number(arg0));
+        case 'market': return MarketFace(decodeText(arg0));
+        case 'poke': return Poke(decodeText(arg0));
+        case 'dice': return Dice(Number(arg0));
+        case 'quote': return Quote(Number(arg0));
+        case 'forward': return Forward(JSON.parse(arg0));
+        case 'app': return App(decodeText(arg0));
+        case 'xml': return Xml(decodeText(arg0));
+        case 'music': return MusicShare({
+          kind: arguments[0],
+          title: arguments[1],
+          summary: arguments[2],
+          jumpUrl: arguments[3],
+          pictureUrl: arguments[4],
+          musicUrl: arguments[5],
+          brief: arguments[6],
+        });
+        // case 'file': return { type: 'File', id: arguments[0], name: arguments[1], size: Number(arguments[2]) }
+        case 'vipface':
+        case 'file':
+          console.warn(`Type [${c}] is not yet supported`)
+          return null;
+        default:
+          // This will be removed in `filter` below
+          console.warn(`Cannot deserialize component [${c}]`);
+          return null;
+      }
+    } else {
+      // Is plain text
+      if (c !== '') return Plain(decodeText(c));
+      return null;
+    }
+  }).filter(i => i !== null);
+};
 
 module.exports = {
   Source,
@@ -457,5 +598,6 @@ module.exports = {
   Dice,
   Forward,
   toMiraiCode,
-  parseMiraiCode,
+  serialize,
+  deserialize,
 };
