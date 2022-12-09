@@ -261,8 +261,8 @@ export type Friend = {
 }
 export type GroupSender = {
   id: number,
-  memberName: String,
-  specialTitle: String,
+  memberName: string,
+  specialTitle: string,
   permission: Permission,
   joinTimestamp: number,
   lastSpeakTimestamp: number,
@@ -398,6 +398,10 @@ export type MessageChain = {
    * Image/FlashImage 类型中图片的大小 / File 类型中的 size
    */
   size?: number,
+  /**
+   * Image/FlashImage 类型中图片的类型(UpperCase)
+   */
+  imageType: 'JPG' | 'PNG' | 'WEBP' | 'BMP' | 'GIG' | 'APNG' | 'SHARPP',
   /**
    * Voice 类型中语音的 voiceId
    */
