@@ -125,15 +125,26 @@ node main.js
 const Mirai = require('node-mirai-sdk');
 const { Plain, At, FlashImage, Image, Face, AtAll, Xml, Json, App, Poke, Forward } = Mirai.MessageComponent;
 const { Friend, Group } = Mirai.Target
+const { serialize, deserialize } = Mirai.MessageComponent;
 
 // ...
 
 bot.onMessage(async message => {
   const { type, sender, messageChain, reply, quoteReply, recall } = message; //接受其他消息,进行提取关键消息
-  let msg = ''; 
+
+  // 遍历消息链提取文本内容
+  let msg = '';
   messageChain.forEach(chain => {
     if (chain.type === 'Plain') msg += Plain.value(chain); //判断消息类型是不是文字
   });
+
+  // 将消息链序列化为含 mirai 码的字符串
+  // 返回内容类似: 文字123[mirai:at:12345]文字234[mirai:image:{abcd}.png]文字345
+  const serialized = serialize(messageChain0);
+
+  // 把序列化后的字符串解析为 messageChain
+  // [{ type: 'Plain', text: '文字123' }, { type: 'At', target: 12345, display: '' }, ...]
+  const deserialized = deserialize(serialized);
 
   switch (msg) {
     case "文字测试":
