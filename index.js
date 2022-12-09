@@ -1265,15 +1265,20 @@ class NodeMirai {
       }
     }
     else if (message.type in events) {
-      if (['NewFriendRequestEvent', 'BotInvitedJoinGroupEvent', 'MemberJoinRequestEvent'].includes(message.type)) {
+      if (['NewFriendRequestEvent', 'BotInvitedJoinGroupRequestEvent', 'MemberJoinRequestEvent'].includes(message.type)) {
         const self = this;
         const args = [message.eventId, message.fromId, message.groupId];
+        const eventHandler = message.type === 'NewFriendRequestEvent'
+          ? (...opt) => self.handleNewFriendRequest(...args, ...opt)
+            : message.type === 'BotInvitedJoinGroupRequestEvent'
+             ? (...opt) => self.handleBotInvitedJoinGroupRequest(...args, ...opt)
+             : (...opt) => self.handleMemberJoinRequest(...args, ...opt)
         const methods = {
           accept (msg) {
-            return self.handleNewFriendRequest(...args, 0, msg);
+            return eventHandler(0, msg);
           },
           reject (msg) {
-            return self.handleNewFriendRequest(...args, 1, msg);
+            return eventHandler(1, msg);
           },
           rejectAndBlock: null,
           ignore: null,
